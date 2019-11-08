@@ -3,7 +3,8 @@ Section: contrib/net
 Priority: extra
 Maintainer: Vyatta Package Maintainers <DL-vyatta-help@att.com>
 Build-Depends: debhelper (>= 9), autotools-dev,
-	       autoconf, automake, cpio, dh-yang
+	       autoconf, automake, cpio, dh-yang, dh-vci, dh-python,
+	       python3, python3-all, python3-setuptools, python3-pytest
 Standards-Version: 3.9.6
 
 Package: vplane-config-qos
@@ -13,7 +14,7 @@ Depends: vplane-config (>= 1.1-1), vplane-config-npf (>= 0.4.0),
 	 libvyatta-interface-perl, libvyatta-file-perl, libvyatta-rate-perl,
 	 libvyatta-dscp-perl, libconfig-tiny-perl, vyatta-cfg,
 	 libjson-perl, configd (>= 1.6) | configd-trial (>= 1.6),
-	 vyatta-dataplane-op-qos-5, vyatta-dataplane-cfg-qos-4,
+	 vyatta-dataplane-op-qos-5, vyatta-dataplane-cfg-qos-7,
 	 ${misc:Depends}, ${perl:Depends}
 Description: vyatta dataplane QoS templates
  Vyatta configuration/operational commands for Quality Of Service
@@ -74,3 +75,12 @@ Architecture: all
 Depends: vplane-config-qos, ${misc:Depends}, python
 Description: Vplane QoS tests
  This package contains the vplane-config-qos tests.
+
+Package: vyatta-policy-qos-vci
+Architecture: any
+Priority: extra
+Depends: python3, python3-vci, python3-systemd, ${misc:Depends},
+	 ${shlibs:depends}
+Built-Using: ${misc:Built-Using}
+Description: Policy QoS VCI Service
+ Service for policy qos commands using the Vyatta Component Infrastructure.

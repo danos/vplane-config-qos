@@ -1,1 +1,2 @@
+scripts/2500-vyatta-qos opt/vyatta/share/vyatta-op/functions/tech-support.d
 yang/vyatta-op-policy-qos-v1.yang usr/share/configd/yang

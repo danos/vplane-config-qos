@@ -63,6 +63,10 @@ module vyatta-policy-qos-uplink-v1 {
 
 		 This module provides the Quality of Service configuration for uplink interfaces.";
 
+	revision 2019-08-30 {
+		description "Move to VCI for commit processing.";
+	}
+
 	revision 2018-09-13 {
 		description "Separate the validation and commit steps
 			     to avoid connnecting to Vplaned for each
@@ -71,10 +75,6 @@ module vyatta-policy-qos-uplink-v1 {
 
 	revision 2017-09-15 {
 		description "Initial revision for version 1.";
-	}
-
-	augment /if:interfaces/interfaces-uplink:uplink {
-		configd:end "/opt/vyatta/sbin/qos-commit.pl --update-binding $VAR(@)";
 	}
 
 	augment /if:interfaces/interfaces-uplink:uplink/interfaces-policy-uplink:policy {

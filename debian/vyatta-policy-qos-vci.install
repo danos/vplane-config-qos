@@ -1,0 +1,2 @@
+vyatta_policy_qos_vci/policy_qos opt/vyatta/sbin
+vyatta_policy_qos_vci/*.py usr/lib/python3/dist-packages/vyatta_policy_qos_vci

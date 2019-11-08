@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Copyright (c) 2019, AT&T Intellectual Property. All rights reserved.
+
+source "$(cd "$(dirname "${0}")" && pwd -P)"/../tech-support.functions
+
+header Traffic Policy 
+if cli-shell-api existsActive policy qos; then
+	header Current Traffic Policies
+	time_out "run show queuing"
+else
+	echo "Traffic-Policy is not configured"
+fi

@@ -54,6 +54,10 @@ module vyatta-policy-action-v1 {
 
 		 This module provides configuration for action groups.";
 
+	revision 2019-08-30 {
+		description "Move to VCI for commit processing.";
+	}
+
 	revision 2018-09-13 {
 		description "Separate the validation and commit steps
 			     to avoid connnecting to Vplaned for each
@@ -89,8 +93,6 @@ module vyatta-policy-action-v1 {
 		list name {
 			description "Policy action name list";
 			configd:help "Policy action name list";
-			configd:update "qos-commit.pl --action=update --name=$VAR(@)";
-			configd:delete "qos-commit.pl --action=delete --name=$VAR(@)";
 			key "id";
 			leaf id {
 				type name;

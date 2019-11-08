@@ -1,3 +1,9 @@
+vplane-config-qos (2.5.0) unstable; urgency=medium
+
+  * DANOS import master
+
+ -- Vyatta Package Maintainers <DL-vyatta-help@att.com>  Wed, 06 Nov 2019 15:58:06 +0000
+
 vplane-config-qos (2.4) unstable; urgency=medium
 
   * DANOS import

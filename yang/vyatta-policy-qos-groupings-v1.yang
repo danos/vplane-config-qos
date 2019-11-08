@@ -66,6 +66,20 @@ module vyatta-policy-qos-groupings-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
+	revision 2019-10-30 {
+		description "Add the to-classifier keyword to policy qos
+			     map command.  Add PCP classification to a
+			     mark-map.
+			     Add configuration option to give burst size in
+			     milliseconds.
+			     Move to VCI for commit processing.";
+	}
+
+	revision 2019-07-17 {
+		description "Remove the if-feature queue-dscp-group so it
+			     appears on a VR platform.";
+	}
+
 	revision 2019-06-20 {
 		description "Reworked policy-list action scripts.
 			     Provide description and help text for wred-map
@@ -138,6 +152,13 @@ module vyatta-policy-qos-groupings-v1 {
 		}
 	}
 
+	typedef burst-time {
+		type string {    /* Number followed by suffix */
+			pattern '(600|[1-5][0-9][0-9]|[1-9][0-9]?)(ms(ec)?)';
+			configd:pattern-help "Time duration (1-600ms[ec])";
+		}
+	}
+
 	typedef dscp-name-or-range {
 		type string {
 			configd:syntax "qos-validate.pl --dscp $VAR(@)";
@@ -192,6 +213,14 @@ module vyatta-policy-qos-groupings-v1 {
 		type uint32 {
 			range 0..7;
 			configd:help "Priority Control Point value";
+		}
+	}
+
+	typedef classifier-type {
+		description "A classifier value written/read to a packet";
+		type uint32 {
+			range 0..7;
+			configd:help "A value used to classify packets";
 		}
 	}
 
@@ -276,6 +305,17 @@ module vyatta-policy-qos-groupings-v1 {
 			default "100%";
 			description "Bandwidth limit";
 			configd:help "Bandwidth limit";
+		}
+	}
+
+	grouping burst-combo {
+		leaf burst {
+			type union {
+				type npf:burst-size;
+				type burst-time;
+			}
+			description "Burst size";
+			configd:help "Burst size";
 		}
 	}
 
@@ -433,7 +473,6 @@ module vyatta-policy-qos-groupings-v1 {
 				uses to-pipe-queue;
 			}
 			list dscp-group {
-				if-feature queue-dscp-group;
 				description "DSCP-group to queue mapping";
 				configd:help "DSCP-group to queue mapping";
 				key "group-name";
@@ -456,6 +495,21 @@ module vyatta-policy-qos-groupings-v1 {
 				}
 				must "(not(../dscp))" {
 					error-message "Cannot mix dscp values and dscp-groups in same profile map";
+				}
+				must "(not(../to-classifier))" {
+					error-message "Cannot mix to-classifier values and dscp-groups in same profile map";
+				}
+			}
+			list to-classifier {
+				description "Classifier applied at ingress";
+				configd:help "Classifier applied at ingress";
+				key "id";
+				leaf id {
+					type classifier-type;
+				}
+				uses to-pipe-queue;
+				must "(not(../dscp-group))" {
+					error-message "Cannot mix dscp-groups and to-classifier in same profile map";
 				}
 			}
 		}
@@ -533,7 +587,7 @@ module vyatta-policy-qos-groupings-v1 {
 			configd:help "Description for this traffic profile";
 		}
 
-		uses npf:burst;
+		uses burst-combo;
 		leaf bandwidth {
 			type npf:bandwidth-suffix;
 			description "Bandwidth limit";
@@ -690,7 +744,7 @@ module vyatta-policy-qos-groupings-v1 {
 						default "10Gbit";
 					}
 				}
-				uses npf:burst;
+				uses burst-combo;
 				uses period;
 				uses traffic-class-list {
 					augment traffic-class {
@@ -898,13 +952,21 @@ module vyatta-policy-qos-groupings-v1 {
 		}
 	}
 
+	grouping pcp-mark {
+		leaf pcp-mark {
+			description "PCP value to mark packet with";
+			configd:help "PCP value to mark packet with";
+			type pcp-value-type;
+			mandatory true;
+		}
+	}
+
 	grouping mark-map-list {
 		list mark-map {
 			if-feature mark-map;
 			description "Mark-map for PCP marking packets";
 			configd:priority "410";
 			configd:help "Mark-map for PCP marking packets";
-			configd:end "qos-commit.pl --mark-map $VAR(@)";
 
 			max-elements "1";
 			key "id";
@@ -921,20 +983,29 @@ module vyatta-policy-qos-groupings-v1 {
 			list dscp-group {
 				description "dscp-group resource group name";
 				configd:help "dscp-group resource group name";
+				must "(not(../in-pcp))" {
+					error-message "Mark-map can only use DSCP or PCP as classifier not both";
+				}
 				key "group-name";
-				min-elements 1;
 				max-elements 64;
 				leaf group-name {
 					type leafref {
 						path "/resources:resources/res-group:group/res-group:dscp-group/res-group:group-name";
 					}
 				}
-				leaf pcp-mark {
-					description "PCP value to mark packet with";
-					configd:help "PCP value to mark packet with";
-					type pcp-value-type;
-					mandatory true;
+				uses pcp-mark;
+			}
+			list in-pcp {
+				description "PCP value";
+				configd:help "PCP value";
+				must "(not(../dscp-group))" {
+					error-message "Mark-map can only use DSCP or PCP as classifier not both";
 				}
+				key "pcp-value-type";
+				leaf pcp-value-type {
+					type pcp-value-type;
+				}
+				uses pcp-mark;
 			}
 		}
 	}

@@ -29,6 +29,12 @@ module vyatta-policy-qos-v1 {
 	import vyatta-interfaces-switch-policy-v1 {
 		prefix sw-pol;
 	}
+	import vyatta-resources-v1 {
+		prefix resources;
+	}
+	import vyatta-resources-group-v1 {
+		prefix res-group;
+	}
 
 	organization "AT&T Inc.";
 	contact
@@ -74,6 +80,12 @@ module vyatta-policy-qos-v1 {
 		 SPDX-License-Identifier: BSD-3-Clause
 
 		 This module implements vyatta-policy-qos-v1.";
+
+	revision 2019-10-30 {
+		description "Add ingress-map definitions and attachment
+			     points to switch interfaces.
+			     Move to VCI for commit processing.";
+	}
 
 	revision 2019-06-20 {
 		description "Reworked policy-list action scipts.";
@@ -125,6 +137,10 @@ module vyatta-policy-qos-v1 {
 	revision 2015-09-30 {
 		description "Initial revision, forked from vyatta-config-qos module.";
 		configd:migration 2;
+	}
+
+	feature ingress-map {
+		description "Ingress-map for DSCP or PCP classifying packets";
 	}
 
 	typedef name {
@@ -232,7 +248,6 @@ module vyatta-policy-qos-v1 {
 		list profile {
 			description "QoS traffic profile";
 			configd:help "QoS traffic profile";
-			configd:end "/opt/vyatta/sbin/qos-commit.pl --update-profile $VAR(@)";
 			max-elements "256";
 			key "id";
 			leaf id {
@@ -279,7 +294,6 @@ module vyatta-policy-qos-v1 {
 		container state {
 			description "QoS operational state and statistical information";
 			config false;
-			configd:get-state "/opt/vyatta/bin/qos-op-mode.pl --all";
 
 			list if-list {
 				description "List of interfaces that have a QoS policy configured";
@@ -440,12 +454,19 @@ module vyatta-policy-qos-v1 {
 		}
 	}
 
+	grouping to-classifier {
+		leaf to-classifier {
+			description "Classifier associated with packet";
+			configd:help "Classifier associated with packet";
+			type qos-groupings:classifier-type;
+		}
+	}
+
 	augment /policy:policy {
 		container qos {
 			configd:priority "400";
 			configd:help "Quality of Service (QoS)";
 			configd:validate "qos-validate.pl --validate";
-			configd:end "qos-commit.pl --update";
 
 			presence "QoS policy configured";
 			uses qos-groupings:mark-map-list;
@@ -462,6 +483,48 @@ module vyatta-policy-qos-v1 {
 			}
 			uses queuing-state;
 		}
+		list ingress-map {
+			if-feature ingress-map;
+			description "Ingress classification map";
+			key "id";
+			leaf id {
+				type name;
+				description "Ingress-map name";
+				configd:help "Ingress-map name";
+			}
+			list dscp-group {
+				description "dscp-group resource group name";
+				configd:help "dscp-group resource group name";
+				must "(not(../pcp))" {
+					error-message "Only dscp or pcp classification allowed not both";
+				}
+				key "id";
+				max-elements 64;
+				leaf id {
+					type leafref {
+						path "/resources:resources/res-group:group/res-group:dscp-group/res-group:group-name";
+					}
+				}
+				uses to-classifier;
+			}
+			list pcp {
+				description "PCP value to mark packet with";
+				configd:help "PCP value to mark packet with";
+				must "(not(../dscp-group))" {
+					error-message "Only dscp or pcp classification allowed not both";
+				}
+				key "id";
+				leaf id {
+					type pcp-value-type;
+				}
+				uses to-classifier;
+			}
+			leaf system-default {
+				type empty;
+				description "Default for unconfigured ports";
+				configd:help "Default for unconfigured ports";
+			}
+		}
 	}
 
 	augment /if:interfaces/interfaces-dataplane:dataplane/interfaces-policy:policy {
@@ -471,7 +534,6 @@ module vyatta-policy-qos-v1 {
 			}
 			configd:help "QoS policy name for interface";
 			configd:validate "qos-validate.pl --validate-binding $VAR(../../@) 0";
-			configd:end "/opt/vyatta/sbin/qos-commit.pl --update-binding $VAR(../../@)";
 		}
 	}
 
@@ -485,7 +547,6 @@ module vyatta-policy-qos-v1 {
 			}
 			configd:help "QoS policy name for virtual interface";
 			configd:validate "qos-validate.pl --validate-binding $VAR(../../../@) $VAR(../../@)";
-			configd:end "/opt/vyatta/sbin/qos-commit.pl --update-binding $VAR(../../../@)";
 		}
 	}
 
@@ -499,7 +560,6 @@ module vyatta-policy-qos-v1 {
 			}
 			configd:help "QoS policy name for interface";
 			configd:validate "qos-validate.pl --validate-binding $VAR(../../../../@) 0";
-			configd:end "/opt/vyatta/sbin/qos-commit.pl --update-binding $VAR(../../../../@)";
 		}
 	}
 
@@ -513,7 +573,6 @@ module vyatta-policy-qos-v1 {
 			}
 			configd:help "QoS policy name for interface";
 			configd:validate "qos-validate.pl --validate-binding $VAR(../../../../../../../@) $VAR(../../@)";
-			configd:end "/opt/vyatta/sbin/qos-commit.pl --update-binding $VAR(../../../../../../../@)";
 		}
 	}
 
@@ -524,6 +583,24 @@ module vyatta-policy-qos-v1 {
 			}
 			configd:help "QoS policy name for interface";
 			configd:validate "qos-validate.pl --validate-binding $VAR(../../../../../../@) $VAR(../../@)";
+		}
+	}
+
+	augment /if:interfaces/interfaces-dataplane:dataplane/dp-sw:switch-group/dp-sw:port-parameters/sw-pol:policy {
+		leaf ingress-map {
+			type leafref {
+				path "/policy:policy/ingress-map/id";
+			}
+			configd:help "QoS policy ingress-map for interface";
+		}
+	}
+
+	augment /if:interfaces/interfaces-dataplane:dataplane/dp-sw:switch-group/dp-sw:port-parameters/dp-sw:vlan-parameters/dp-sw:qos-parameters/dp-sw:vlan/sw-pol:policy {
+		leaf ingress-map {
+			type leafref {
+				path "/policy:policy/ingress-map/id";
+			}
+			configd:help "QoS policy ingress-map for vlan";
 		}
 	}
 }

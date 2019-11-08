@@ -1,7 +1,6 @@
 opt/vyatta/bin/qos-op-mode.pl
 opt/vyatta/bin/show-queueing.pl
 opt/vyatta/bin/qos-clear-counters.pl
-opt/vyatta/sbin/qos-commit.pl
 opt/vyatta/sbin/qos-validate.pl
 opt/vyatta/share/perl5/Vyatta/QoS/Bandwidth.pm
 opt/vyatta/share/perl5/Vyatta/QoS/Class.pm

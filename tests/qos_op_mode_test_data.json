@@ -1,0 +1,585 @@
+ {
+        "dp0s4" : {
+            "shaper" : {
+                "vlans" : [],
+                "subports" : [
+                    {
+                        "tc" : [
+                            {
+                                "dropped" : 0,
+                                "bytes" : 0,
+                                "random_drop" : 0,
+                                "packets" : 0
+                            },
+                            {
+                                "packets" : 0,
+                                "random_drop" : 0,
+                                "bytes" : 0,
+                                "dropped" : 0
+                            },
+                            {
+                                "dropped" : 0,
+                                "bytes" : 0,
+                                "random_drop" : 0,
+                                "packets" : 0
+                            },
+                            {
+                                "dropped" : 0,
+                                "random_drop" : 0,
+                                "bytes" : 0,
+                                "packets" : 0
+                            }
+                        ],
+                        "pipes" : [
+                            {
+                                "tc" : [
+                                    [
+                                        {
+                                            "qlen" : 0,
+                                            "packets" : 0,
+                                            "traffic-class" : 0,
+                                            "dropped" : 0,
+                                            "queue" : 0,
+                                            "bytes" : 0,
+                                            "random_drop" : 0,
+                                            "prio_local" : false
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "packets" : 0,
+                                            "qlen" : 0,
+                                            "prio_local" : false,
+                                            "random_drop" : 0,
+                                            "bytes" : 0,
+                                            "queue" : 0,
+                                            "traffic-class" : 1,
+                                            "dropped" : 0
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "random_drop" : 0,
+                                            "queue" : 0,
+                                            "bytes" : 0,
+                                            "prio_local" : false,
+                                            "traffic-class" : 2,
+                                            "dropped" : 0,
+                                            "packets" : 0,
+                                            "qlen" : 0
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "packets" : 0,
+                                            "qlen" : 0,
+                                            "bytes" : 0,
+                                            "queue" : 0,
+                                            "random_drop" : 0,
+                                            "prio_local" : false,
+                                            "dropped" : 0,
+                                            "traffic-class" : 3
+                                        }
+                                    ]
+                                ],
+                                "params" : {
+                                    "tc_period" : 10,
+                                    "tc_rates" : [
+                                        12500000,
+                                        12500000,
+                                        12500000,
+                                        12500000
+                                    ],
+                                    "tb_size" : 1542,
+                                    "tb_rate" : 12500000,
+                                    "wrr_weights" : [
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1
+                                    ]
+                                },
+                                "dscp2q" : [
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0
+                                ]
+                            }
+                        ],
+                        "rules" : {}
+                    }
+                ]
+            }
+        },
+        "dp0s5" : {
+            "shaper" : {
+                "vlans" : [],
+                "subports" : [
+                    {
+                        "pipes" : [
+                            {
+                                "dscp2q" : [
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0
+                                ],
+                                "params" : {
+                                    "tc_period" : 10,
+                                    "tb_rate" : 37500000,
+                                    "wrr_weights" : [
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1
+                                    ],
+                                    "tb_size" : 1542,
+                                    "tc_rates" : [
+                                        37500000,
+                                        37500000,
+                                        37500000,
+                                        37500000
+                                    ]
+                                },
+                                "tc" : [
+                                    [
+                                        {
+                                            "qlen" : 0,
+                                            "packets" : 0,
+                                            "traffic-class" : 0,
+                                            "dropped" : 0,
+                                            "prio_local" : false,
+                                            "random_drop" : 0,
+                                            "bytes" : 0,
+                                            "queue" : 0
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "prio_local" : false,
+                                            "bytes" : 0,
+                                            "queue" : 0,
+                                            "random_drop" : 0,
+                                            "dropped" : 0,
+                                            "traffic-class" : 1,
+                                            "packets" : 0,
+                                            "qlen" : 0
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "prio_local" : false,
+                                            "random_drop" : 0,
+                                            "bytes" : 0,
+                                            "queue" : 0,
+                                            "dropped" : 0,
+                                            "traffic-class" : 2,
+                                            "packets" : 0,
+                                            "qlen" : 0
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "dropped" : 0,
+                                            "traffic-class" : 3,
+                                            "prio_local" : false,
+                                            "bytes" : 0,
+                                            "queue" : 0,
+                                            "random_drop" : 0,
+                                            "qlen" : 0,
+                                            "packets" : 0
+                                        }
+                                    ]
+                                ]
+                            },
+                            {
+                                "tc" : [
+                                    [
+                                        {
+                                            "qlen" : 0,
+                                            "packets" : 0,
+                                            "dropped" : 0,
+                                            "traffic-class" : 0,
+                                            "prio_local" : false,
+                                            "bytes" : 0,
+                                            "queue" : 0,
+                                            "random_drop" : 0
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "traffic-class" : 1,
+                                            "dropped" : 0,
+                                            "prio_local" : false,
+                                            "bytes" : 0,
+                                            "queue" : 0,
+                                            "random_drop" : 0,
+                                            "qlen" : 0,
+                                            "packets" : 0
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "prio_local" : false,
+                                            "random_drop" : 0,
+                                            "bytes" : 0,
+                                            "queue" : 0,
+                                            "traffic-class" : 2,
+                                            "dropped" : 0,
+                                            "packets" : 0,
+                                            "qlen" : 0
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "packets" : 0,
+                                            "qlen" : 0,
+                                            "queue" : 0,
+                                            "bytes" : 0,
+                                            "random_drop" : 0,
+                                            "prio_local" : false,
+                                            "traffic-class" : 3,
+                                            "dropped" : 0
+                                        }
+                                    ]
+                                ],
+                                "params" : {
+                                    "tc_period" : 10,
+                                    "tb_size" : 1542,
+                                    "wrr_weights" : [
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1,
+                                        1
+                                    ],
+                                    "tb_rate" : 25000000,
+                                    "tc_rates" : [
+                                        25000000,
+                                        25000000,
+                                        25000000,
+                                        25000000
+                                    ]
+                                },
+                                "dscp2q" : [
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    3,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    2,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0
+                                ]
+                            }
+                        ],
+                        "tc" : [
+                            {
+                                "packets" : 0,
+                                "random_drop" : 0,
+                                "bytes" : 0,
+                                "dropped" : 0
+                            },
+                            {
+                                "random_drop" : 0,
+                                "bytes" : 0,
+                                "packets" : 0,
+                                "dropped" : 0
+                            },
+                            {
+                                "dropped" : 0,
+                                "random_drop" : 0,
+                                "bytes" : 0,
+                                "packets" : 0
+                            },
+                            {
+                                "dropped" : 0,
+                                "random_drop" : 0,
+                                "bytes" : 0,
+                                "packets" : 0
+                            }
+                        ],
+                        "rules" : {
+                            "groups" : [
+                                {
+                                    "rules" : {
+                                        "1" : {
+                                            "config" : "action=accept src-addr=10.10.10.0/24 handle=tag(1)",
+                                            "operation" : "apply tag(1)",
+                                            "action" : "pass ",
+                                            "packets" : 0,
+                                            "bytes" : 0,
+                                            "match" : "from 10.10.10.0/24 "
+                                        }
+                                    },
+                                    "name" : "dp0s5/0",
+                                    "direction" : "out",
+                                    "class" : "qos"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    }

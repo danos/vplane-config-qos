@@ -23,3 +23,5 @@ debian/*.debhelper
 debian/*.substvars
 debian/tmp
 debian/vplane-config-qos
+
+vyatta_policy_qos_vci/__pycache__

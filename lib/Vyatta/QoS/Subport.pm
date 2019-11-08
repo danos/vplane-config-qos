@@ -21,14 +21,12 @@ use Vyatta::QoS::Queue;
 our $PERIOD_DEFAULT = 40;
 
 sub new {
-    my ( $class, $level, $vif, $tag, $parent_bw, $default, $trunk_tc_ref,
-        $oper_speed )
-      = @_;
+    my ( $class, $level, $vif, $tag, $parent_bw, $default, $trunk_tc_ref ) = @_;
     my $config = new Vyatta::Config($level);
     my $self   = {};
     bless $self, $class;
 
-    my $bw = new Vyatta::QoS::Bandwidth( $level, $parent_bw, $oper_speed );
+    my $bw = new Vyatta::QoS::Bandwidth( $level, $parent_bw );
     my $tclass = new Vyatta::QoS::TrafficClass( "$level traffic-class", $bw,
         $trunk_tc_ref );
 

@@ -7,7 +7,6 @@ cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
 	cpio -0pd
 
 sbin_SCRIPTS = scripts/qos-validate.pl
-sbin_SCRIPTS += scripts/qos-commit.pl
 
 bin_SCRIPTS = scripts/show-queueing.pl
 bin_SCRIPTS += scripts/qos-op-mode.pl

@@ -24,25 +24,16 @@ use constant DEFAULT_BURST_MS => 4;
 
 # Create object based on input
 sub new {
-    my ( $class, $level, $parent, $oper_speed ) = @_;
+    my ( $class, $level, $parent ) = @_;
     my $config = new Vyatta::Config($level);
     my $self   = {};
     my $percent;
-    my $bandwidth;
+    my $burst_time;
     bless $self, $class;
 
-    # If oper_speed is provided it takes precedence over bandwidth. The
-    # oper_speed is only provided when a subport is created without the
-    # bandwidth being specified as shown in the following sequence:
-    #     _getVLans->_getSubport->new Subport->new Bandwidth
-
-    if ( defined($oper_speed) ) {
-        $bandwidth = $oper_speed;
-    } else {
-        $bandwidth = $config->returnValue('bandwidth');
-        $bandwidth = '100%'
-          unless defined($bandwidth);
-    }
+    my $bandwidth = $config->returnValue('bandwidth');
+    $bandwidth = '100%'
+      unless defined($bandwidth);
 
     my $bps;
     if ( $bandwidth =~ /^([0-9]*\.?[0-9]+)%$/ ) {
@@ -50,9 +41,9 @@ sub new {
           unless defined($parent);
 
         $percent = $1;
-        $bps     = int( $parent->{bps} * $percent ) / 100.;
+        $bps = int( ( $parent->{bps} * $percent ) / 100. );
     } else {
-        $bps = parse_rate($bandwidth) / 8;
+        $bps = int( parse_rate($bandwidth) / 8 );
     }
 
     invalid "Invalid bandwidth $bandwidth"
@@ -68,32 +59,43 @@ sub new {
     my $burst = $config->returnValue('burst');
     $self->{default_burst} = "";
     if ( !defined($burst) ) {
-        $burst = int( ( $bps * DEFAULT_BURST_MS ) / 1000 );
+        $burst_time = DEFAULT_BURST_MS;
         $self->{default_burst} = 1;
+    } elsif ( $burst =~ /^([1-9][0-9]*)ms(ec)?$/ ) {
+        $burst_time = $1;
     }
 
-    $self->{bps}     = $bps;
-    $self->{burst}   = $burst;
-    $self->{percent} = $percent;
+    if ( defined($burst_time) ) {
+        $burst = int( ( $bps * $burst_time ) / 1000 );
+    }
+
+    $self->{bps}        = $bps;
+    $self->{burst}      = $burst;
+    $self->{percent}    = $percent;
+    $self->{burst_time} = $burst_time;
     return $self;
 }
 
 # Produce rate part of command
 sub command {
     my ( $self, $prefix ) = @_;
-    my $bps     = $self->{bps};
-    my $burst   = $self->{burst};
-    my $percent = $self->{percent};
-
-    if ( $self->{default_burst} ) {
-        $burst = 0;
-    }
+    my $bps        = $self->{bps};
+    my $burst      = $self->{burst};
+    my $burst_time = $self->{burst_time};
+    my $percent    = $self->{percent};
 
     if ( defined($percent) ) {
-        $prefix .= " percent $percent size $burst";
+        $prefix .= " percent $percent";
     } else {
-        $prefix .= " rate $bps size $burst";
+        $prefix .= " rate $bps";
     }
+
+    if ( defined($burst_time) ) {
+        $prefix .= " msec $burst_time";
+    } else {
+        $prefix .= " size $burst";
+    }
+
     return $prefix;
 }
 

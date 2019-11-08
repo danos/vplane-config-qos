@@ -86,15 +86,7 @@ sub getDscpGroupMap {
     $level .= ' map dscp-group';
     my $config = new Vyatta::Config($level);
     my @dscp2q;
-
-    # default DSCP to queue mapping
-    # 0 == best effort => traffic-class 3
-    # 63 == high priority =>            0
-    # Need indexes into the queue array, not TC/Q combo
-    for my $dscp ( 0 .. MAX_DSCP ) {
-        my $tc = ( ~$dscp >> 4 ) & 3;
-        $dscp2q[$dscp] = $tc;
-    }
+    my $index = 0;
 
     # process overrides
     foreach my $name ( $config->listNodes() ) {
@@ -102,16 +94,13 @@ sub getDscpGroupMap {
         invalid "Queue id missing at $level $name"
           unless defined($qid);
 
-        my $group_config =
-          new Vyatta::Config("resources group dscp-group $name dscp");
-        foreach my $dscp ( $group_config->returnValues() ) {
-            next unless defined $queues->[$qid];
-
-            # We might have diff-serv dscp-name e.g. af12, cs6, ef
-            $dscp = str2dscp($dscp);
+        # The dataplane sets up a default map so we only need
+        # send those which are configured to non default queues
+        if ( defined $queues->[$qid] ) {
             my $q  = $queues->[$qid];
             my $dp = $q->getdp($name);
-            $dscp2q[$dscp] = $q->qmap() | ( $dp << TC_WRR_BITS );
+            $dscp2q[$index] = " $name ";
+            $dscp2q[$index++] .= $q->qmap() | ( $dp << TC_WRR_BITS );
         }
     }
 
@@ -125,15 +114,6 @@ sub getDscpMap {
     my $config = new Vyatta::Config($level);
     my @dscp2q;
 
-    # default DSCP to queue mapping
-    # 0 == best effort => traffic-class 3
-    # 63 == high priority =>            0
-    # Need indexes into the queue array, not TC/Q combo
-    for my $dscp ( 0 .. MAX_DSCP ) {
-        my $tc = ( ~$dscp >> 4 ) & 3;
-        $dscp2q[$dscp] = $tc;
-    }
-
     # process overrides
     foreach my $str ( $config->listNodes() ) {
         my $qid = $config->returnValue("$str to");
@@ -144,6 +124,8 @@ sub getDscpMap {
         invalid "Invalid DSCP '$str'"
           unless ( $#ret >= 0 );
 
+        # The dataplane sets up a default map so we only
+        # need send those values assigned to different queues
         foreach my $dscp (@ret) {
             next unless defined $queues->[$qid];
             my $q = $queues->[$qid];
@@ -263,6 +245,22 @@ sub _map_commands {
     return @cmds;
 }
 
+sub _grp_map_commands {
+    my ( $self, $name, $mapref, $prefix ) = @_;
+    my @map = @{$mapref};
+    my @cmds;
+
+    for my $value ( 0 .. $#map ) {
+        my $q = $map[$value];
+        next unless defined($q);
+
+        my $cmd = sprintf ' %s %s', $name, $q;
+        push @cmds, $prefix . $cmd;
+    }
+
+    return @cmds;
+}
+
 # generate parameters for profile
 sub commands {
     my ( $self, $prefix ) = @_;
@@ -293,7 +291,8 @@ sub commands {
 
         if ( $self->{map_in_use} eq 'dscp-group' ) {
             push @cmds,
-              $self->_map_commands( 'dscp', $self->{dscp_group}, $prefix );
+              $self->_grp_map_commands( 'dscp-group', $self->{dscp_group},
+                $prefix );
         }
     }
 

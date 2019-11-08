@@ -42,12 +42,12 @@ module vyatta-policy-qos-deviation-siad-v1 {
 		prefix qos-groupings;
 	}
 
-	organization "AT&T Inc.";
+    organization "AT&T Inc.";
 	contact
 		"AT&T
-		 Postal: 208 S. Akard Street
-		 Dallas, TX 25202
-		 Web: www.att.com";
+          Postal: 208 S. Akard Street
+                  Dallas, TX 25202
+          Web: www.att.com";
 
 	description
 		"Copyright (c) 2019, AT&T Intellectual Property.
@@ -83,6 +83,11 @@ module vyatta-policy-qos-deviation-siad-v1 {
 		 SPDX-License-Identifier: BSD-3-Clause
 
 		 Deviations for QoS policies on the SIAD platform";
+
+	revision 2019-09-16 {
+		description "Add configuration option to give burst size in
+			     milliseconds";
+	}
 
 	revision 2019-06-20 {
 		description "Add custom configd:must for slow must statements";
@@ -225,7 +230,10 @@ module vyatta-policy-qos-deviation-siad-v1 {
 
 	deviation /policy:policy/qos:qos/qos:name/qos:shaper/qos:burst {
 		deviate replace {
-			type siad-burst-size;
+			type union {
+				type siad-burst-size;
+				type qos-groupings:burst-time;
+			}
 		}
 		deviate add {
 			default "16000";
@@ -234,7 +242,10 @@ module vyatta-policy-qos-deviation-siad-v1 {
 
 	deviation /policy:policy/qos:qos/qos:name/qos:shaper/qos:profile/qos:burst {
 		deviate replace {
-			type siad-burst-size;
+			type union {
+				type siad-burst-size;
+				type qos-groupings:burst-time;
+			}
 		}
 		deviate add {
 			default "16000";
@@ -243,7 +254,10 @@ module vyatta-policy-qos-deviation-siad-v1 {
 
 	deviation /policy:policy/qos:qos/qos:profile/qos:burst {
 		deviate replace {
-			type siad-burst-size;
+			type union {
+				type siad-burst-size;
+				type qos-groupings:burst-time;
+			}
 		}
 		deviate add {
 			default "16000";

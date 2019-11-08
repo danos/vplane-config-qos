@@ -15,7 +15,6 @@ use Carp;
 use List::Util qw(first);
 
 use Vyatta::Config;
-use Vyatta::Configd;
 use Vyatta::FWHelper qw(validate_npf_rule);
 use Vyatta::Rate qw(parse_rate);
 use Vyatta::QoS::Profile qw(valid_binding);
@@ -138,7 +137,7 @@ sub init {
 }
 
 sub _getSubport {
-    my ( $level, $vif, $tag, $parent_bw, $trunk_tc_ref, $oper_speed ) = @_;
+    my ( $level, $vif, $tag, $parent_bw, $trunk_tc_ref ) = @_;
     my $config = new Vyatta::Config($level);
 
     my $default = $config->returnValue("default");
@@ -151,7 +150,7 @@ sub _getSubport {
 
     my $subport =
       new Vyatta::QoS::Subport( $level, $vif, $tag, $parent_bw, $default,
-        $trunk_tc_ref, $oper_speed );
+        $trunk_tc_ref );
 
     return $subport;
 }
@@ -184,33 +183,7 @@ sub _getVLans {
     invalid "Interface $ifname does not exist"
       unless defined($intf);
 
-    my $bw_config = new Vyatta::Config($level);
-    my $oper_speed;
-    if ( $bw_config->isDefault('bandwidth') ) {
-        my $configd = Vyatta::Configd::Client->new();
-        my $oper_tree =
-          $configd->tree_get_full_hash( "interfaces statistics interface",
-            { 'database' => $Vyatta::Configd::Client::RUNNING } );
-        foreach my $intf_oper ( @{ $oper_tree->{'interface'} } ) {
-            if ( $intf_oper->{name} eq $intf->{name} ) {
-                $oper_speed = $intf_oper->{speed} * 1000;
-                last;
-            }
-        }
-        if ( !defined($oper_speed) || $oper_speed eq "0" ) {
-            my $intf_config  = new Vyatta::Config("$intf->{path}");
-            my $config_speed = $intf_config->returnValue('speed');
-            if (   !defined($config_speed)
-                || $config_speed eq "0"
-                || $config_speed eq "auto" )
-            {
-                undef $oper_speed;
-            } else {
-                $oper_speed = $config_speed . 'bit';
-            }
-        }
-    }
-    my $untag = _getSubport( $level, 0, 0, undef, undef, $oper_speed );
+    my $untag = _getSubport( $level, 0, 0 );
     $vlans{0} = $untag;
     my $port_bw  = $untag->bandwidth();
     my $trunk_tc = $untag->tc();

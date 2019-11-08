@@ -1,0 +1,84 @@
+ {
+        "vyatta-interfaces-v1:interfaces": {
+            "vyatta-interfaces-dataplane-v1:dataplane": [
+                {
+                    "tagnode": "dp0s4",
+                    "vyatta-interfaces-policy-v1:policy": {
+                        "vyatta-policy-qos-v1:qos": "policy-2"
+                    }
+                },
+                {
+                    "tagnode": "dp0s5",
+                    "vyatta-interfaces-policy-v1:policy": {
+                        "vyatta-policy-qos-v1:qos": "policy-1"
+                    }
+                }
+            ]
+        },
+        "vyatta-policy-v1:policy": {
+            "vyatta-policy-qos-v1:qos": {
+                "name": [
+                    {
+                        "id": "policy-1",
+                        "shaper": {
+                            "bandwidth": "10Gbit",
+                            "class": [
+                                {
+                                    "id": 1,
+                                    "match": [
+                                        {
+                                            "action": "pass",
+                                            "id": "m1",
+                                            "source": {
+                                                "address": "10.10.10.0/24"
+                                            }
+                                        }
+                                    ],
+                                    "profile": "profile-2"
+                                }
+                            ],
+                            "default": "profile-1",
+                            "frame-overhead": "24",
+                            "profile": [
+                                {
+                                    "bandwidth": "300Mbit",
+                                    "id": "profile-1"
+                                },
+                                {
+                                    "bandwidth": "200Mbit",
+                                    "id": "profile-2"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "id": "policy-2",
+                        "shaper": {
+                            "bandwidth": "10Gbit",
+                            "default": "profile-2",
+                            "frame-overhead": "24",
+                            "profile": [
+                                {
+                                    "bandwidth": "100Mbit",
+                                    "id": "profile-2"
+                                }
+                            ],
+                            "traffic-class": [
+                                {
+                                    "bandwidth": "100%",
+                                    "id": 1,
+                                    "queue-limit": 8192,
+                                    "random-detect": {
+                                        "filter-weight": 10,
+                                        "mark-probability": 50,
+                                        "max-threshold": 8191,
+                                        "min-threshold": 4096
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    }

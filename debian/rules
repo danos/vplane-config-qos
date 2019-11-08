@@ -1,8 +1,13 @@
 #!/usr/bin/make -f
+#export DH_VERBOSE=1
 
 %:
-	dh $@ --with=yang
+	dh $@ --with=yang,vci
 
 override_dh_auto_configure:
 	debian/autogen.sh
 	./configure --prefix=/opt/vyatta
+
+# unit-test the python VCI scripts
+override_dh_auto_test:
+	pytest-3
