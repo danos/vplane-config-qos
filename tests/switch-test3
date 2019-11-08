@@ -1,0 +1,70 @@
+#!/bin/bash
+#  Test 3
+#
+# Try updating a policy under the switch-group CLI for a switch
+
+INTERFACE=$1
+
+vplsh -l -c "debug qos"
+
+set policy qos name test shaper def def
+set policy qos name test shaper profile def bandwidth 4mbit
+set int data $INTERFACE switch-group switch sw0
+set int data $INTERFACE switch-group port-parameters mode access
+set int data $INTERFACE switch-group port-parameters vlan-parameters primary-vlan-id 10
+set int switch sw0 physical-switch 0
+set int switch sw0 default-port-parameters vlan-parameters primary-vlan-id 10
+set int switch sw0 default-port-parameters mode access
+set int switch sw0 default-port-parameters vlan-parameters qos-parameters vlan 10 policy qos test
+commit
+/opt/vyatta/bin/vplsh -l -c "qos show" > fout
+cat fout | grep tb_rate | grep 500000 > /dev/null
+if [ $? != 0 ];
+then
+  echo "Test 3 invalid policy install attempt"
+  exit 1;
+fi
+
+set policy qos name test shaper profile def bandwidth 8mbit
+commit
+/opt/vyatta/bin/vplsh -l -c "qos show" > fout
+cat fout | grep tb_rate | grep 1000000 > /dev/null
+if [ $? != 0 ];
+then
+  echo "Test 3 policy not updated on target correctly"
+  exit 1;
+fi
+
+del int switch sw0 default-port-parameters vlan-parameters qos-parameters
+set int data $INTERFACE switch-group port-parameters policy qos test
+set policy qos name test shaper profile def bandwidth 4mbit
+commit
+/opt/vyatta/bin/vplsh -l -c "qos show" > fout
+cat fout | grep tb_rate | grep 500000 > /dev/null
+if [ $? != 0 ];
+then
+  echo "Test 3 invalid policy install attempt directly on dataplane switch"
+  exit 1;
+fi
+
+set policy qos name test shaper profile def bandwidth 8mbit
+commit
+/opt/vyatta/bin/vplsh -l -c "qos show" > fout
+cat fout | grep tb_rate | grep 1000000 > /dev/null
+if [ $? != 0 ];
+then
+  echo "Test 3 policy not updated on dataplane switch correctly"
+  exit 1;
+fi
+
+
+del int switch sw0
+del int data $INTERFACE
+del policy qos
+commit
+
+
+vplsh -l -c "debug -qos"
+
+echo "Test 3 passed"
+

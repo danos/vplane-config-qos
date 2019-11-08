@@ -1,0 +1,41 @@
+#!/bin/bash
+#  Test 2
+
+INTERFACE=$1
+
+vplsh -l -c "debug qos"
+
+# Check the Tc is rounded up for bandwidth to ensure a max MTU frame
+# can be sent.
+set policy qos name foo shaper def def
+set policy qos name foo shaper profile def bandwidth 1Gbit
+set policy qos name foo shaper class 1 match 1 police bandwidth 400
+set policy qos name foo shaper class 1 profile def
+set int data $INTERFACE policy qos foo
+commit
+journalctl --no-hostname -u vyatta-dataplane -n 20 | grep "Policer create" > fout
+TCVAL=`cat fout | sed 's/.*(//;s/).*//' | awk -F ',' '{ print $6 }'`
+if [ $TCVAL != "31" ];
+then
+  echo "Test 2 failed, invalid bandwidth TC $TCVAL"
+  exit 1
+fi
+
+# Now set the tc and make sure rounding up still occurs
+set policy qos name foo shaper class 1 match 1 police tc 28
+commit
+journalctl --no-hostname -u vyatta-dataplane -n 20 | grep "Policer create" > fout
+TCVAL=`cat fout | sed 's/.*(//;s/).*//' | awk -F ',' '{ print $6 }'`
+if [ $TCVAL != "31" ];
+then
+  echo "Test 2 failed, invalid bandwidth TC $TCVAL"
+  exit 1
+fi
+
+# Tidy up
+del int data $INTERFACE policy
+del policy
+commit
+
+echo "Test 2 passed"
+

@@ -1,0 +1,96 @@
+#!/bin/bash
+#  Test 1
+#
+# Try adding a policy under the switch-group CLI to a physical port
+
+INTERFACE=$1
+
+vplsh -l -c "debug qos"
+
+set policy qos name test shaper def def
+set policy qos name test shaper bandwidth 3500kbit
+set policy qos name test shaper profile def bandwidth 4mbit
+set policy qos name v10 shaper def def
+set policy qos name test shaper bandwidth 5500kbit
+set policy qos name v10 shaper profile def bandwidth 6mbit
+set policy qos name v20 shaper def def
+set policy qos name test shaper bandwidth 10500kbit
+set policy qos name v20 shaper profile def bandwidth 12mbit
+set int switch sw0 physical-switch 0
+set int switch sw0 default-port-parameters vlan-parameters primary-vlan-id 1
+set int dataplane $INTERFACE switch-group port-parameters mode trunk
+set int dataplane $INTERFACE switch-group switch sw0
+set int dataplane $INTERFACE switch-group port-parameters policy qos test
+set int dataplane $INTERFACE switch-group port-parameters vlan-param qos-param vlan 10 pol qos v10
+set int dataplane $INTERFACE switch-group port-parameters vlan-param qos-param vlan 20 pol qos v20
+set int dataplane $INTERFACE switch-group port-parameters vlan-param vlan 10
+set int dataplane $INTERFACE switch-group port-parameters vlan-param vlan 20
+commit
+journalctl --no-ho -u vyatta-dataplane -n 120 > fout
+cat fout | grep "subport 0"  > /dev/null
+if [ $? != 0 ];
+then
+  echo "Test 1 failed, no subport 0"
+  exit 1
+fi
+cat fout | grep "subport 1" > /dev/null
+if [ $? != 0 ];
+then
+  echo "Test 1 failed, no subport 1"
+  exit 1
+fi
+cat fout | grep "subport 2"  > /dev/null
+if [ $? != 0 ];
+then
+  echo "Test 1 failed, no subport 2"
+  exit 1
+fi
+
+del int data $INTERFACE switch-group port-parameters vlan-parameters qos-parameters vlan 10
+commit
+
+journalctl --no-ho -u vyatta-dataplane -n 50 > fout
+cat fout | grep "subport 0"  > /dev/null
+if [ $? != 0 ];
+then
+  echo "Test 1 failed, no subport 0"
+  exit 1
+fi
+cat fout | grep "subport 1"  > /dev/null
+if [ $? != 0 ];
+then
+  echo "Test 1 failed, no subport 1"
+  exit 1
+fi
+cat fout | grep "subport 2"  > /dev/null
+if [ $? != 1 ];
+then
+  echo "Test 1 failed, subport 2 not removed"
+  exit 1
+fi
+
+del int dataplane $INTERFACE switch-group port-parameters policy
+commit
+if [ $? != 1 ];
+then
+  echo "Invalid config committed successfully"
+  exit 1
+fi
+
+del int data $INTERFACE switch-group
+del int switch sw0
+del policy qos
+commit
+
+/opt/vyatta/bin/vplsh -l -c "qos show" > fout
+lines=`cat fout | wc -l`
+if [ $lines != 3 ];
+then
+  echo "Test 1 failed policy not removed"
+  exit 1
+fi
+
+vplsh -l -c "debug -qos"
+
+echo "Test 1 passed"
+

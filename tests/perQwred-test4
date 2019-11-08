@@ -1,0 +1,145 @@
+#!/bin/bash -x
+# Test 4
+# Check various valid and invalid policies are handled correctly
+# The first batch test using a global profile, the next a local one
+INTERFACE=$1
+set resource group dscp-group DSCP-WRED dscp af21
+set resource group dscp-group DSCP-WRED dscp af41
+set policy qos name foo shaper class 1 match 1 destination address 10.10.10.0/24
+set policy qos name foo shaper class 1 profile glob-prof
+set policy qos name foo shaper default def
+set policy qos name foo shaper profile def
+set policy qos profile glob-prof map dscp 0-63 to 0
+set policy qos profile glob-prof queue 0 traffic-class 1
+set policy qos profile glob-prof queue 0 wred-map dscp-group DSCP-WRED
+set policy qos profile glob-prof queue 0 wred-map dscp-group DSCP-WRED max 20
+set policy qos profile glob-prof queue 0 wred-map dscp-group DSCP-WRED min 40
+set int data $INTERFACE policy qos foo
+if ( `commit` ); then
+   echo "Test 4 failed min < max test global profile"
+   return 1;
+fi
+
+vplsh -l -c "debug qos"
+
+set policy qos profile glob-prof queue 0 wred-map dscp-group DSCP-WRED max 40
+set policy qos profile glob-prof queue 0 wred-map dscp-group DSCP-WRED min 20
+commit
+
+journalctl --no-hostname -u vyatta-dataplane -n 50 > fout
+ret=`cat fout | grep "dscp-group DSCP-WRED 40 20 10" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP configuration set failed, test 4 global profile"
+    return 1;
+fi
+ret=`cat fout | grep "per Q red prof 0 dscp-grp DSCP-WRED 20 40 prob 10 mask 400040000" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP configuration set failed, test 4 global profile"
+    return 1;
+fi
+ret=`cat fout | grep "Setup per Q wred sub 0 pip 1 qind 40 maps 1" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP configuration set failed, test 4 global profile"
+    return 1;
+fi
+
+set policy qos profile glob-prof queue 0 wred-map dscp-group DSCP-WRED max 80
+if ( `commit` ); then
+   echo "Test 4 failed max must be < qlimit"
+   return 1;
+fi
+
+set policy qos name foo shaper traffic-class 1 queue-limit 2048
+set policy qos profile glob-prof queue 0 wred-map dscp-group DSCP-WRED max 1204
+commit
+
+journalctl --no-hostname -u vyatta-dataplane -n 50 > fout
+ret=`cat fout | grep "dscp-group DSCP-WRED 1204 20 10" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP configuration set failed, test 4 global profile"
+    return 1;
+fi
+ret=`cat fout | grep "per Q red prof 0 dscp-grp DSCP-WRED 20 1204 prob 10 mask 400040000" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP configuration set failed, test 4 global profile"
+    return 1;
+fi
+ret=`cat fout | grep "Setup per Q wred sub 0 pip 1 qind 40 maps 1" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP configuration set failed, test 4 global profile"
+    return 1;
+fi
+
+set policy qos name foo shaper traffic-class 1 queue-limit 1024
+set policy qos profile glob-prof queue 0 wred-map dscp-group DSCP-WRED max 1024
+if ( `commit` ); then
+   echo "Test 4 failed max must be < qlimit global profile"
+   return 1;
+fi
+
+del policy qos profile glob-prof
+set policy qos name foo shaper class 1 profile prof
+set policy qos name foo shaper profile prof map dscp 0-63 to 0
+set policy qos name foo shaper profile prof queue 0 traffic-class 1
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group DSCP-WRED
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group DSCP-WRED max 20
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group DSCP-WRED min 40
+if ( `commit` ); then
+   echo "Test 4 failed min < max test local profile"
+   return 1;
+fi
+
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group DSCP-WRED max 50
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group DSCP-WRED min 20
+commit
+
+journalctl --no-hostname -u vyatta-dataplane -n 50 > fout
+ret=`cat fout | grep "dscp-group DSCP-WRED 50 20 10" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP configuration set failed, test 4 local profile"
+    return 1;
+fi
+ret=`cat fout | grep "per Q red prof 1 dscp-grp DSCP-WRED 20 50 prob 10 mask 400040000" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP configuration set failed, test 4 local profile"
+    return 1;
+fi
+ret=`cat fout | grep "Setup per Q wred sub 0 pip 1 qind 40 maps 1" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP configuration set failed, test 4 global profile"
+    return 1;
+fi
+
+del policy qos name foo shaper traffic-class 1
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group DSCP-WRED max 80
+if ( `commit` ); then
+   echo "Test 4 failed max must be < qlimit local profile"
+   return 1;
+fi
+
+set policy qos name foo shaper traffic-class 1 queue-limit 1024
+commit
+journalctl --no-hostname -u vyatta-dataplane -n 50 > fout
+ret=`cat fout | grep "per Q red prof 1 dscp-grp DSCP-WRED 20 80 prob 10 mask 400040000" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP configuration set failed, test 4 local profile"
+    return 1;
+fi
+
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group DSCP-WRED max 1204
+if ( `commit` ); then
+   echo "Test 4 failed max must be < qlimit local profile"
+   return 1;
+fi
+
+# Tidy up
+del int data $INTERFACE policy
+del policy qos
+del resources group dscp-group DSCP-WRED
+commit
+
+vplsh -l -c "debug -qos"
+
+echo "Test 4 passed"
+
+return 0;

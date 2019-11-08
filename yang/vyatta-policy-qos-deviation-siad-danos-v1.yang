@@ -1,0 +1,85 @@
+module vyatta-policy-qos-deviation-siad-danos-v1 {
+	namespace "urn:vyatta.com:mgmt:vyatta-policy-qos-deviation-siad-danos:1";
+	prefix vyatta-policy-qos-deviation-siad-danos-v1;
+
+	import vyatta-interfaces-v1 {
+		prefix if;
+	}
+
+	import vyatta-interfaces-switch-v1 {
+		prefix sw;
+	}
+
+	import vyatta-interfaces-dataplane-v1 {
+		prefix interfaces-dataplane;
+	}
+
+	import vyatta-interfaces-dataplane-switch-v1 {
+		prefix dp-sw;
+	}
+
+	import vyatta-policy-v1 {
+		prefix policy;
+	}
+
+	import vyatta-interfaces-policy-v1 {
+		prefix interfaces-policy;
+	}
+
+	import vyatta-interfaces-switch-policy-v1 {
+		prefix sw-pol;
+	}
+
+	import vyatta-policy-qos-v1 {
+		prefix qos;
+	}
+
+	import vyatta-policy-action-v1 {
+		prefix action;
+	}
+
+    organization "AT&T Inc.";
+	contact
+		"AT&T
+          Postal: 208 S. Akard Street
+                  Dallas, TX 25202
+          Web: www.att.com";
+
+	description
+		"Copyright (c) 2019, AT&T Intellectual Property.
+          All rights reserved.
+
+         Deviations to remove QoS on the UFI s9500 platform in DANOS";
+
+	revision 2019-10-30 {
+		description "Initial revision of version 1.";
+	}
+
+	deviation /if:interfaces/interfaces-dataplane:dataplane/interfaces-policy:policy/qos:qos {
+		deviate not-supported;
+	}
+
+	deviation /if:interfaces/interfaces-dataplane:dataplane/interfaces-dataplane:vif/interfaces-policy:policy/qos:qos {
+		deviate not-supported;
+	}
+
+	deviation /if:interfaces/interfaces-dataplane:dataplane/dp-sw:switch-group/dp-sw:port-parameters/sw-pol:policy/qos:qos {
+		deviate not-supported;
+	}
+
+	deviation /if:interfaces/interfaces-dataplane:dataplane/dp-sw:switch-group/dp-sw:port-parameters/dp-sw:vlan-parameters/dp-sw:qos-parameters {
+		deviate not-supported;
+	}
+
+	deviation /if:interfaces/sw:switch/sw:default-port-parameters/sw:vlan-parameters/sw:qos-parameters {
+		deviate not-supported;
+	}
+
+	deviation /policy:policy/qos:qos {
+		deviate not-supported;
+	}
+
+	deviation /policy:policy/action:action {
+		deviate not-supported;
+	}
+}

@@ -1,0 +1,25 @@
+#! /bin/bash
+# Generate command tree (similar yang2path)
+
+if [ $# -ne 1 ]; then
+   echo "Usage: $0 template-dir"
+   exit 1
+fi
+
+if [ ! -d $1 ]; then
+    echo $1 is not a directory
+    exit 1
+fi
+
+find $1 -name node.def | \
+ while read p
+ do
+    d=$(dirname $p)
+    if [ $(ls $d | wc -l) -eq 1 ]; then
+	echo $p
+    else
+	echo $d
+    fi
+ done | sed -e "s:^$1/::" -e "s:/: :g" \
+	-e 's/node.def/<value>/g' -e 's/node.tag/<tagnode>/g'
+

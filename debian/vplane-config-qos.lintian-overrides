@@ -1,0 +1,3 @@
+vplane-config-qos: file-in-unusual-dir
+vplane-config-qos: dir-or-file-in-opt
+vplane-config-qos: unusual-interpreter opt/vyatta/share/tmplscripts/*

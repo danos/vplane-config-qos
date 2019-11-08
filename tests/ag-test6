@@ -1,0 +1,26 @@
+#!/bin/bash
+# Test 6
+# Now check we can share an action group in different classes
+INTERFACE=$1
+set policy action name fred police rate 200
+set policy qos name foo shaper class 1 match 1 action-group fred
+set policy qos name foo shaper class 1 profile prof
+set policy qos name foo shaper class 2 match 1 action-group fred
+set policy qos name foo shaper class 2 profile prof
+set policy qos name foo shaper profile prof bandwidth 1Gbit
+set policy qos name foo shaper def prof
+set int data $INTERFACE policy qos foo
+commit
+
+vplsh -l -c "qos show action-groups" > fout
+ret=`grep refs fout | grep 2 | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Test 6 failed, valid configuration failed"
+    exit 1
+fi
+
+del policy
+del int data $INTERFACE policy
+commit
+
+echo "Test 6 passed"

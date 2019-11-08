@@ -1,0 +1,529 @@
+module vyatta-policy-qos-v1 {
+	namespace "urn:vyatta.com:mgmt:vyatta-policy-qos:1";
+	prefix vyatta-policy-qos-v1;
+
+	import vyatta-interfaces-v1 {
+		prefix if;
+	}
+	import vyatta-interfaces-dataplane-v1 {
+		prefix interfaces-dataplane;
+	}
+	import vyatta-policy-v1 {
+		prefix policy;
+	}
+	import vyatta-policy-qos-groupings-v1 {
+		prefix qos-groupings;
+	}
+	import vyatta-interfaces-policy-v1 {
+		prefix interfaces-policy;
+	}
+	import configd-v1 {
+		prefix configd;
+	}
+	import vyatta-interfaces-dataplane-switch-v1 {
+		prefix dp-sw;
+	}
+	import vyatta-interfaces-switch-v1 {
+		prefix sw;
+	}
+	import vyatta-interfaces-switch-policy-v1 {
+		prefix sw-pol;
+	}
+
+	organization "AT&T Inc.";
+	contact
+		"AT&T
+		 Postal: 208 S. Akard Street
+		 Dallas, TX 25202
+		 Web: www.att.com";
+
+	description
+		"Copyright (c) 2017-2019 AT&T Intellectual Property
+		 All rights reserved.
+
+		 Copyright (c) 2014-2017 by Brocade Communications Systems, Inc.
+		 All rights reserved.
+
+		 Redistribution and use in source and binary forms, with or without
+		 modification, are permitted provided that the following conditions
+		 are met:
+
+		 1. Redistributions of source code must retain the above copyright
+		    notice, this list of conditions and the following disclaimer.
+		 2. Redistributions in binary form must reproduce the above
+		    copyright notice, this list of conditions and the following
+		    disclaimer in the documentation and/or other materials provided
+		    with the distribution.
+		 3. Neither the name of the copyright holder nor the names of its
+		    contributors may be used to endorse or promote products derived
+		    from this software without specific prior written permission.
+
+		 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+		 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+		 LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+		 FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+		 COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+		 INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+		 BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+		 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+		 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+		 LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+		 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+		 POSSIBILITY OF SUCH DAMAGE.
+
+		 SPDX-License-Identifier: BSD-3-Clause
+
+		 This module implements vyatta-policy-qos-v1.";
+
+	revision 2019-06-20 {
+		description "Reworked policy-list action scipts.";
+	}
+
+	revision 2018-11-22 {
+		description "Don't call qos-commit for dataplane interfaces
+			    which don't have a policy.
+			    Separate the commit steps for profiles so
+			    the global and local ones can invoke different
+			    checks.   Without this all profiles run through
+			    both.
+			    Separate the validation and commit steps
+			    to avoid connnecting to Vplaned for each
+			    validation.
+			    Added Qos policy CLI under the dataplane
+			    switch-group CLI tree.
+			    Added support for pcp mark map.
+			    Support 64-bit counters.";
+	}
+
+	revision 2018-06-22 {
+		description "Added high priority queue for local traffic.
+		            Modify priority_local to be priority-local.";
+	}
+
+	revision 2017-11-27 {
+		description "Add support for eight WRR queues per traffic-class.";
+	}
+
+	revision 2017-09-15 {
+		description "Move groupings into separate module.
+			     Add support for Action groups.
+			     Increase WRED queue thresholds from 1K to 8K.";
+	}
+
+	revision 2017-06-08 {
+		description "Add support for global QoS profiles.";
+	}
+
+	revision 2017-03-17 {
+		description "Add support for QoS operational state into presence container.";
+	}
+
+	revision 2016-05-16 {
+		 description "Modify queue-limit to only accept power-of-two values";
+        }
+
+	revision 2015-09-30 {
+		description "Initial revision, forked from vyatta-config-qos module.";
+		configd:migration 2;
+	}
+
+	typedef name {
+		type string {
+			pattern "[0-9A-Za-z][-_0-9A-Za-z]*" {
+				error-message "Only alpha-numeric name allowed";
+			}
+			configd:pattern-help "<name>";
+		}
+	}
+
+	typedef bandwidth-percent {
+		type string {	/* Number from 1 - 100 followed by percent */
+			pattern '(100|[1-9][0-9]?(\.[0-9]*)?)%';
+			configd:pattern-help "<<number>%>";
+		}
+	}
+
+	typedef dscp-name-or-range {
+		type string {
+			configd:syntax "qos-validate.pl --dscp $VAR(@)";
+			pattern "([0-9a-z])*(-(([0-9a-z])*))?(,([0-9a-z])*(-(([0-9a-z])*))?)*";
+			configd:pattern-help "<<dscp>[-<dscp>][,<dscp>[-<dscp>]...]>";
+			configd:help "List of individual or range of DSCP values/names";
+		}
+	}
+
+	typedef traffic-class-id {
+		description "Traffic-class identifier";
+		type uint32 {
+			range 0..3;
+			configd:help "Traffic-class identifier";
+		}
+	}
+
+	typedef subport-id {
+		description "Subport identifier";
+		type uint16 {
+			range 0..4095;
+			configd:help "Subport identifier";
+		}
+	}
+
+	typedef pipe-queue-id {
+		description "Pipe-queue identifier";
+		status deprecated;
+		type qos-groupings:pipe-queue-id;
+	}
+
+	typedef traffic-class-queue-id {
+		description "Traffic-class queue identifier";
+		status deprecated;
+		type qos-groupings:traffic-class-queue-id;
+	}
+
+	typedef dscp-value-type {
+		description "A DSCP value";
+		type uint8 {
+			range 0..63;
+			configd:help "DSCP value";
+		}
+	}
+
+	typedef pcp-value-type {
+		description "A PCP value";
+		type uint32 {
+			range 0..7;
+			configd:help "Priority Control Point value";
+		}
+	}
+
+	grouping rule-qos {
+		uses qos-groupings:rule-qos;
+	}
+
+	grouping class-list {
+		uses qos-groupings:class-list;
+	}
+
+	grouping bandwidth-combo {
+		uses qos-groupings:bandwidth-combo;
+	}
+
+	grouping traffic-class-list {
+		uses qos-groupings:traffic-class-list;
+	}
+
+	grouping period {
+		uses qos-groupings:period;
+	}
+
+	grouping red-parameter {
+		uses qos-groupings:red-parameter;
+	}
+
+	grouping to-pipe-queue {
+		uses qos-groupings:to-pipe-queue;
+	}
+
+	grouping queue-map {
+		uses qos-groupings:queue-map;
+	}
+
+	grouping profile-glob-list {
+		list profile {
+			description "QoS traffic profile";
+			configd:help "QoS traffic profile";
+			configd:end "/opt/vyatta/sbin/qos-commit.pl --update-profile $VAR(@)";
+			max-elements "256";
+			key "id";
+			leaf id {
+				type name;
+			}
+			uses qos-groupings:profile-list;
+		}
+	}
+
+	grouping queue-limit {
+		uses qos-groupings:queue-limit;
+	}
+
+	grouping policy-list {
+		uses qos-groupings:policy-list;
+	}
+
+	grouping packet-counters {
+		uses qos-groupings:packet-counters;
+		uses qos-groupings:packet-counters-64;
+	}
+
+	grouping queue-counters {
+		uses qos-groupings:queue-counters;
+	}
+
+	grouping pipe-params {
+		uses qos-groupings:pipe-params;
+	}
+
+	grouping traffic-class-queue-number {
+		uses qos-groupings:traffic-class-queue-number;
+	}
+
+	grouping policer-stats {
+		uses qos-groupings:policer-stats;
+	}
+
+	grouping npf-rule-status {
+		uses qos-groupings:npf-rule-status;
+	}
+
+	grouping queuing-state {
+		container state {
+			description "QoS operational state and statistical information";
+			config false;
+			configd:get-state "/opt/vyatta/bin/qos-op-mode.pl --all";
+
+			list if-list {
+				description "List of interfaces that have a QoS policy configured";
+				key "ifname";
+				leaf ifname {
+					description "Name of interface";
+					type interfaces-dataplane:dataplane-ifname;
+				}
+				container shaper {
+					description "QoS policy";
+					list vlan-list {
+						description "List mapping VLAN tags onto subport numbers";
+						key "tag";
+						leaf tag {
+							description "IEEE 802.1Q Vlan tag";
+							type uint16 {
+								range 1..4095;
+							}
+						}
+						leaf subport {
+							description "Subport number";
+							type subport-id;
+						}
+					}
+					list subport-list {
+						description "List of subport QoS scheduling information";
+						key "subport";
+						leaf subport {
+							description "Subport number";
+							type subport-id;
+						}
+						leaf subport-name {
+							description "Subport name";
+							type string;
+						}
+						list traffic-class-list {
+							description "List of traffic-class statistics";
+							key "traffic-class";
+							leaf traffic-class {
+								description "Traffic-class number";
+								type traffic-class-id;
+							}
+							uses packet-counters;
+						}
+						list pipe-list {
+							description "List of QoS pipes using the subport";
+							key "pipe";
+							leaf pipe {
+								description "Pipe identifier";
+								type uint16 {
+									range 0..4095;
+								}
+							}
+							leaf qos-class {
+								description "Number of the qos-class associated with this pipe";
+								type uint32 {
+									range 0..255;
+								}
+							}
+							leaf qos-profile {
+								description "Name of the qos-profile associated with this pipe";
+								type name;
+							}
+							uses pipe-params;
+							list dscp-to-queue-map {
+								description "The mapping from DSCP value to QoS scheduling queue";
+								key "dscp";
+								leaf dscp {
+									description "DSCP value";
+									type dscp-value-type;
+								}
+								uses traffic-class-queue-number;
+							}
+							list pcp-to-queue-map {
+								description "The mapping from PCP value to QoS scheduling queue";
+								key "pcp";
+								leaf pcp {
+									description "PCP value";
+									type pcp-value-type;
+								}
+								uses traffic-class-queue-number;
+							}
+							list traffic-class-queues-list {
+								description "List of traffic-class queue statistics";
+								key "traffic-class";
+								leaf  traffic-class {
+									description "Traffic-class number";
+									type traffic-class-id;
+								}
+								list queue-statistics {
+									description "Traffic-class queue statistics";
+									key "queue";
+									leaf queue {
+										description "Traffic-class queue number";
+										type qos-groupings:traffic-class-queue-id;
+									}
+									uses queue-counters;
+									leaf priority-local {
+										description "If true, this queue is for high priority locally generated traffic";
+										type boolean;
+									}
+									list dscp-values {
+										description "List of DSCP values that are mapped to this queue";
+										key dscp;
+										leaf dscp {
+											description "DSCP value";
+											type dscp-value-type;
+										}
+									}
+									list pcp-values {
+										description "List of PCP values that are mapped to this queue";
+										key pcp;
+										leaf pcp {
+											description "PCP value";
+											type pcp-value-type;
+										}
+									}
+								}
+							}
+						}
+						container rules {
+							description "QoS rules";
+							list groups {
+								description "List of QoS NPF rule groups and shaper class statistics";
+								key "name";
+								leaf name {
+									description "NPF rule group name";
+									type string;
+								}
+								leaf class {
+									description "NPF rule class - should be 'qos'";
+									type string;
+								}
+								leaf ifindex {
+									description "Interface index";
+									type int32;
+								}
+								leaf direction {
+									description "The direction in which this rule is applied";
+									type enumeration {
+										enum on {
+											description "Rule configured on both ingress and egress";
+										}
+										enum in {
+											description "Rule configured on ingress only";
+										}
+										enum out{
+											description "Rule configured on egress only";
+										}
+									}
+								}
+								uses npf-rule-status;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	augment /policy:policy {
+		container qos {
+			configd:priority "400";
+			configd:help "Quality of Service (QoS)";
+			configd:validate "qos-validate.pl --validate";
+			configd:end "qos-commit.pl --update";
+
+			presence "QoS policy configured";
+			uses qos-groupings:mark-map-list;
+			uses policy-list;
+			uses profile-glob-list {
+				refine profile/id {
+					must "not(current() = /policy:policy/qos/name/shaper/profile/id)" {
+						error-message "Clash between global and local profile name";
+					}
+				}
+				refine profile/bandwidth {
+					default "10Gbit";
+				}
+			}
+			uses queuing-state;
+		}
+	}
+
+	augment /if:interfaces/interfaces-dataplane:dataplane/interfaces-policy:policy {
+		leaf qos {
+			type leafref {
+				path "/policy:policy/qos/name/id";
+			}
+			configd:help "QoS policy name for interface";
+			configd:validate "qos-validate.pl --validate-binding $VAR(../../@) 0";
+			configd:end "/opt/vyatta/sbin/qos-commit.pl --update-binding $VAR(../../@)";
+		}
+	}
+
+	augment /if:interfaces/interfaces-dataplane:dataplane/interfaces-dataplane:vif/interfaces-policy:policy {
+		leaf qos {
+			type leafref {
+				path "/policy:policy/qos/name/id";
+			}
+			must "(count(../../../interfaces-policy:policy/qos) = 1)" {
+				error-message "Parent port must have QoS policy configured";
+			}
+			configd:help "QoS policy name for virtual interface";
+			configd:validate "qos-validate.pl --validate-binding $VAR(../../../@) $VAR(../../@)";
+			configd:end "/opt/vyatta/sbin/qos-commit.pl --update-binding $VAR(../../../@)";
+		}
+	}
+
+	augment /if:interfaces/interfaces-dataplane:dataplane/dp-sw:switch-group/dp-sw:port-parameters/sw-pol:policy {
+		leaf qos {
+			must "(not(../../../../interfaces-policy:policy/qos))" {
+				error-message "Policies only permitted under switch-group CLI tree";
+			}
+			type leafref {
+				path "/policy:policy/qos/name/id";
+			}
+			configd:help "QoS policy name for interface";
+			configd:validate "qos-validate.pl --validate-binding $VAR(../../../../@) 0";
+			configd:end "/opt/vyatta/sbin/qos-commit.pl --update-binding $VAR(../../../../@)";
+		}
+	}
+
+	augment /if:interfaces/interfaces-dataplane:dataplane/dp-sw:switch-group/dp-sw:port-parameters/dp-sw:vlan-parameters/dp-sw:qos-parameters/dp-sw:vlan/sw-pol:policy {
+		leaf qos {
+			must "(../../../../../sw-pol:policy/qos)" {
+				error-message "There must be a port-parameters level policy";
+			}
+			type leafref {
+				path "/policy:policy/qos/name/id";
+			}
+			configd:help "QoS policy name for interface";
+			configd:validate "qos-validate.pl --validate-binding $VAR(../../../../../../../@) $VAR(../../@)";
+			configd:end "/opt/vyatta/sbin/qos-commit.pl --update-binding $VAR(../../../../../../../@)";
+		}
+	}
+
+	augment /if:interfaces/sw:switch/sw:default-port-parameters/sw:vlan-parameters/sw:qos-parameters/sw:vlan/sw-pol:policy {
+		leaf qos {
+			type leafref {
+				path "/policy:policy/qos/name/id";
+			}
+			configd:help "QoS policy name for interface";
+			configd:validate "qos-validate.pl --validate-binding $VAR(../../../../../../@) $VAR(../../@)";
+		}
+	}
+}

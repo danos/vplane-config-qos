@@ -1,0 +1,8 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ --with=yang
+
+override_dh_auto_configure:
+	debian/autogen.sh
+	./configure --prefix=/opt/vyatta

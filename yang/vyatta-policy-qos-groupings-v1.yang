@@ -1,0 +1,941 @@
+module vyatta-policy-qos-groupings-v1 {
+	namespace "urn:vyatta.com:mgmt:vyatta-policy-qos-groupings:1";
+	prefix vyatta-policy-qos-groupings-v1;
+
+	import configd-v1 {
+		prefix configd;
+	}
+	import vyatta-fw-types-v1 {
+		prefix fw-types;
+	}
+	import vyatta-npf-v1 {
+		prefix npf;
+	}
+	import vyatta-policy-v1 {
+		prefix policy;
+	}
+	import vyatta-policy-action-v1 {
+		prefix policy-action;
+	}
+	import vyatta-resources-v1 {
+		prefix resources;
+	}
+	import vyatta-resources-group-v1 {
+		prefix res-group;
+	}
+
+	organization "AT&T Inc.";
+	contact
+		"AT&T
+		 Postal: 208 S. Akard Street
+		 Dallas, TX 25202
+		 Web: www.att.com";
+
+	description
+		"Copyright (c) 2017-2019 AT&T Intellectual Property
+		 All rights reserved.
+
+		 Redistribution and use in source and binary forms, with or without
+		 modification, are permitted provided that the following conditions
+		 are met:
+
+		 1. Redistributions of source code must retain the above copyright
+		    notice, this list of conditions and the following disclaimer.
+		 2. Redistributions in binary form must reproduce the above
+		    copyright notice, this list of conditions and the following
+		    disclaimer in the documentation and/or other materials provided
+		    with the distribution.
+		 3. Neither the name of the copyright holder nor the names of its
+		    contributors may be used to endorse or promote products derived
+		    from this software without specific prior written permission.
+
+		 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+		 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+		 LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+		 FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+		 COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+		 INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+		 BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+		 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+		 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+		 LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+		 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+		 POSSIBILITY OF SUCH DAMAGE.
+
+		 SPDX-License-Identifier: BSD-3-Clause
+
+		 This module provides common groupings for Quality of Service.";
+
+	revision 2019-06-20 {
+		description "Reworked policy-list action scripts.
+			     Provide description and help text for wred-map
+			     and wred-map-bytes keywords.";
+	}
+
+	revision 2019-01-21 {
+		description "Make map dscp-group to [qid] into a feature.
+			     Make PCP mark-map into a feature. Make queue
+			     limits and WRED thresholds expressed in bytes
+			     into a feature.";
+	}
+
+	revision 2018-11-23 {
+		description "Add byte support to the queueing features.
+			     Separate the commit steps for profiles so
+			     the global and local ones can invoke different
+			     checks.   Without this all profiles run through
+			     both.
+			     Separate the validation and commit steps
+			     to avoid connnecting to Vplaned for each
+			     validation.
+			     Added new dscp-group keyword to the profile map.
+			     Add support for pcp mark-map to QoS policy
+			     shaper.
+			     Support for 64-bit counters.";
+	}
+
+	revision 2018-05-31 {
+		description "Add per queue DSCP WRED map statistics.
+			     Add Per queue DSCP WRED.
+			     Added high priority queue for local traffic.";
+	}
+
+	revision 2017-12-12 {
+		description "Support eight WRR queues per traffic-class.
+			     Support 32 queues per pipe.
+			     Added frame-overhead negative capability.";
+	}
+
+	revision 2017-09-15 {
+		description "Initial revision for version 1.";
+	}
+
+	feature queue-dscp-group {
+		description "Map dscp-group [name]";
+	}
+
+	feature mark-map {
+		description "Mark-map for PCP marking packets";
+	}
+
+	feature byte-limits {
+		description "Queue limit and WRED thresholds in bytes";
+	}
+
+	typedef name {
+		type string {
+			pattern '[0-9A-Za-z][-_0-9A-Za-z]*' {
+				error-message "Only alpha-numeric name allowed";
+			}
+			configd:pattern-help "<name>";
+		}
+	}
+
+	typedef bandwidth-percent {
+		type string {	/* Number from 1 - 100 followed by percent */
+			pattern '(100|[1-9][0-9]?(\.[0-9]*)?)%';
+			configd:pattern-help "<<number>%>";
+		}
+	}
+
+	typedef dscp-name-or-range {
+		type string {
+			configd:syntax "qos-validate.pl --dscp $VAR(@)";
+			pattern '([0-9a-z])*(-(([0-9a-z])*))?(,([0-9a-z])*(-(([0-9a-z])*))?)*';
+			configd:pattern-help "<<dscp>[-<dscp>][,<dscp>[-<dscp>]...]>";
+			configd:help "List of individual or range of DSCP values/names";
+		}
+	}
+
+	typedef traffic-class-id {
+		description "Traffic-class identifier";
+		type uint32 {
+			range 0..3;
+			configd:help "Traffic-class identifier";
+		}
+	}
+
+	typedef subport-id {
+		description "Subport identifier";
+		type uint16 {
+			range 0..4095;
+			configd:help "Subport identifier";
+		}
+	}
+
+	typedef pipe-queue-id {
+		description "Pipe-queue identifier";
+		type uint32 {
+			range 0..31;
+			configd:help "Pipe-queue identifier";
+		}
+	}
+
+	typedef traffic-class-queue-id {
+		description "Traffic-class queue identifier";
+		type uint32 {
+			range 0..7;
+			configd:help "Traffic-class queue identifier";
+		}
+	}
+
+	typedef dscp-value-type {
+		description "A DSCP value";
+		type uint8 {
+			range 0..63;
+			configd:help "DSCP value";
+		}
+	}
+
+	typedef pcp-value-type {
+		description "A PCP value";
+		type uint32 {
+			range 0..7;
+			configd:help "Priority Control Point value";
+		}
+	}
+
+	grouping rule-qos {
+		uses npf:rule-common;
+		uses npf:ethertype;
+		uses npf:fragment;
+		uses npf:marking-qos;
+		uses npf:policing-qos;
+		uses policy-action:action-group {
+			refine action-group {
+				must "(not(../police) and not(../mark))" {
+					error-message "Use action group to configure police and mark";
+				}
+				must "((current() = /policy:policy/policy-action:action/policy-action:name/policy-action:id))" {
+					error-message "Must define policy action for action-group";
+				}
+			}
+		}
+		leaf action {
+			type enumeration {
+				enum "pass" {
+					description "Process packets matching this rule with QoS settings";
+					configd:help "Process packets matching this rule with QoS settings";
+				}
+				enum "drop" {
+					description "Drop packets matching this rule";
+					configd:help "Drop packets matching this rule";
+				}
+			}
+			description "Rule action";
+			configd:help "Rule action";
+			default "pass";
+		}
+	}
+
+	grouping class-list {
+		list class {
+			description "Class number";
+			configd:help "Class number";
+			max-elements "255";
+			key "id";
+			leaf id {
+				type uint32 {
+					range 1..255;
+				}
+			}
+			leaf description {
+				type string;
+				description "Description for this policy class";
+				configd:help "Description for this policy class";
+			}
+			leaf profile {
+				type name;
+				mandatory true;
+				must "((current() = /policy:policy/qos/profile/id) or " +
+				     "(current() = ../../profile/id))" {
+					error-message "Must define profile for class";
+				}
+				description "QoS profile name for this policy class";
+				configd:help "QoS profile name for this policy class";
+				configd:allowed "qos-validate.pl --list-profiles $VAR(../../../@)";
+			}
+			list match {
+				description "Class matching rule";
+				configd:help "Class matching rule";
+				key "id";
+				leaf id {
+					type name;
+				}
+				uses rule-qos;
+			}
+		}
+	}
+
+	grouping bandwidth-combo {
+		leaf bandwidth {
+			type union {
+				type npf:bandwidth-suffix;
+				type bandwidth-percent;
+			}
+			default "100%";
+			description "Bandwidth limit";
+			configd:help "Bandwidth limit";
+		}
+	}
+
+	grouping traffic-class-list {
+		list traffic-class {
+			description "Traffic-class settings";
+			configd:help "Traffic-class settings";
+			key "id";
+			leaf id {
+				type traffic-class-id;
+			}
+			leaf description {
+				type string;
+				description "Description for this traffic-class";
+				configd:help "Description for this traffic-class";
+			}
+			uses bandwidth-combo;
+		}
+	}
+
+	grouping period {
+		leaf period {
+			type uint32 {
+				range 1..3000;
+			}
+			description "Enforcement period (ms)";
+			configd:help "Enforcement period (ms)";
+		}
+	}
+
+	grouping thresholds {
+		leaf min-threshold {
+			type uint16 {
+				range 1..8190;
+			}
+			description "Minimum threshold";
+			configd:help "Minimum threshold";
+		}
+		leaf max-threshold {
+			type uint16 {
+				range 1..8191;
+			}
+			description "Maximum threshold";
+			configd:help "Maximum threshold";
+		}
+	}
+
+	grouping thresholds-bytes {
+		leaf min-threshold {
+			type uint64 {
+				range 64..499999998;
+			}
+			description "Minimum threshold in bytes";
+			configd:help "Minimum threshold in bytes";
+		}
+		leaf max-threshold {
+			must "not(../min-threshold) or (../max-threshold > ../min-threshold)" {
+				error-message "min-threshold must be less than" +
+					      " max-threshold";
+			}
+			type uint64 {
+				range 128..499999999;
+			}
+			description "Maximum threshold in bytes";
+			configd:help "Maximum threshold in bytes";
+		}
+	}
+
+	grouping mark-probability {
+		leaf mark-probability {
+			type uint16 {
+				range 1..255;
+			}
+			description
+				"Inverse of packet marking probability " +
+				"maximum value (see the paper Random Early" +
+				" Detection Gateways for Congestion Avoidance)";
+			configd:help 
+				"Inverse of packet marking probability " +
+				"maximum value";
+			default "10";
+		}
+	}
+
+	grouping wred-base {
+		description "Random Early Detection (RED) parameters";
+		configd:help "Random Early Detection (RED) parameters";
+		uses thresholds {
+		refine max-threshold {
+			must "not(../min-threshold) or (../max-threshold > ../min-threshold)" {
+				error-message "min-threshold must be less than" +
+					      " max-threshold";
+			}
+		    }
+		}
+		uses mark-probability;
+	}
+
+	grouping wred-base-bytes {
+		description "Random Early Detection (RED) parameters";
+		configd:help "Random Early Detection (RED) parameters";
+		uses thresholds-bytes;
+		uses mark-probability;
+	}
+
+	grouping red-drop-line {
+		leaf filter-weight {
+			type uint16 {
+				range 1..12;
+			}
+			description "Exponentially Weighted Moving Averages Filter Weight";
+			configd:help "EWMA Filter Weight";
+			default "9";
+		}
+		uses mark-probability;
+	}
+
+	grouping red-parameter {
+		container random-detect {
+			presence "true";
+			description "Random Early Detection (RED) parameters";
+			configd:help "Random Early Detection (RED) parameters";
+			uses thresholds;
+			uses red-drop-line;
+		}
+	}
+
+	grouping to-pipe-queue {
+		leaf to {
+			type pipe-queue-id;
+			mandatory true;
+		}
+	}
+
+	grouping queue-map {
+		container map {
+			description "Type to queue mapping";
+			configd:help "Type to queue mapping";
+			list pcp {
+				description "PCP to queue mapping";
+				configd:help "PCP to queue mapping";
+				key "id";
+				leaf id {
+					type pcp-value-type;
+				}
+				uses to-pipe-queue;
+			}
+			list dscp {
+				description "DSCP to queue mapping";
+				configd:help "DSCP to queue mapping";
+				key "id";
+				leaf id {
+					type dscp-name-or-range;
+				}
+				uses to-pipe-queue;
+			}
+			list dscp-group {
+				if-feature queue-dscp-group;
+				description "DSCP-group to queue mapping";
+				configd:help "DSCP-group to queue mapping";
+				key "group-name";
+				leaf group-name {
+					configd:help "DSCP-group resource group name";
+					type leafref {
+						path "/resources:resources/res-group:group/res-group:dscp-group/res-group:group-name";
+					}
+				}
+				uses to-pipe-queue {
+					refine to {
+						must "count(../../dscp-group[to=current()]) <= 3" {
+							error-message "Each pipe-queue can only have a maxiumum
+								      of three dscp-groups assigned to it";
+						}
+					}
+				}
+				must "(not(../pcp))" {
+					error-message "Cannot mix pcp values and dscp-groups in same profile map";
+				}
+				must "(not(../dscp))" {
+					error-message "Cannot mix dscp values and dscp-groups in same profile map";
+				}
+			}
+		}
+	}
+
+	grouping wred-list {
+		container wred-map {
+			presence "Per queue wred maps";
+			description "WRED configuration with packet thresholds";
+			configd:help "WRED configuration with packet thresholds";
+			must "(not(../../../traffic-class/random-detect))" {
+				error-message "Subport level wred must not be configured with per queue wred";
+			}
+			list dscp-group {
+				description "Group of DSCP values to match in an incoming IP header";
+				configd:help "Group of DSCP values to match in an incoming IP header";
+				key "group-name";
+				max-elements "4";
+				leaf group-name {
+					type leafref {
+						path "/resources:resources/res-group:group/res-group:dscp-group/res-group:group-name";
+					}
+				}
+				uses wred-base;
+			}
+			leaf filter-weight {
+				type uint16 {
+					range 1..12;
+				}
+				description "Exponentially Weighted Moving Averages Filter Weight";
+				configd:help "EWMA Filter Weight";
+				default "9";
+			}
+		}
+		container wred-map-bytes {
+			if-feature byte-limits;
+			presence "Per queue wred maps";
+			description "WRED configuration with byte thresholds";
+			configd:help "WRED configuration with byte thresholds";
+			must "(not(../../../traffic-class/random-detect))" {
+				error-message "Subport level wred must not be configured with per queue wred";
+			}
+			list dscp-group {
+				description "Group of DSCP values to match in an incoming IP header";
+				configd:help "Group of DSCP values to match in an incoming IP header";
+				key "group-name";
+				max-elements "4";
+				leaf group-name {
+					must "current() = ../../../../map/dscp-group[to = current()/../../../id]/group-name and " +
+					     "count(../../dscp-group) = count(../../../../map/dscp-group[to = current()/../../../id])"{
+						error-message "The queue must have the same dscp-groups configured as the map";
+					}
+					type leafref {
+						path "/resources:resources/res-group:group/res-group:dscp-group/res-group:group-name";
+					}
+				}
+				uses wred-base-bytes;
+			}
+			leaf filter-weight {
+				type uint16 {
+					range 1..12;
+				}
+				description "Exponentially Weighted Moving Averages Filter Weight";
+				configd:help "EWMA Filter Weight";
+				default "9";
+			}
+		}
+	}
+
+	grouping profile-opts {
+		uses period;
+		leaf description {
+			type string;
+			description "Description for this traffic profile";
+			configd:help "Description for this traffic profile";
+		}
+
+		uses npf:burst;
+		leaf bandwidth {
+			type npf:bandwidth-suffix;
+			description "Bandwidth limit";
+			configd:help "Bandwidth limit";
+		}
+
+		uses queue-map {
+			refine map/dscp/to {
+				must "not(../../../queue[id = current()]/priority-local)" {
+					error-message "Priority local queue cannot be used in DSCP to queue mapping";
+				}
+			}
+			refine map/pcp {
+				must "not(../../queue/priority-local)" {
+					error-message "Priority local queue cannot be used together with PCP to queue mapping";
+				}
+			}
+		}
+		list queue {
+			description "Queue properties";
+			configd:help "Queue properties";
+			key "id";
+			must "count(../queue/priority-local) <= 1" {
+				error-message "Only one queue can be used for high priority local traffic";
+			}
+			leaf id {
+				type pipe-queue-id;
+			}
+			leaf description {
+				type string;
+				description "Description for this queue";
+				configd:help "Description for this queue";
+			}
+			leaf priority-local {
+				type empty;
+				description "Queue for high priority (DSCP value >= 48) locally generated traffic";
+				configd:help "Queue for high priority (DSCP value >= 48) locally generated traffic";
+			}
+			leaf traffic-class {
+				type traffic-class-id;
+				mandatory true;
+				description "Traffic-class identifier";
+				configd:help "Traffic-class identifier";
+			}
+			leaf weight {
+				type uint8 {
+					range 1..100;
+				}
+				description "WRR weight";
+				configd:help "WRR weight";
+				default "1";
+			}
+			uses wred-list;
+		}
+		uses traffic-class-list;
+	}
+
+	grouping queue-limit {
+		leaf queue-limit {
+			type uint16 {
+				range 1|2|4|8|16|32|64|128|256|512|1024|2048|4096|8192|16384|32768;
+				configd:help "Maximum queue length in packets";
+			}
+			description "Queue limit setting";
+			configd:help "Queue limit setting";
+			default "64";
+		}
+		leaf queue-limit-bytes {
+			if-feature byte-limits;
+			type uint64 {
+				range 9000..500000000;
+				configd:help "Maximum queue length in bytes";
+			}
+			description "Queue limit setting in bytes";
+			configd:help "Queue limit setting in bytes";
+			default "65536";
+		}
+	}
+
+	grouping policy-list {
+		list name {
+			description "Quality of Service (QoS) policy";
+			configd:priority "420";
+			configd:help "Quality of Service (QoS) policy";
+
+			key "id";
+			leaf id {
+				type name;
+				description "Quality of Service (QoS) policy name";
+				configd:help "Quality of Service (QoS) policy name";
+			}
+			container shaper {
+				description "Shaping QoS policy";
+				configd:help "Shaping QoS policy";
+				leaf description {
+					type string;
+					description "Description for this QoS policy";
+					configd:help "Description for this QoS policy";
+				}
+				leaf frame-overhead {
+					type union {
+						type uint32 {
+							range 0..1000;
+							configd:help "Framing overhead in bytes";
+						}
+						type int32 {
+							range -22..-1;
+							configd:help "Framing overhead in bytes";
+						}
+					}
+					description
+						"Framing
+						overhead. This is the
+						number of bytes of
+						overhead per frame to
+						take into account,
+						including the Ethernet
+						framing overhead of
+						preamble (7 bytes),
+						Start of Frame
+						Delimiter (1 byte),
+						Frame Check Sequence
+						(4 bytes) and Inter
+						Frame Gap (12 bytes)";
+					configd:help "Framing overhead";
+					default "24";
+				}
+				list profile {
+					must "not(current() = /policy:policy/qos/profile/id)" {
+						error-message "Clash between global and local profile name";
+					}
+					description "QoS traffic profile";
+					configd:help "QoS traffic profile";
+					max-elements "256";
+					key "id";
+					leaf id {
+						type name;
+					}
+					uses profile-list;
+				}
+				leaf default {
+					type name;
+					must "(current() = ../profile/id) or " +
+					     "(current() = /policy:policy/qos/profile/id)" {
+						error-message "The default profile must be defined";
+					}
+					mandatory true;
+					description "QoS profile for default traffic";
+					configd:help "QoS profile for default traffic";
+					configd:allowed "qos-validate.pl --list-profiles $VAR(../../@)";
+				}
+				uses bandwidth-combo {
+					refine bandwidth {
+						default "10Gbit";
+					}
+				}
+				uses npf:burst;
+				uses period;
+				uses traffic-class-list {
+					augment traffic-class {
+						uses queue-limit;
+						uses red-parameter;
+					}
+				}
+				uses class-list;
+				leaf mark-map {
+					if-feature mark-map;
+					type leafref {
+						path "/policy:policy/qos/mark-map/id";
+					}
+					description "Name of QoS marking map";
+					configd:help "Name of QoS marking map";
+				}
+			}
+		}
+	}
+
+	grouping profile-list {
+		uses profile-opts;
+	}
+
+
+	grouping packet-counters {
+		description "32-bit QoS packet counters";
+		leaf packets {
+			description "Number of packets successfully queued for transmit";
+			status deprecated;
+			type uint32;
+		}
+		leaf bytes {
+			description "Number of bytes successfully queued for transmit";
+			status deprecated;
+			type uint32;
+		}
+		leaf dropped {
+			description "Number of packets tail dropped";
+			status deprecated;
+			type uint32;
+		}
+		leaf random-drop {
+			description "Number of packets RED dropped";
+			status deprecated;
+			type uint32;
+		}
+		list wred-map {
+			description "This shows the resource group name with associated statistics";
+			key "res-grp";
+			leaf res-grp {
+				description "Resource group name for DSCP WRED map";
+				status deprecated;
+				type string;
+			}
+			leaf random-dscp-drop {
+				description "Number of WRED drops in this map";
+				status deprecated;
+				type uint32;
+			}
+		}
+	}
+
+	grouping packet-counters-64 {
+		description "64-bit QoS packet counters";
+		leaf packets-64 {
+			description "Number of packets successfully queued for transmit";
+			type uint64;
+		}
+		leaf bytes-64 {
+			description "Number of bytes successfully queued for transmit";
+			type uint64;
+		}
+		leaf dropped-64 {
+			description "Number of packets tail dropped";
+			type uint64;
+		}
+		leaf random-drop-64 {
+			description "Number of packets RED dropped";
+			type uint64;
+		}
+		list wred-map-64 {
+			description "This shows the resource group name with associated statistics";
+			key "res-grp-64";
+			leaf res-grp-64 {
+				description "Resource group name for DSCP WRED map";
+				type string;
+			}
+			leaf random-dscp-drop-64 {
+				description "Number of WRED drops in this map";
+				type uint64;
+			}
+		}
+	}
+
+	grouping queue-counters {
+		description "QoS queue counters";
+		uses packet-counters;
+		uses packet-counters-64;
+		leaf qlen {
+			description "Current length of transmit queue";
+			status deprecated;
+			type uint32;
+		}
+		leaf qlen-packets {
+			description "Current length of transmit queue in packets";
+			type uint64;
+		}
+		leaf qlen-bytes {
+			description "Current length of transmit queue in bytes";
+			type uint64;
+		}
+	}
+
+	grouping pipe-params {
+		description "QoS pipe parameters";
+		leaf token-bucket-rate {
+			description "The rate at which tokens are added to the token bucket";
+			type uint32;
+		}
+		leaf token-bucket-size {
+			description "The size of the token bucket";
+			type uint32;
+		}
+		list traffic-class-rates {
+			description "Bandwidth rates for the traffic classes";
+			key "traffic-class";
+			leaf traffic-class {
+				description "Traffic-class";
+				type traffic-class-id;
+			}
+			leaf rate {
+				type uint32;
+			}
+		}
+		leaf traffic-class-period {
+			description "The period over which traffic class bandwidth is calculated";
+			type uint32;
+		}
+		list weighted-round-robin-weights {
+			min-elements 16;
+			max-elements 32;
+			description "Queue weights used for weighted-round-robin scheduling";
+			key "queue";
+			leaf queue {
+				description "Queue number";
+				type pipe-queue-id;
+			}
+			leaf weight {
+				description "Queue weight";
+				type uint32;
+			}
+		}
+	}
+
+	grouping traffic-class-queue-number {
+		description "The traffic-class and queue-number tuple";
+		leaf traffic-class {
+			description "Traffic-class";
+			type traffic-class-id;
+		}
+		leaf queue {
+			description "Queue number";
+			type traffic-class-queue-id;
+		}
+	}
+
+	grouping policer-stats {
+		leaf exceeded-packets {
+			description "Packets exceeding policer limit";
+			type uint64;
+		}
+		leaf exceeded-bytes {
+			description "Bytes exceeding policer limit";
+			type uint64;
+		}
+	}
+
+	grouping npf-rule-status {
+		list rule {
+			description "Status of rule number";
+			key "rule-number";
+			leaf rule-number {
+				type fw-types:rule-number;
+			}
+			leaf qos-class {
+				description "Number of the qos-class associated with this rule";
+				type uint32 {
+					range 1..255;
+				}
+			}
+			leaf action-group {
+				description "Action group configured";
+				type string;
+			}
+			uses policer-stats;
+			leaf packets {
+				description "Number of packets matching the rule";
+				type uint64;
+			}
+			leaf bytes {
+				description "Number of bytes matching the rule";
+				type uint64;
+			}
+		}
+	}
+
+	grouping mark-map-list {
+		list mark-map {
+			if-feature mark-map;
+			description "Mark-map for PCP marking packets";
+			configd:priority "410";
+			configd:help "Mark-map for PCP marking packets";
+			configd:end "qos-commit.pl --mark-map $VAR(@)";
+
+			max-elements "1";
+			key "id";
+			leaf id {
+				type name;
+				description "Mark-map name";
+				configd:help "Mark-map name";
+			}
+			leaf description {
+				type string;
+				description "Description for this mark-map";
+				configd:help "Description for this mark-map";
+			}
+			list dscp-group {
+				description "dscp-group resource group name";
+				configd:help "dscp-group resource group name";
+				key "group-name";
+				min-elements 1;
+				max-elements 64;
+				leaf group-name {
+					type leafref {
+						path "/resources:resources/res-group:group/res-group:dscp-group/res-group:group-name";
+					}
+				}
+				leaf pcp-mark {
+					description "PCP value to mark packet with";
+					configd:help "PCP value to mark packet with";
+					type pcp-value-type;
+					mandatory true;
+				}
+			}
+		}
+	}
+}

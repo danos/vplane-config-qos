@@ -1,0 +1,136 @@
+#!/bin/bash
+#  Test 4
+#
+# Confirm L2/L3 combinations are blocked and L3 work
+
+INTERFACE=$1
+
+vplsh -l -c "debug qos"
+
+set policy qos name test shaper def def
+set policy qos name test shaper profile def bandwidth 4mbit
+set int data $INTERFACE switch-group switch sw0
+set int data $INTERFACE switch-group port-parameters mode access
+set int data $INTERFACE switch-group port-parameters vlan-parameters primary-vlan-id 10
+set int data $INTERFACE policy qos test
+set int switch sw0 physical-switch 0
+set int switch sw0 default-port-parameters vlan-parameters primary-vlan-id 10
+set int switch sw0 default-port-parameters mode access
+commit
+if [ $? != 0 ];
+then
+  echo "Test 4 policy not accepted directlt on dp interface";
+  exit 1;
+fi
+/opt/vyatta/bin/vplsh -l -c "qos show" > fout
+lines=`cat fout | wc -l`
+if [ $lines -lt 200 ];
+then
+  echo "Test 4 policy not installed in dataplane"
+  exit 1;
+fi
+
+del int data $INTERFACE policy qos test
+commit
+if [ $? != 0 ];
+then
+  echo "Test 4 valid L2 config not accepted"
+  exit 1;
+fi
+
+set int data $INTERFACE policy qos test
+del int data $INTERFACE switch-group
+commit
+if [ $? != 0 ];
+then
+  echo "Test 4 valid L3 policy install on interface failed"
+  exit 1;
+fi
+/opt/vyatta/bin/vplsh -l -c "qos show" > fout
+lines=`cat fout | wc -l`
+if [ $lines -lt 200 ];
+then
+  echo "Test 4 valid L3 policy not installed in dataplane"
+  exit 1;
+fi
+cat fout | grep tb_rate | grep 500000 > /dev/null
+if [ $? != 0 ];
+then
+  echo "Test 4 policy install failed on L3 target, incorrect bandwidth"
+  exit 1;
+fi
+
+set policy qos name foo shaper default def
+set policy qos name foo shaper profile def band 8mbit
+set int data $INTERFACE policy qos foo
+commit
+if [ $? != 0 ];
+then
+  echo "Test 4 valid L3 policy change failed on interface failed"
+  exit 1;
+fi
+/opt/vyatta/bin/vplsh -l -c "qos show" > fout
+cat fout | grep tb_rate | grep 1000000 > /dev/null
+if [ $? != 0 ];
+then
+  echo "Test 4 policy bandwidth not updated on target correctly"
+  exit 1;
+fi
+
+set policy qos name v10 shaper default def
+set policy qos name v10 shaper profile def bandwidth 5mbit
+set policy qos name v10 shaper bandwidth 5500kbit
+set policy qos name v20 shaper default def
+set policy qos name v20 shaper bandwidth 10500kbit
+set policy qos name v20 shaper profile def bandwidth 10mbit
+set int data dp0s9 vif 10 policy qos v10
+set int data dp0s9 vif 20 policy qos v20
+commit
+if [ $? != 0 ];
+then
+  echo "Test 4 valid L3 policy with 2 vifs not installed"
+  exit 1;
+fi
+/opt/vyatta/bin/vplsh -l -c "qos show" > fout
+cat fout | grep -e '"tag": 10' -e '"subport": 1' > /dev/null
+if [ $? != 0 ];
+then
+  echo "Test 4 failed to install L3 with 2 VIF policies"
+  exit 1;
+fi
+cat fout | grep -e '"tag": 20' -e '"subport": 2' > /dev/null
+if [ $? != 0 ];
+then
+  echo "Test 4 failed to install L3 with 2 VIF policies"
+  exit 1;
+fi
+
+del int dataplane dp0s9 vif 10
+commit
+if [ $? != 0 ];
+then
+  echo "Test 4 failed to installl L3 policy with single VIF"
+  exit 1;
+fi
+/opt/vyatta/bin/vplsh -l -c "qos show" > fout
+cat fout | grep -e '"tag": 20' -e '"subport": 1' > /dev/null
+if [ $? != 0 ];
+then
+  echo "Test 4 failed to install L3 with 2 VIF policies"
+  exit 1;
+fi
+cat fout | grep '"tag": 10' > /dev/null
+if [ $? != 1 ];
+then
+  echo "Test 4 failed to uninstall VIF policy"
+  exit 1;
+fi
+
+del int switch sw0
+del int data $INTERFACE
+del policy qos
+commit
+
+vplsh -l -c "debug -qos"
+
+echo "Test 4 passed"

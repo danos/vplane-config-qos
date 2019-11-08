@@ -1,0 +1,33 @@
+#!/bin/bash
+# Test 7
+# Add the same policy to a vlan on the same interface.  Confirm the
+# action-groups are not shared between the npf_config instances
+INTERFACE=$1
+set policy action name fred police rate 200
+set policy qos name foo shaper class 1 match 1 action-group fred
+set policy qos name foo shaper class 1 profile prof
+set policy qos name foo shaper profile prof bandwidth 1Gbit
+set policy qos name foo shaper def prof
+set int data $INTERFACE policy qos foo
+set int dataplane $INTERFACE vif 20 policy qos foo
+commit
+
+sleep 2
+vplsh -l -c "qos show action-groups" > fout
+ret=`grep name fout | wc -l`
+if [ $ret -ne 2 ]; then
+  echo "Test 7 failed, valid configuration failed"
+  exit 1
+fi
+ret=`grep refs fout | grep 1 | wc -l`
+if [ $ret -ne 2 ]; then
+  echo "Test 7 failed, valid configuration failed"
+  exit 1
+fi
+
+del policy
+del int data $INTERFACE policy
+del int data $INTERFACE vif 20
+commit
+
+echo "Test 7 passed"

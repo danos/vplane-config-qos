@@ -1,0 +1,43 @@
+#!/bin/bash
+# Test 3
+# Check invalid policy is blocked
+INTERFACE=$1
+set resource group dscp-group DSCP-WRED dscp af21
+set resource group dscp-group DSCP-WRED dscp af22
+set resource group dscp-group DSCP-WRED dscp af23
+set resource group dscp-group DSCP-WRED dscp af41
+set policy qos name foo shaper class 1 match 1 destination address 10.10.10.0/24
+set policy qos name foo shaper class 1 profile glob-prof
+set policy qos name foo shaper default def
+set policy qos name foo shaper profile def
+set policy qos profile glob-prof map dscp 0-63 to 0
+set policy qos profile glob-prof queue 0 traffic-class 1
+set policy qos profile glob-prof queue 0 wred-map dscp-group DSCP-WRED
+set policy qos profile glob-prof queue 0 wred-map dscp-group DSCP-WRED mark 110
+set policy qos profile glob-prof queue 0 wred-map dscp-group DSCP-WRED max 55
+set policy qos profile glob-prof queue 0 wred-map dscp-group DSCP-WRED min 23
+set policy qos profile glob-prof queue 0 wred-map filter-weight 11
+set policy qos name foo shaper traffic-class 1 random-detect
+set int data $INTERFACE policy qos foo
+if ( `commit` ); then
+   echo "Test 3 failed, invalid conifg accepted";
+   return 1;
+fi
+
+del policy qos name foo shaper traffic-class 1 random-detect
+set policy qos name foo shaper traffic-class 2 random-detect
+if ( `commit` ); then
+   echo "Test 3 failed, invalid conifg accepted";
+   return 1;
+fi
+
+
+# Tidy up
+del int data $INTERFACE policy
+del policy qos
+del resources group dscp-group DSCP-WRED
+commit
+
+echo "Test 3 passed"
+
+return 0;

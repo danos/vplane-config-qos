@@ -1,0 +1,30 @@
+#!/bin/bash
+# Test 4
+# Check whether a valid configuration can be acccepted
+INTERFACE=$1
+set policy action name fred police rate 200
+set policy qos name foo shaper def def
+set policy qos name foo shaper profile def bandwidth 1Gbit
+set policy qos name foo shaper class 1 match 1 action-group fred
+set policy qos name foo shaper class 1 profile def
+set int data $INTERFACE policy qos foo
+commit
+vplsh -l -c "qos show action-groups" > fout
+ret=`grep $INTERFACE fout | wc -l`
+if [ $ret -ne 2 ]; then
+   echo "Policy install failed"
+   exit 1;
+fi
+ret=`grep name fout | grep fred | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Can't find the action-group"
+   exit 1;
+fi
+
+# Tidy up
+del int data $INTERFACE policy
+del policy
+commit
+
+echo "Test 4 passed"
+

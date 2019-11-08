@@ -1,0 +1,40 @@
+#!/bin/bash
+# Test 2
+# Check adding and removing inner-vlan enables and disables marking
+INTERFACE=$1
+set policy qos profile prof bandwidth 2mbit
+set policy qos name trunk shaper default prof
+set policy qos name test shaper class 1 match 1 mark pcp 7
+set policy qos name test shaper class 1 match 1 mark pcp-inner
+set policy qos name test shaper class 1 profile prof
+set policy qos name test shaper default prof
+set int data $INTERFACE policy qos trunk
+set int data $INTERFACE vif 10 policy qos test
+set int data $INTERFACE vif 10 vlan 10
+commit
+ret=`run sh queuing $INTERFACE.10 class | grep markpcp | grep inner | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Inner QinQ marking setup failed"
+   exit 1;
+fi
+ret=`run sh queuing $INTERFACE.10 class | grep markpcp | grep inner | grep inactive | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Inner QinQ marking failed, inactive not reported with no inner vlan"
+   exit 1;
+fi
+
+set int data $INTERFACE vif 10 inner-vlan 20
+commit
+ret=`run sh queuing $INTERFACE.10 class | grep markpcp | grep inner | grep active | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Inner QinQ marking setup failed"
+   exit 1;
+fi
+
+# Tidy up
+del int data $INTERFACE policy
+del int data $INTERFACE vif 10
+del policy
+commit
+
+echo "Test 2 passed"

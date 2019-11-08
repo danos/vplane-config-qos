@@ -1,0 +1,69 @@
+#!/bin/bash
+# Test 9
+# Check policer parameters are processed ok
+INTERFACE=$1
+vplsh -l -c "debug qos"
+set policy qos profile prof bandwidth 2mbit
+set policy qos name trunk shaper default prof
+set policy qos name test shaper class 1 match 1 mark pcp 5
+set policy qos name test shaper class 1 match 1 police bandwidth 1mbit
+set policy qos name test shaper class 1 match 1 police tc 40
+set policy qos name test shaper class 1 match 1 police then mark pcp 5
+set policy qos name test shaper class 1 match 1 police then mark pcp-inner
+set policy qos name test shaper class 1 match 1 mark pcp-inner
+set policy qos name test shaper class 1 profile prof
+set policy qos name test shaper default prof
+set int data $INTERFACE policy qos trunk
+set int data $INTERFACE vif 10 inner-vlan 20
+set int data $INTERFACE vif 10 vlan 10
+set int data $INTERFACE vif 10 policy qos test
+if ( ! `commit` ); then
+    echo "Test 9 failed to commit a valid config";
+    return 1;
+fi
+journalctl --no-hostname -u vyatta-dataplane -n 70 > fout
+
+ret=`cat fout | grep "markpcp inner via policer" | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Failed to setup marker via policer";
+   exit 1;
+fi
+ret=`cat fout | grep "Saving mark to subport $INTERFACE" | wc -l`
+if [ $ret -ne 2 ]; then
+   echo "Failed to setup marker via policer on subport";
+   exit 1;
+fi
+
+del int data $INTERFACE policy
+del int data $INTERFACE vif 10
+del policy
+commit
+
+set security firewall name fw rule 1 action accept
+set security firewall name fw rule 1 police band 200kbit
+set security firewall name fw rule 1 police then mark pcp 5
+set int data $INTERFACE firewall in fw
+if ( ! `commit` ); then
+    echo "Test 9 failed to commit a valid firewall config";
+    return 1;
+fi
+journalctl --no-hostname -u vyatta-dataplane -n 70 > fout
+ret=`cat fout | grep "Policer create" | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Test 9 - Failed to setup marker via policer on subport";
+   exit 1;
+fi
+
+del security firewall name fw
+del int data $INTERFACE firewall
+commit
+
+ret=`ps -aef | grep "/usr/sbin/dataplane" | wc -l`
+if [ $ret -ne 2 ]; then
+   echo "Test 9 - dataplane process died";
+   exit 1;
+fi
+
+vplsh -l -c "debug -qos"
+
+echo "Test 9 passed"

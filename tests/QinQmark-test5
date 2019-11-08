@@ -1,0 +1,37 @@
+#!/bin/bash
+# Test 5
+# Check when marking configured using the policer
+INTERFACE=$1
+set policy qos profile prof bandwidth 2mbit
+set policy qos name trunk shaper default prof
+set policy qos name test shaper class 1 match 1 police rate 1
+set policy qos name test shaper class 1 match 1 police then mark pcp 3
+set policy qos name test shaper class 1 match 1 police then mark pcp-inner
+set policy qos name test shaper class 1 profile prof
+set policy qos name test shaper default prof
+set int data $INTERFACE policy qos trunk
+set int data $INTERFACE vif 10 inner-vlan 20
+set int data $INTERFACE vif 10 policy qos test
+set int data $INTERFACE vif 10 vlan 10
+commit
+ret=`run sh queuing $INTERFACE.10 class | grep policer | grep markpcp | grep inner | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Failed to setup inner marking via a policer";
+   exit 1;
+fi
+
+del policy qos name test shaper class 1 match 1 police then mark pcp-inner
+commit
+ret=`run sh queuing $INTERFACE.10 class | grep policer | grep markpcp | grep none | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Failed to setup policer with markpcp";
+   exit 1;
+fi
+
+# Tidy up
+del int data $INTERFACE policy
+del int data $INTERFACE vif 10
+del policy
+commit
+
+echo "Test 5 passed"

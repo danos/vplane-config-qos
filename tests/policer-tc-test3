@@ -1,0 +1,44 @@
+#!/bin/bash
+#  Test 3
+
+INTERFACE=$1
+
+vplsh -l -c "debug qos"
+
+# Check the default values for bandwidth and ratelimit are set
+# properly.  That is 1000ms for ratelimit and 20ms for bandwidth.
+
+set policy qos name foo shaper def def
+set policy qos name foo shaper profile def bandwidth 1Gbit
+set policy qos name foo shaper class 1 match 1 police ratelimit 400
+set policy qos name foo shaper class 1 match 1 police tc 500
+set policy qos name foo shaper class 1 profile def
+set int data $INTERFACE policy qos foo
+commit
+journalctl --no-hostname -u vyatta-dataplane -n 20 | grep "Policer create" > fout
+TCVAL=`cat fout | sed 's/.*(//;s/).*//' | awk -F ',' '{ print $6 }'`
+if [ $TCVAL != "500" ];
+then
+  echo "Test 3 failed, invalid ratelimit TC $TCVAL"
+  exit 1
+fi
+
+del policy qos name foo shaper class 1 match 1 police ratelimit 400
+set policy qos name foo shaper class 1 match 1 police bandwidth	1200
+set policy qos name foo shaper class 1 match 1 police tc 10
+commit
+journalctl --no-hostname -u vyatta-dataplane -n 20 | grep "Policer create" > fout
+TCVAL=`cat fout | sed 's/.*(//;s/).*//' | awk -F ',' '{ print $6 }'`
+if [ $TCVAL != "10" ];
+then
+  echo "Test 3 failed, invalid bandwidth TC $TCVAL"
+  exit 1
+fi
+
+# Tidy up
+del int data $INTERFACE policy
+del policy
+commit
+
+echo "Test 3 passed"
+

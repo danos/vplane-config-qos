@@ -1,0 +1,25 @@
+build-stamp
+config.*
+config
+configure
+Makefile
+Makefile.in
+aclocal.m4
+# autoconf debris
+autom4te.cache/
+INSTALL
+ChangeLog
+NEWS
+
+*.o
+*.orig
+*~
+\#*#
+*.swp
+
+debian/files
+debian/*.log
+debian/*.debhelper
+debian/*.substvars
+debian/tmp
+debian/vplane-config-qos

@@ -1,0 +1,88 @@
+#!/bin/bash
+#  Test 1
+#
+# Try adding a policy under the switch-group CLI for a switch
+
+INTERFACE=$1
+
+vplsh -l -c "debug qos"
+
+set policy qos name test shaper def def
+set policy qos name test shaper bandwidth 3500kbit
+set policy qos name test shaper profile def bandwidth 4mbit
+set int switch sw0 physical-switch 0
+set int switch sw0 default-port-parameters vlan-parameters primary-vlan-id 10
+set int switch sw0 default-port-parameters mode access
+set int switch sw0 default-port-parameters vlan-parameters qos-parameters vlan 10 policy qos test
+commit
+/opt/vyatta/bin/vplsh -l -c "qos show" > fout
+lines=`cat fout | wc -l`
+if [ $lines != 3 ];
+then
+  echo "Test 2 failed policy applied when no interface in switch-groups"
+  exit 1;
+fi
+
+set int data $INTERFACE switch-group port-parameters mode trunk
+set int data $INTERFACE switch-group port-parameters vlan-parameters primary-vlan-id 10
+set int data $INTERFACE switch-group port-parameters vlan-parameters vlans 10
+set int data $INTERFACE switch-group switch sw0
+commit
+/opt/vyatta/bin/vplsh -l -c "qos show" > fout
+lines=`cat fout | wc -l`
+if [ $lines != 3 ];
+then
+  echo "Test 2 failed policy applied to a  trunk port"
+  exit 1;
+fi
+
+del int data $INTERFACE switch-group port-parameters vlan-parameters vlans 10
+set int data $INTERFACE switch-group port-parameters mode access
+commit
+/opt/vyatta/bin/vplsh -l -c "qos show" > fout
+lines=`cat fout | wc -l`
+if [ $lines -lt 200 ];
+then
+  echo "Test 2 failed policy wasn't inherited to an access port"
+  exit 1;
+fi
+
+del int switch sw0 default-port-parameters vlan-parameters qos-parameters
+commit
+/opt/vyatta/bin/vplsh -l -c "qos show" > fout
+lines=`cat fout | wc -l`
+if [ $lines != 3 ];
+then
+  echo "Test 2 failed policy not removed from access port"
+  exit 1;
+fi
+
+set int switch sw0 default-port-parameters vlan-parameters qos-parameters vlan 10 policy qos test
+commit
+/opt/vyatta/bin/vplsh -l -c "qos show" > fout
+lines=`cat fout | wc -l`
+if [ $lines -lt 200 ];
+then
+  echo "Test 2 failed policy not applied to inherited interface"
+  exit 1;
+fi
+
+del int data $INTERFACE switch-group
+commit
+/opt/vyatta/bin/vplsh -l -c "qos show" > fout
+lines=`cat fout | wc -l`
+if [ $lines != 3 ];
+then
+  echo "Test 2 failed policy not removed from access port when removed from switch"
+  exit 1;
+fi
+
+del int switch sw0
+del policy qos
+commit
+
+
+vplsh -l -c "debug -qos"
+
+echo "Test 2 passed"
+

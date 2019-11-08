@@ -1,0 +1,98 @@
+#!/bin/bash
+# Test 8
+# Check when marking ref count is tracked correctly for multiple vlans
+INTERFACE=$1
+set policy qos profile prof bandwidth 2mbit
+set policy qos name trunk shaper default prof
+set policy qos name test shaper class 1 match 1 mark pcp 3
+set policy qos name test shaper class 1 match 1 mark pcp-inner
+set policy qos name test shaper class 1 profile prof
+set policy qos name test shaper default prof
+set int data $INTERFACE policy qos trunk
+set int data $INTERFACE vif 10 inner-vlan 20
+set int data $INTERFACE vif 10 vlan 10
+set int data $INTERFACE vif 11 inner-vlan 21
+set int data $INTERFACE vif 11 vlan 10
+commit
+set int data $INTERFACE vif 10 policy qos test
+commit
+ret=`run sh queuing $INTERFACE.10 class | grep markpcp | grep active | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Failed to activate marking";
+   exit 1;
+fi
+
+del int data $INTERFACE vif 11 
+commit
+
+ret=`run sh queuing $INTERFACE.10 class | grep markpcp | grep inner | grep active | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Failed to activate a marking using 2 inner vlans on vlan";
+   exit 1;
+fi
+# Now check it was active and not inactive
+ret=`run sh queuing $INTERFACE.10 class | grep markpcp | grep inactive | wc -l`
+if [ $ret -ne 0 ]; then
+   echo "Failed to activate a policer using 2 inner vlans on vlan";
+   exit 1;
+fi
+
+set int data $INTERFACE vif 11 inner-vlan 21
+set int data $INTERFACE vif 11 vlan 10
+set int data $INTERFACE vif 12 inner-vlan 22
+set int data $INTERFACE vif 12 vlan 10
+commit
+
+ret=`run sh queuing $INTERFACE.10 class | grep markpcp | grep inner | grep active | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Failed to activate a marking using 3 inner vlans on vlan";
+   exit 1;
+fi
+
+del int data $INTERFACE vif 11
+commit
+del int data $INTERFACE vif 12
+commit
+
+ret=`run sh queuing $INTERFACE.10 class | grep markpcp | grep inner | grep active | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Failed to keep marking active after removing 2 vlans";
+   exit 1;
+fi
+ret=`run sh queuing $INTERFACE.10 class | grep markpcp | grep inner | grep inactive | wc -l`
+if [ $ret -ne 0 ]; then
+   echo "Failed to keep marking active after removing 2 vlans";
+   exit 1;
+fi
+
+del int data $INTERFACE vif 10 inner-
+commit
+
+ret=`run sh queuing $INTERFACE.10 class | grep markpcp | grep inner | grep inactive | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Failed to activate a marking using 2 inner vlans on vlan";
+   exit 1;
+fi
+
+set int data $INTERFACE vif 10 inner-vlan 20
+commit
+
+ret=`run sh queuing $INTERFACE.10 class | grep markpcp | grep inner | grep inactive | wc -l`
+if [ $ret -ne 0 ]; then
+   echo "Failed to activate marking on vlan";
+   exit 1;
+fi
+
+ret=`run sh queuing $INTERFACE.10 class | grep markpcp | grep inner | grep active | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Failed to activate marking on vlan";
+   exit 1;
+fi
+
+# Tidy up
+del int data $INTERFACE policy
+del int data $INTERFACE vif 10
+del policy
+commit
+
+echo "Test 8 passed"

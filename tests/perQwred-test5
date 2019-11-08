@@ -1,0 +1,145 @@
+#!/bin/bash
+# Test 5
+# Check multiple wred-maps per queue and queues per TC
+INTERFACE=$1
+set resource group dscp-group GRP1 dscp af11
+set resource group dscp-group GRP1 dscp af12
+set resource group dscp-group GRP2 dscp af21
+set resource group dscp-group GRP2 dscp af22
+set resource group dscp-group GRP3 dscp af31
+set resource group dscp-group GRP3 dscp af32
+set resource group dscp-group GRP4 dscp af41
+set resource group dscp-group GRP4 dscp af42
+set resource group dscp-group GRP5 dscp cs1
+set resource group dscp-group GRP5 dscp cs2
+set policy qos name foo shaper class 1 match 1 destination address 10.10.10.0/24
+set policy qos name foo shaper class 1 profile prof
+set policy qos name foo shaper default def
+set policy qos name foo shaper profile def
+set policy qos name foo shaper traffic-class 2 queue-limit 512
+set policy qos name foo shaper profile prof map dscp 10,12 to 0
+set policy qos name foo shaper profile prof map dscp 18,20 to 0
+set policy qos name foo shaper profile prof map dscp 26,28 to 0
+set policy qos name foo shaper profile prof map dscp 34,36 to 0
+set policy qos name foo shaper profile prof map dscp 8,16 to 0
+set policy qos name foo shaper profile prof queue 0 traffic-class 2
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP1
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP1 mark 80
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP1 max 99
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP1 min 50
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP2
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP2 mark 80
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP2 max 149
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP2 min 100
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP3
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP3 mark 80
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP3 max 199
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP3 min 150
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP4
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP4 mark 80
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP4 max 249
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP4 min 200
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP5
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP5 mark 80
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP5 max 299
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP5 min 250
+set policy qos name foo shaper profile prof queue 0 wred-map filter-weight 10
+if ( `commit` ); then
+   echo "Test 5 failed, invalid config accepted, 5 maps";
+   return 1;
+fi
+
+vplsh -l -c "debug qos"
+
+del policy qos name foo shaper profile prof queue 0 wred-map dscp-group GRP5
+set int data $INTERFACE policy qos foo
+if ( ! `commit` ); then
+    echo "Test 5 failed, valid config not accepted";
+    return 1;
+fi
+
+journalctl --no-hostname -u vyatta-dataplane -n 70 > fout
+ret=`cat fout | grep "dscp-grp GRP2 100 149 prob 80 mask 140000" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP configuration set failed, test 5 4 maps"
+    return 1;
+fi
+ret=`cat fout | grep "dscp-grp GRP4 200 249 prob 80 mask 1400000000" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP configuration set failed, test 5 4 maps"
+    return 1;
+fi
+ret=`cat fout | grep "Setup per Q wred sub 0 pip 1 qind 48 maps 4" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP configuration set failed, test 5 4 maps"
+    return 1;
+fi
+
+set policy qos name foo shaper profile prof map dscp 10,12 to 1
+set policy qos name foo shaper profile prof map dscp 18,20 to 1
+set policy qos name foo shaper profile prof map dscp 26,28 to 1
+set policy qos name foo shaper profile prof map dscp 34,36 to 1
+set policy qos name foo shaper profile prof queue 1 traffic-class 2
+set policy qos name foo shaper profile prof queue 1 wred-map dscp-group GRP1
+set policy qos name foo shaper profile prof queue 1 wred-map dscp-group GRP1 mark 80
+set policy qos name foo shaper profile prof queue 1 wred-map dscp-group GRP1 max 99
+set policy qos name foo shaper profile prof queue 1 wred-map dscp-group GRP1 min 50
+set policy qos name foo shaper profile prof queue 1 wred-map dscp-group GRP2
+set policy qos name foo shaper profile prof queue 1 wred-map dscp-group GRP2 mark 80
+set policy qos name foo shaper profile prof queue 1 wred-map dscp-group GRP2 max 149
+set policy qos name foo shaper profile prof queue 1 wred-map dscp-group GRP2 min 100
+set policy qos name foo shaper profile prof queue 1 wred-map dscp-group GRP3
+set policy qos name foo shaper profile prof queue 1 wred-map dscp-group GRP3 mark 80
+set policy qos name foo shaper profile prof queue 1 wred-map dscp-group GRP3 max 199
+set policy qos name foo shaper profile prof queue 1 wred-map dscp-group GRP3 min 150
+set policy qos name foo shaper profile prof queue 1 wred-map dscp-group GRP4
+set policy qos name foo shaper profile prof queue 1 wred-map dscp-group GRP4 mark 80
+set policy qos name foo shaper profile prof queue 1 wred-map dscp-group GRP4 max 249
+set policy qos name foo shaper profile prof queue 1 wred-map dscp-group GRP4 min 200
+if ( ! `commit` ); then
+    echo "Test 5 failed, valid config not accepted, 2 Qs 4 maps";
+    return 1;
+fi
+
+journalctl --no-hostname -u vyatta-dataplane -n 70 > fout
+
+ret=`cat fout | grep "Setup per Q wred sub 0 pip 1 qind 48 maps 4" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP configuration set failed, test 5 2 Qs 4 maps"
+    return 1;
+fi
+
+ret=`cat fout | grep "Setup per Q wred sub 0 pip 1 qind 49 maps 4" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP configuration set failed, test 5 2 Qs 4 maps"
+    return 1;
+fi
+
+del int data $INTERFACE policy
+if ( ! `commit` ); then
+    echo "Test 5 failed, removing 2 Qs 4 maps";
+    return 1;
+fi
+
+journalctl --no-hostname -u vyatta-dataplane -n 70 > fout
+ret=`cat fout | grep "Freeing Q RED params qindex 2" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP failed removing maps test 5 2 Qs 4 maps"
+    return 1;
+fi
+ret=`cat fout | grep "Freeing Q RED params qindex 6" | wc -l`
+if [ $ret -ne 1 ]; then
+    echo "Per Q DSCP failed removing maps test 5 2 Qs 4 maps"
+    return 1;
+fi
+
+# Tidy up
+del policy qos
+del resources group 
+commit
+
+vplsh -l -c "debug -qos"
+
+echo "Test 5 passed"
+
+return 0;

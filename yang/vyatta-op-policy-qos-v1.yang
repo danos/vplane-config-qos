@@ -1,0 +1,232 @@
+module vyatta-op-policy-qos-v1 {
+	namespace "urn:vyatta.com:mgmt:vyatta-op-policy-qos:1";
+	prefix vyatta-op-policy-qos-v1;
+
+	import vyatta-opd-extensions-v1 {
+		prefix opd;
+	}
+	import vyatta-op-clear-v1 {
+		prefix clear;
+	}
+	import vyatta-op-show-v1 {
+		prefix show;
+	}
+	import vyatta-op-policy-pbr-v1 {
+	        prefix policy;
+	}
+	import vyatta-op-monitor-v1 {
+	        prefix monitor;
+	}
+
+	organization "AT&T Inc.";
+	contact
+		"AT&T
+		 Postal: 208 S. Akard Street
+			 Dallas, TX 25202
+		 Web: www.att.com";
+
+	description
+		"Copyright (c) 2017-2019, AT&T Intellectual Property.
+		 All rights reserved.
+
+		 Redistribution and use in source and binary forms, with or without
+		 modification, are permitted provided that the following conditions
+		 are met:
+
+		 1. Redistributions of source code must retain the above copyright
+		    notice, this list of conditions and the following disclaimer.
+		 2. Redistributions in binary form must reproduce the above
+		    copyright notice, this list of conditions and the following
+		    disclaimer in the documentation and/or other materials provided
+		    with the distribution.
+		 3. Neither the name of the copyright holder nor the names of its
+		    contributors may be used to endorse or promote products derived
+		    from this software without specific prior written permission.
+
+		 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+		 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+		 LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+		 FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+		 COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+		 INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+		 BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+		 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+		 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+		 LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+		 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+		 POSSIBILITY OF SUCH DAMAGE.
+
+		 SPDX-License-Identifier: BSD-3-Clause
+
+		 YANG module for policy QoS operational mode commands.";
+
+	revision 2019-02-25 {
+		description "Fix option name confusion between yang and perl
+			    scripts.
+			    Add support for show queuing <interface> map
+			    mark-map.
+			    Add support for 64-bit clear/show policy qos
+			    commands.
+			    Add platform subcommands.";
+	}
+	revision 2018-05-23 {
+		description "Convert show queuing command to use yang.";
+	}
+	revision 2017-12-09 {
+		description "Initial support for clear queuing command.";
+	}
+
+	feature show-platform {
+		description "QoS platform show command support";
+	}
+
+	opd:augment /clear:clear {
+
+		opd:command queuing {
+			opd:help "Clear QoS queuing counters";
+			opd:on-enter "qos-clear-counters.pl --clear-all";
+
+			opd:argument interface-name {
+				opd:help "Interface name";
+				type string;
+				opd:allowed "qos-clear-counters.pl --if-list";
+				opd:on-enter "qos-clear-counters.pl --clear-if=$3";
+			}
+		}
+	}
+
+	opd:augment /clear:clear/policy:policy {
+
+		opd:command qos {
+			opd:help "Clear QoS queuing counters";
+			opd:on-enter "qos-clear-counters.pl --clear-all";
+
+			opd:argument interface-name {
+				opd:help "Interface name";
+				type string;
+				opd:allowed "qos-clear-counters.pl --if-list";
+				opd:on-enter "qos-clear-counters.pl --clear-if=$4";
+			}
+		}
+	}
+
+	grouping qos-interface {
+		opd:command class {
+			opd:help "Show specified dataplane interface match information";
+			opd:on-enter "show-queueing.pl --class $3";
+		}
+		opd:command map {
+			opd:help "Show dataplane queue mapping";
+
+			opd:command dscp {
+				opd:help "Show dataplane DSCP to queue information";
+				opd:on-enter "show-queueing.pl --dscp $3";
+			}
+			opd:command pcp {
+				opd:help "Show dataplane priority code point to queue information";
+				opd:on-enter "show-queueing.pl --cos $3";
+			}
+			opd:command mark {
+				opd:help "Show dataplane dscp-to-pcp marking information";
+				opd:on-enter "show-queueing.pl --mark $3";
+			}
+		}
+		opd:command brief {
+			opd:help "Show brief queuing summary";
+			opd:on-enter "show-queueing.pl --brief $3";
+		}
+	}
+
+	grouping qos-interface-64 {
+		opd:command class {
+			opd:help "Show specified dataplane interface match information";
+			opd:on-enter "show-queueing.pl --64 --class $4";
+		}
+		opd:command map {
+			opd:help "Show dataplane queue mapping";
+
+			opd:command dscp {
+				opd:help "Show dataplane DSCP to queue information";
+				opd:on-enter "show-queueing.pl --dscp $4";
+			}
+			opd:command platform {
+				if-feature show-platform;
+				opd:help "Show platform DSCP to queue information";
+				opd:on-enter "show-queueing.pl --platmap $4";
+			}
+			opd:command pcp {
+				opd:help "Show dataplane priority code point to queue information";
+				opd:on-enter "show-queueing.pl --cos $4";
+			}
+			opd:command mark {
+				opd:help "Show dataplane dscp-to-pcp marking information";
+				opd:on-enter "show-queueing.pl --mark $4";
+			}
+		}
+		opd:command brief {
+			opd:help "Show brief queuing summary";
+			opd:on-enter "show-queueing.pl --64 --brief $4";
+		}
+	}
+
+	opd:augment /show:show {
+
+		opd:command queuing {
+			opd:help "Show dataplane queuing summary";
+			opd:on-enter "show-queueing.pl --summary";
+
+			opd:command class {
+				opd:help "Show dataplane matching summary";
+				opd:on-enter "show-queueing.pl --class";
+			}
+
+			opd:argument interface-name {
+				opd:help "Show dataplane interface queuing summary";
+				opd:allowed "vyatta-interfaces.pl --show=dataplane,vhost,bonding";
+				opd:on-enter "show-queueing.pl $3";
+				type string;
+
+				uses qos-interface;
+			}
+		}
+	}
+
+	opd:augment /show:show/policy:policy {
+
+		opd:command qos {
+			opd:help "Show dataplane queuing summary";
+			opd:on-enter "show-queueing.pl --64 --summary";
+
+			opd:command platform {
+				if-feature show-platform;
+				opd:help "Show platform DSCP to queue information";
+				opd:on-enter "show-queueing.pl --platinfo";
+			}
+
+			opd:command class {
+				opd:help "Show dataplane matching summary";
+				opd:on-enter "show-queueing.pl --64 --class";
+			}
+
+			opd:argument interface-name {
+				opd:help "Show dataplane interface queuing summary";
+				opd:allowed "vyatta-interfaces.pl --show=dataplane,vhost,bonding";
+				opd:on-enter "show-queueing.pl --64 $4";
+				type string;
+
+				uses qos-interface-64;
+			}
+		}
+	}
+
+	opd:augment /monitor:monitor {
+
+		opd:command policy {
+			opd:command qos {
+				opd:help "Monitor dataplane queuing information";
+				opd:on-enter "show-queueing.pl --64 --monitor";
+			}
+		}
+	}
+
+}

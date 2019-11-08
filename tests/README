@@ -1,0 +1,4 @@
+
+To run all the tests simply enter configuration mode and ". ./po-tests.sh dp0s8"
+
+To run feature groups pick the feature .sh file and invoke as shown above.

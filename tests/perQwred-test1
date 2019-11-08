@@ -1,0 +1,57 @@
+#!/bin/bash
+# Test 1
+# Check whether a valid configuration can be accepted
+INTERFACE=$1
+vplsh -l -c "debug qos"
+set resource group dscp-group DSCP-WRED dscp af21
+set resource group dscp-group DSCP-WRED dscp af22
+set resource group dscp-group DSCP-WRED dscp af23
+set resource group dscp-group DSCP-WRED dscp af41
+set policy qos name foo shaper class 1 match 1 destination address 10.10.10.0/24
+set policy qos name foo shaper class 1 profile prof
+set policy qos name foo shaper default def
+set policy qos name foo shaper profile def
+set policy qos name foo shaper profile prof map dscp 0-63 to 0
+set policy qos name foo shaper profile prof queue 0 traffic-class 1
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group DSCP-WRED
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group DSCP-WRED mark 110
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group DSCP-WRED max 55
+set policy qos name foo shaper profile prof queue 0 wred-map dscp-group DSCP-WRED min 23
+set policy qos name foo shaper profile prof queue 0 wred-map filter-weight 11
+set int data $INTERFACE policy qos foo
+commit
+journalctl --no-hostname -u vyatta-dataplane -n 50 > fout
+ret=`cat fout | grep "profile 1 queue 0x1 dscp-group DSCP-WRED 55 23 110" | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Per Q DSCP configuration set failed, test 1"
+   return 1;
+fi
+ret=`cat fout | grep "per Q red prof 1 dscp-grp DSCP-WRED 23 55 prob 110 mask 400540000" | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Per Q DSCP configuration set failed, test 1"
+   return 1;
+fi
+ret=`cat fout | grep "Setup per Q wred sub 0 pip 1 qind 40 maps 1" | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Per Q DSCP configuration set failed, test 1"
+   return 1;
+fi
+
+del int data $INTERFACE policy
+commit
+journalctl --no-hostname -u vyatta-dataplane -n 50 > fout
+ret=`cat fout | grep "Freeing Q RED params qindex 1" | wc -l`
+if [ $ret -ne 1 ]; then
+   echo "Per Q DSCP configuration set failed, test 1"
+   return 1;
+fi
+
+# Tidy up
+del policy qos
+del resources group dscp-group DSCP-WRED
+commit
+vplsh -l -c "debug -qos"
+
+echo "Test 1 passed"
+
+return 0;
