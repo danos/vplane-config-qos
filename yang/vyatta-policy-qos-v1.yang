@@ -81,7 +81,7 @@ module vyatta-policy-qos-v1 {
 
 		 This module implements vyatta-policy-qos-v1.";
 
-	revision 2019-10-30 {
+	revision 2019-11-18 {
 		description "Add ingress-map definitions and attachment
 			     points to switch interfaces.
 			     Move to VCI for commit processing.";
@@ -454,11 +454,11 @@ module vyatta-policy-qos-v1 {
 		}
 	}
 
-	grouping to-classifier {
-		leaf to-classifier {
-			description "Classifier associated with packet";
-			configd:help "Classifier associated with packet";
-			type qos-groupings:classifier-type;
+	grouping designation {
+		leaf designation {
+			description "Designation associated with packet";
+			configd:help "Designation associated with packet";
+			type qos-groupings:designation-type;
 		}
 	}
 
@@ -505,7 +505,7 @@ module vyatta-policy-qos-v1 {
 						path "/resources:resources/res-group:group/res-group:dscp-group/res-group:group-name";
 					}
 				}
-				uses to-classifier;
+				uses designation;
 			}
 			list pcp {
 				description "PCP value to mark packet with";
@@ -517,7 +517,7 @@ module vyatta-policy-qos-v1 {
 				leaf id {
 					type pcp-value-type;
 				}
-				uses to-classifier;
+				uses designation;
 			}
 			leaf system-default {
 				type empty;

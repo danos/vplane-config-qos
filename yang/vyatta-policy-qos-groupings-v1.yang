@@ -66,8 +66,8 @@ module vyatta-policy-qos-groupings-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
-	revision 2019-10-30 {
-		description "Add the to-classifier keyword to policy qos
+	revision 2019-11-18 {
+		description "Add the designation keyword to policy qos
 			     map command.  Add PCP classification to a
 			     mark-map.
 			     Add configuration option to give burst size in
@@ -216,7 +216,7 @@ module vyatta-policy-qos-groupings-v1 {
 		}
 	}
 
-	typedef classifier-type {
+	typedef designation-type {
 		description "A classifier value written/read to a packet";
 		type uint32 {
 			range 0..7;
@@ -496,20 +496,23 @@ module vyatta-policy-qos-groupings-v1 {
 				must "(not(../dscp))" {
 					error-message "Cannot mix dscp values and dscp-groups in same profile map";
 				}
-				must "(not(../to-classifier))" {
-					error-message "Cannot mix to-classifier values and dscp-groups in same profile map";
+				must "(not(../designation))" {
+					error-message "Cannot mix designation values and dscp-groups in same profile map";
 				}
 			}
-			list to-classifier {
-				description "Classifier applied at ingress";
-				configd:help "Classifier applied at ingress";
+			list designation {
+				description "Designation applied at ingress";
+				configd:help "Designation applied at ingress";
 				key "id";
 				leaf id {
-					type classifier-type;
+					type designation-type;
 				}
 				uses to-pipe-queue;
-				must "(not(../dscp-group))" {
-					error-message "Cannot mix dscp-groups and to-classifier in same profile map";
+				must "(not(/policy:policy/qos/name/shaper/profile/map/dscp-group))" {
+					error-message "Cannot mix dscp-groups and designation in same profile map";
+				}
+				must "(count(/policy:policy/ingress-map/system-default) = 1)" {
+					error-message "There must be a system-default ingress-map configured.";
 				}
 			}
 		}
