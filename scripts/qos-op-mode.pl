@@ -429,13 +429,21 @@ sub convert_npf_rule {
         if ( $rule_operation =~ /tag\((\d+)\)/ ) {
             $rule_out{'qos-class'} = $1;
         }
-        $rule_out{'action-group'} = $rule_in->{'action-group'};
-        my $pstats = $rule_in->{'policer-stats'};
-        if ( defined($pstats) ) {
-            my @police_stats = split( / /, $pstats );
-            $rule_out{'exceeded-packets'} = int( $police_stats[2] );
-            $rule_out{'exceeded-bytes'}   = int( $police_stats[4] );
+
+        if ( index( $rule_operation, "action-group" ) != -1 ) {
+            $rule_out{'action-group'} = $rule_in->{'rprocs'}->{'action-group'};
+            my $policer = $rule_in->{'rprocs'}->{'action-group'}->{'policer'};
+            if ( defined($policer) ) {
+                $rule_out{'exceeded-packets'} = $policer->{'exceed-packets'};
+                $rule_out{'exceeded-bytes'}   = $policer->{'exceed-bytes'};
+            }
         }
+        if ( index( $rule_operation, "policer" ) != -1 ) {
+            my $policer = $rule_in->{'rprocs'}->{'policer'};
+            $rule_out{'exceeded-packets'}  = $policer->{'exceed-packets'};
+            $rule_out{'exceeded-bytes'}    = $policer->{'exceed-bytes'};
+        }
+
         $rule_out{packets} = $rule_in->{packets};
         $rule_out{bytes}   = $rule_in->{bytes};
 
