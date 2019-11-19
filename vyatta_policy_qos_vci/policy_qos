@@ -282,6 +282,7 @@ if __name__ == "__main__":
         (vci.Component("net.vyatta.vci.policy.qos")
          .model(vci.Model("net.vyatta.vci.policy.qos.v1")
                 .config(Config())
+                .state(State())
                )
          .subscribe("vyatta-npf-v1", "configuration-updated", npf_update)
          .run()
