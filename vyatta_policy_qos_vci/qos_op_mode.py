@@ -36,6 +36,7 @@ chance of understanding.
 This module was translated from VR/vplane-config-qos/scripts/qos-op-mode.pl
 """
 
+import logging
 import re
 
 from vyatta_policy_qos_vci.provisioner import get_existing_config
@@ -43,6 +44,7 @@ from vyatta_policy_qos_vci.provisioner import get_existing_config
 TC_SHIFT = 2
 TC_MASK = 0x3
 WRR_MASK = 0x7
+LOG = logging.getLogger('Policy QoS VCI')
 
 config = {}
 
@@ -57,8 +59,8 @@ def get_sysfs_value(ifname, valuename):
         with open(filename, 'r') as data:
             value = data.read()
     except OSError:
-        # For unit-testing return a fixed if-index of 8
-        return "8"
+        LOG.error(f"Failed to open {filename}")
+        return None
 
     return value.strip()
 
@@ -194,10 +196,10 @@ def convert_tc_rates(tc_rates_in):
     tc_id = 0
 
     for tc_rate in tc_rates_in:
-        tc_rate_out = {}
-
-        tc_rate_out['traffic-class'] = tc_id
-        tc_rate_out['rate'] = tc_rate
+        tc_rate_out = {
+            'traffic-class': tc_id,
+            'rate': tc_rate
+        }
         tc_rates_out.append(tc_rate_out)
         tc_id += 1
 
@@ -213,10 +215,10 @@ def convert_wrr_weights(wrr_weights_in):
     queue_id = 0
 
     for wrr in wrr_weights_in:
-        wrr_weight_out = {}
-
-        wrr_weight_out['queue'] = queue_id
-        wrr_weight_out['weight'] = wrr
+        wrr_weight_out = {
+            'queue': queue_id,
+            'weight': wrr
+        }
         wrr_weights_out.append(wrr_weight_out)
         queue_id += 1
 
@@ -235,17 +237,17 @@ def convert_dscp_map(dscp_map_in):
 
     if dscp_map_in is not None:
         for dscp_map_value in dscp_map_in:
-            dscp_out = {}
-            dscp_values = []
             tc_id = get_traffic_class(dscp_map_value)
             q_id = get_queue_number(dscp_map_value)
 
-            dscp_out['dscp'] = dscp_id
-            # The following two elements are defined in
-            # vyatta-policy-qos-groupings-v1.yang hence the need
-            # to include their namespace.
-            dscp_out['vyatta-policy-qos-groupings-v1:traffic-class'] = tc_id
-            dscp_out['vyatta-policy-qos-groupings-v1:queue'] = q_id
+            dscp_out = {
+                'dscp': dscp_id,
+                # The following two elements are defined in
+                # vyatta-policy-qos-groupings-v1.yang hence the need
+                # to include their namespace.
+                'vyatta-policy-qos-groupings-v1:traffic-class': tc_id,
+                'vyatta-policy-qos-groupings-v1:queue': q_id
+            }
             dscp_map_out.append(dscp_out)
 
             try:
@@ -269,7 +271,7 @@ def convert_dscp_map(dscp_map_in):
 
             dscp_id += 1
 
-    return (dscp_map_out, tc_queue_to_dscp_map)
+    return dscp_map_out, tc_queue_to_dscp_map
 
 
 def convert_pcp_map(pcp_map_in):
@@ -284,17 +286,17 @@ def convert_pcp_map(pcp_map_in):
 
     if pcp_map_in is not None:
         for pcp_value in pcp_map_in:
-            pcp_out = {}
-            pcp_values = []
             tc_id = get_traffic_class(pcp_value)
             q_id = get_queue_number(pcp_value)
 
-            pcp_out['pcp'] = pcp_id
-            # The following two elements are defined in
-            # vyatta-policy-qos-groupings-v1.yang hence the need
-            # to include their namespace.
-            pcp_out['vyatta-policy-qos-groupings-v1:traffic-class'] = tc_id
-            pcp_out['vyatta-policy-qos-groupings-v1:queue'] = q_id
+            pcp_out = {
+                'pcp': pcp_id,
+                # The following two elements are defined in
+                # vyatta-policy-qos-groupings-v1.yang hence the need
+                # to include their namespace.
+                'vyatta-policy-qos-groupings-v1:traffic-class': tc_id,
+                'vyatta-policy-qos-groupings-v1:queue': q_id
+            }
             pcp_map_out.append(pcp_out)
 
             if tc_queue_to_pcp_map[tc_id][q_id] is not None:
@@ -307,7 +309,7 @@ def convert_pcp_map(pcp_map_in):
 
                 pcp_id += 1
 
-    return (pcp_map_out, tc_queue_to_pcp_map)
+    return pcp_map_out, tc_queue_to_pcp_map
 
 
 def convert_map_list(map_list, map_type):
@@ -315,9 +317,7 @@ def convert_map_list(map_list, map_type):
     map_list_out = []
 
     for value in map_list:
-        value_out = {}
-
-        value_out[map_type] = value
+        value_out = {map_type: value}
         map_list_out.append(value_out)
 
     return map_list_out
@@ -331,10 +331,10 @@ def convert_wred_map_list(map_list_in):
     map_list_out = []
 
     for map_in in map_list_in:
-        map_out = {}
-
-        map_out['res-grp'] = map_in['res_grp']
-        map_out['random-dscp-drop'] = map_in['random_dscp_drop'] & 0xffffffff
+        map_out = {
+            'res-grp': map_in['res_grp'],
+            'random-dscp-drop': map_in['random_dscp_drop'] & 0xffffffff
+        }
         map_list_out.append(map_out)
 
     return map_list_out
@@ -348,10 +348,10 @@ def convert_wred_map_list_64(map_list_in):
     map_list_out = []
 
     for map_in in map_list_in:
-        map_out = {}
-
-        map_out['res-grp-64'] = map_in['res_grp']
-        map_out['random-dscp-drop-64'] = map_in['random_dscp_drop']
+        map_out = {
+            'res-grp-64': map_in['res_grp'],
+            'random-dscp-drop-64': map_in['random_dscp_drop']
+        }
         map_list_out.append(map_out)
 
     return map_list_out
@@ -366,37 +366,42 @@ def convert_tc_queues(tc_queues_in, tc_id, reverse_map, map_type_values):
     queue_id = 0
 
     for queue in tc_queues_in:
-        queue_out = {}
+        queue_out = {
+            'queue': queue_id,
 
-        queue_out['queue'] = queue_id
+            # The following elements are defined in
+            # vyatta-policy-qos-groupings-v1.yang hence the need to include
+            # their namespace.
+            # Truncate the value for the old 32-bit counters
+            'vyatta-policy-qos-groupings-v1:packets': (
+                queue['packets'] & 0xffffffff),
+            'vyatta-policy-qos-groupings-v1:bytes': (
+                queue['bytes'] & 0xffffffff),
 
-        # The following elements are defined in
-        # vyatta-policy-qos-groupings-v1.yang hence the need to include their
-        # namespace.
-        # Truncate the value for the old 32-bit counters
-        queue_out['vyatta-policy-qos-groupings-v1:packets'] = (
-            queue['packets'] & 0xffffffff)
-        queue_out['vyatta-policy-qos-groupings-v1:bytes'] = (
-            queue['bytes'] & 0xffffffff)
+            # The dropped counter is total drops, we just want tail-drops
+            'vyatta-policy-qos-groupings-v1:dropped': ((
+                queue['dropped'] - queue['random_drop']) & 0xffffffff),
+            'vyatta-policy-qos-groupings-v1:random-drop': (
+                queue['random_drop'] & 0xffffffff),
 
-        # The dropped counter is total drops, we just want tail-drops
-        queue_out['vyatta-policy-qos-groupings-v1:dropped'] = ((
-            queue['dropped'] - queue['random_drop']) & 0xffffffff)
-        queue_out['vyatta-policy-qos-groupings-v1:random-drop'] = (
-            queue['random_drop'] & 0xffffffff)
+            # Don't truncate the new 64-bit counters
+            'vyatta-policy-qos-groupings-v1:packets-64': queue['packets'],
+            'vyatta-policy-qos-groupings-v1:bytes-64': queue['bytes'],
+
+            # The dropped counter is total drops, we just want tail-drops
+            'vyatta-policy-qos-groupings-v1:dropped-64': (
+                queue['dropped'] - queue['random_drop']),
+            'vyatta-policy-qos-groupings-v1:random-drop-64': (
+                queue['random_drop']),
+
+            'priority-local': queue['prio_local']
+
+        }
+
         if queue.get('wred_map') is not None:
             queue_out['vyatta-policy-qos-groupings-v1:wred-map'] = (
                 convert_wred_map_list(queue['wred_map']))
 
-        # Don't truncate the new 64-bit counters
-        queue_out['vyatta-policy-qos-groupings-v1:packets-64'] = queue['packets']
-        queue_out['vyatta-policy-qos-groupings-v1:bytes-64'] = queue['bytes']
-
-        # The dropped counter is total drops, we just want tail-drops
-        queue_out['vyatta-policy-qos-groupings-v1:dropped-64'] = (
-            queue['dropped'] - queue['random_drop'])
-        queue_out['vyatta-policy-qos-groupings-v1:random-drop-64'] = (
-            queue['random_drop'])
         if queue.get('wred_map') is not None:
             queue_out['vyatta-policy-qos-groupings-v1:wred-map-64'] = (
                 convert_wred_map_list_64(queue['wred_map']))
@@ -410,7 +415,6 @@ def convert_tc_queues(tc_queues_in, tc_id, reverse_map, map_type_values):
             queue_out['vyatta-policy-qos-groupings-v1:qlen-bytes'] = (
                 queue['qlen-bytes'])
 
-        queue_out['priority-local'] = queue['prio_local']
         if map_type_values == "dscp-values":
             map_type = "dscp"
         else:
@@ -439,13 +443,11 @@ def convert_tc_queue_list(tc_queues_list_in, reverse_map, map_type_values):
     tc_id = 0
 
     for tc_queues_in in tc_queues_list_in:
-        tc_queues_out = {}
-
-        tc_queues_out['traffic-class'] = tc_id
-        tc_queues_out['queue-statistics'] = convert_tc_queues(tc_queues_in,
-                                                              tc_id,
-                                                              reverse_map,
-                                                              map_type_values)
+        tc_queues_out = {
+            'traffic-class': tc_id,
+            'queue-statistics': convert_tc_queues(tc_queues_in, tc_id,
+                                                  reverse_map, map_type_values)
+        }
         tc_queues_list_out.append(tc_queues_out)
         tc_id += 1
 
@@ -457,11 +459,12 @@ def convert_pipe(cmd, pipe_in, pipe_id, profile_name):
     Convert a single pipe element of a 'pipes' JSON array into a 'tagged'
     element, tagged by pipe-id
     """
-    pipe_out = {}
+    pipe_out = {
+        'pipe': pipe_id,
+        'qos-class': pipe_id,
+        'qos-profile': profile_name,
+    }
 
-    pipe_out['pipe'] = pipe_id
-    pipe_out['qos-class'] = pipe_id
-    pipe_out['qos-profile'] = profile_name
     if cmd == 'all':
         # The following elements are defined in
         # vyatta-policy-qos-groupings-v1.yang hence we need to specify
@@ -478,11 +481,11 @@ def convert_pipe(cmd, pipe_in, pipe_id, profile_name):
             convert_wrr_weights(pipe_in['params']['wrr_weights']))
 
 
-    (pipe_out['dscp-to-queue-map'], reverse_dscp_map) = (
-        convert_dscp_map(pipe_in.get('dscp2q')))
+    pipe_out['dscp-to-queue-map'], reverse_dscp_map = convert_dscp_map(
+        pipe_in.get('dscp2q'))
 
-    (pipe_out['pcp-to-queue-map'], reverse_pcp_map) = (
-        convert_pcp_map(pipe_in.get('pcp2q')))
+    pipe_out['pcp-to-queue-map'], reverse_pcp_map = convert_pcp_map(
+        pipe_in.get('pcp2q'))
 
     if pipe_out.get('dscp-to-queue-map') is not None:
         queue_list = convert_tc_queue_list(pipe_in['tc'], reverse_dscp_map,
@@ -534,31 +537,30 @@ def convert_tcs(tcs_in):
     tc_id = 0
 
     for tc_in in tcs_in:
-        tc_out = {}
+        tc_out = {
+            'traffic-class': tc_id,
+            # Truncate these values for the old 32-bit counters
+            # The following counters are defined in
+            # vyatta-policy-qos-groupings-v1 hence we need to include their
+            # namespace
+            'vyatta-policy-qos-groupings-v1:packets': tc_in['packets'] & 0xffffffff,
+            'vyatta-policy-qos-groupings-v1:bytes': tc_in['bytes'] & 0xfffffff,
 
-        tc_out['traffic-class'] = tc_id
+            # The dropped counter is total drops, we just want tail-drops
+            'vyatta-policy-qos-groupings-v1:dropped': (
+                (tc_in['dropped'] - tc_in['random_drop']) & 0xffffffff),
+            'vyatta-policy-qos-groupings-v1:random-drop': (
+                tc_in['random_drop'] & 0xffffffff),
 
-        # Truncate these values for the old 32-bit counters
-        # The following counters are defined in vyatta-policy-qos-groupings-v1
-        # hence we need to include their namespace
-        tc_out['vyatta-policy-qos-groupings-v1:packets'] = tc_in['packets'] & 0xffffffff
-        tc_out['vyatta-policy-qos-groupings-v1:bytes'] = tc_in['bytes'] & 0xfffffff
+            # 64-bit counters don't get truncated
+            'vyatta-policy-qos-groupings-v1:packets-64': tc_in['packets'],
+            'vyatta-policy-qos-groupings-v1:bytes-64': tc_in['bytes'],
 
-        # The dropped counter is total drops, we just want tail-drops
-        tc_out['vyatta-policy-qos-groupings-v1:dropped'] = (
-            (tc_in['dropped'] - tc_in['random_drop']) & 0xffffffff)
-        tc_out['vyatta-policy-qos-groupings-v1:random-drop'] = (
-            tc_in['random_drop'] & 0xffffffff)
-
-        # 64-bit counters don't get truncated
-        tc_out['vyatta-policy-qos-groupings-v1:packets-64'] = tc_in['packets']
-        tc_out['vyatta-policy-qos-groupings-v1:bytes-64'] = tc_in['bytes']
-
-        # The dropped counter is total drops, we just want tail-drops
-        tc_out['vyatta-policy-qos-groupings-v1:dropped-64'] = (
-            tc_in['dropped'] - tc_in['random_drop'])
-        tc_out['vyatta-policy-qos-groupings-v1:random-drop-64'] = tc_in['random_drop']
-
+            # The dropped counter is total drops, we just want tail-drops
+            'vyatta-policy-qos-groupings-v1:dropped-64': (
+                tc_in['dropped'] - tc_in['random_drop']),
+            'vyatta-policy-qos-groupings-v1:random-drop-64': tc_in['random_drop']
+        }
         tc_list_out.append(tc_out)
         tc_id += 1
 
@@ -575,9 +577,12 @@ def convert_npf_rule(rules_in):
     for rule_id in rules_in.keys():
         rule_in = rules_in[rule_id]
         rule_operation = rule_in['operation']
-        rule_out = {}
+        rule_out = {
+            'rule-number': "{}".format(rule_id),
+            'packets': rule_in['packets'],
+            'bytes': rule_in['bytes']
+        }
 
-        rule_out['rule-number'] = "{}".format(rule_id)
         search_obj = re.search(r'tag\(([0-9]+)\)', rule_operation, flags=0)
         if search_obj:
             rule_out['qos-class'] = "{}".format(search_obj.group(1))
@@ -593,9 +598,6 @@ def convert_npf_rule(rules_in):
             police_stats = pstats.split(' ')
             rule_out['exceeded-packets'] = int(police_stats[2])
             rule_out['exceeded-bytes'] = int(police_stats[4])
-
-        rule_out['packets'] = rule_in['packets']
-        rule_out['bytes'] = rule_in['bytes']
 
         rules_out.append(rule_out)
 
@@ -613,17 +615,17 @@ def convert_groups(subport_ifname, group_list_in):
         ifindex = get_sysfs_value(subport_ifname, 'ifindex')
 
         for group_in in group_list_in:
-            group_out = {}
-
-            group_out['name'] = group_in['name']
-            group_out['class'] = group_in['class']
-            group_out['ifindex'] = ifindex
-            group_out['direction'] = group_in['direction']
-            # The following element is defined in
-            # vyatta-policy-qos-groupings-v1.yang hence we need to specify
-            # its namespace.
-            group_out['vyatta-policy-qos-groupings-v1:rule'] = convert_npf_rule(group_in['rules'])
-
+            group_out = {
+                'name': group_in['name'],
+                'class': group_in['class'],
+                'ifindex': ifindex,
+                'direction': group_in['direction'],
+                # The following element is defined in
+                # vyatta-policy-qos-groupings-v1.yang hence we need to specify
+                # its namespace.
+                'vyatta-policy-qos-groupings-v1:rule': convert_npf_rule(
+                    group_in['rules'])
+            }
             group_list_out.append(group_out)
 
     return group_list_out
@@ -633,9 +635,8 @@ def convert_rules(subport_ifname, rules_in):
     """
     Convert the 'rules' JSON dictionary into a Yang compatible JSON dictionary
     """
-    rules_out = {}
-
-    rules_out['groups'] = convert_groups(subport_ifname, rules_in.get('groups'))
+    rules_out = {'groups': convert_groups(subport_ifname,
+                                          rules_in.get('groups'))}
 
     return rules_out
 
@@ -649,7 +650,10 @@ def convert_subports(cmd, subports_in, ifname, vlan_list):
     subport_id = 0
 
     for subport_in in subports_in:
-        subport_out = {}
+        subport_out = {
+            'subport': subport_id,
+            'traffic-class-list': convert_tcs(subport_in['tc']),
+        }
         subport_name = ifname
         subport_ifname = ifname
 
@@ -661,14 +665,11 @@ def convert_subports(cmd, subports_in, ifname, vlan_list):
                     subport_ifname += ".{}".format(vif)
                     break
 
-        subport_out['subport'] = subport_id
         subport_out['subport-name'] = subport_name
-        subport_out['traffic-class-list'] = convert_tcs(subport_in['tc'])
-        subport_out['pipe-list'] = convert_pipes(cmd, subport_in['pipes'],
-                                                 subport_out['subport-name'])
         subport_out['rules'] = convert_rules(subport_ifname,
                                              subport_in['rules'])
-
+        subport_out['pipe-list'] = convert_pipes(cmd, subport_in['pipes'],
+                                                 subport_out['subport-name'])
         subport_list_out.append(subport_out)
         subport_id += 1
 
@@ -683,10 +684,7 @@ def convert_vlans(vlans_in):
     vlan_list_out = []
 
     for vlan in vlans_in:
-        vlan_out = {}
-        vlan_out['tag'] = vlan['tag']
-        vlan_out['subport'] = vlan['subport']
-
+        vlan_out = {'tag': vlan['tag'], 'subport': vlan['subport']}
         vlan_list_out.append(vlan_out)
 
     return vlan_list_out
@@ -698,13 +696,12 @@ def convert_shaper(cmd, shaper_in, ifname):
     """
     shaper_out = {}
 
-    shaper_out['vlan-list'] = convert_vlans(shaper_in['vlans'])
+    vlan_list = convert_vlans(shaper_in['vlans'])
     shaper_out['subport-list'] = convert_subports(cmd, shaper_in['subports'],
-                                                  ifname,
-                                                  shaper_out['vlan-list'])
+                                                  ifname, vlan_list)
 
-    if cmd == 'stats':
-        del shaper_out['vlan-list']
+    if cmd == 'all':
+        shaper_out['vlan-list'] = vlan_list
 
     return shaper_out
 
@@ -720,12 +717,13 @@ def convert_if_list(cmd, op_mode_dict):
     if_list_out - a tagged JSON array of QoS op-mode state of each physical port
     """
     if_list_out = []
-    for ifname in sorted(op_mode_dict.keys()):
-        shaper_in = op_mode_dict[ifname]['shaper']
+    for ifname, interface in sorted(op_mode_dict.items()):
+        shaper_in = interface['shaper']
 
-        if_shaper_out = {}
-        if_shaper_out['ifname'] = ifname
-        if_shaper_out['shaper'] = convert_shaper(cmd, shaper_in, ifname)
+        if_shaper_out = {
+            'ifname': ifname,
+            'shaper': convert_shaper(cmd, shaper_in, ifname)
+        }
         if_list_out.append(if_shaper_out)
 
     return if_list_out

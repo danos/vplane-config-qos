@@ -11,52 +11,8 @@ Unit-tests for the qos_op_mode.py module.
 """
 
 import json
-import sys
 from unittest.mock import patch
 import vyatta_policy_qos_vci.qos_op_mode
-
-
-def recursive_compare(data1, data2, level='root'):
-    """
-    Compare two multi-level dictionary/list data-structures for equality,
-    printing out any differences.
-
-    Start comparing elements at the top layer, and recurse down through
-    all the dictionary and list elements until we find elements that aren't
-    dictionaries or lists.
-    """
-    if isinstance(data1, dict) and isinstance(data2, dict):
-        if data1.keys() != data2.keys():
-            set1 = set(data1.keys())
-            set2 = set(data2.keys())
-            print('{:<20} + {} - {}'.format(level, set1-set2, set2-set1))
-            sys.stdout.flush()
-            common_keys = set1 & set2
-        else:
-            common_keys = set(data1.keys())
-
-        for key in common_keys:
-            recursive_compare(data1[key], data2[key],
-                              level='{}.{}'.format(level, key))
-
-    elif isinstance(data1, list) and isinstance(data2, list):
-        if len(data1) != len(data2):
-            print('{:<20} len1={}; len2={}'.format(level, len(data1),
-                                                   len(data2)))
-            sys.stdout.flush()
-
-        common_len = min(len(data1), len(data2))
-
-        for index in range(common_len):
-            recursive_compare(data1[index], data2[index],
-                              level='{}[{}]'.format(level, index))
-
-    else:
-        if data1 != data2:
-            print('{:<20} {} != {}'.format(level, data1, data2))
-            sys.stdout.flush()
-
-    return
 
 
 def test_qos_op_mode():
@@ -97,10 +53,14 @@ def test_qos_op_mode():
 
     with patch('vyatta_policy_qos_vci.qos_op_mode.get_existing_config') as mock_get_existing_config:
         mock_get_existing_config.return_value = config
+        with patch('vyatta_policy_qos_vci.qos_op_mode.get_sysfs_value') as mock_get_sysfs_value:
+            mock_get_sysfs_value.return_value = "8"
 
-        yang_dict = {}
-        yang_dict['if-list'] = vyatta_policy_qos_vci.qos_op_mode.convert_if_list('all', test_data)
+            yang_dict = {}
+            yang_dict['if-list'] = (
+                vyatta_policy_qos_vci.qos_op_mode.convert_if_list('all',
+                                                                  test_data)
+            )
 
-        expected_if_list = expected_results['state']
-        # recursive_compare(expected_if_list, expected_results['state'])
-        assert yang_dict == expected_if_list
+            expected_if_list = expected_results['state']
+            assert yang_dict == expected_if_list
