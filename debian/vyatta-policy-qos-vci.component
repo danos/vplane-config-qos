@@ -5,6 +5,7 @@ ExecName=/opt/vyatta/sbin/policy_qos
 ConfigFile=/etc/vyatta/policy-qos.json
 
 [Model net.vyatta.vci.policy.qos.v1]
-Modules=vyatta-policy-qos-v1, vyatta-policy-action-v1
+Modules=vyatta-policy-qos-v1, vyatta-policy-action-v1, \
+vyatta-interfaces-bonding-qos-v1
 
 ModelSets=vyatta-v1

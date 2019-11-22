@@ -121,6 +121,28 @@ SIAD_VLAN_DICT = {
     }
 }
 
+VM_BONDED_IF_DICT = {
+    'tagnode': 'lo',
+    'vyatta-interfaces-policy-v1:policy': {
+        'vyatta-interfaces-bonding-qos-v1:qos': 'policy-1'
+    }
+}
+
+VM_BONDED_VLAN_DICT = {
+    'tagnode': 'lo',
+    'vyatta-interfaces-policy-v1:policy': {
+        'vyatta-interfaces-bonding-qos-v1:qos': 'policy-1'
+    },
+    'vif': [
+        {
+            'tagnode': 10,
+            'vyatta-interfaces-policy-v1:policy': {
+                'vyatta-interfaces-bonding-qos-v1:qos': 'policy-2'
+            }
+        }
+    ]
+}
+
 SIAD_POLICY_3_DICT = {
     "id": "policy-3",
     "shaper": {
@@ -183,7 +205,7 @@ for policy in QOS_POLICY_DICT.values():
 TEST_DATA = [
     (
         # test_input
-        VM_IF_DICT,
+        ('dataplane', VM_IF_DICT),
         # expected_data
         [
             # Vyatta VM trunk commands
@@ -209,7 +231,7 @@ TEST_DATA = [
     ),
     (
         # test_input
-        VM_VLAN_DICT,
+        ('dataplane', VM_VLAN_DICT),
         # expected_data
         [
             # Vyatta VM trunk and vlan commands
@@ -251,7 +273,7 @@ TEST_DATA = [
     ),
     (
         # test_input
-        SIAD_IF_DICT,
+        ('dataplane', SIAD_IF_DICT),
         # expected_data
         [
             # SIAD commands
@@ -278,7 +300,7 @@ TEST_DATA = [
     ),
     (
         # test_input
-        SIAD_VLAN_DICT,
+        ('dataplane', SIAD_VLAN_DICT),
         # expected_data
         [
             # SIAD trunk and vlan commands
@@ -334,12 +356,81 @@ TEST_DATA = [
             "qos 1 pipe 2 0 2",
             "qos 1 enable"
         ]
+    ),
+    (
+        # test_input
+        ('bonding', VM_BONDED_IF_DICT),
+        # expected_data
+        [
+            # Bonded interface trunk commands
+            "qos 1 port subports 1 pipes 1 profiles 1 overhead 24",
+            "qos 1 subport 0 rate 125000000 size 0 period 40",
+            "qos 1 subport 0 queue 0 percent 100 size 0",
+            "qos 1 param subport 0 0 limit packets 64",
+            "qos 1 subport 0 queue 1 percent 100 size 0",
+            "qos 1 param subport 0 1 limit packets 64",
+            "qos 1 subport 0 queue 2 percent 100 size 0",
+            "qos 1 param subport 0 2 limit packets 64",
+            "qos 1 subport 0 queue 3 percent 100 size 0",
+            "qos 1 param subport 0 3 limit packets 64",
+            "qos 1 vlan 0 0",
+            "qos 1 profile 0 percent 100 size 0 period 10",
+            "qos 1 profile 0 queue 0 percent 100 size 0",
+            "qos 1 profile 0 queue 1 percent 100 size 0",
+            "qos 1 profile 0 queue 2 percent 100 size 0",
+            "qos 1 profile 0 queue 3 percent 100 size 0",
+            "qos 1 pipe 0 0 0",
+            "qos 1 enable"
+        ]
+    ),
+    (
+        # test_input
+        ('bonding', VM_BONDED_VLAN_DICT),
+        # expected_data
+        [
+            # Bonded interface trunk and vlan commands
+            "qos 1 port subports 2 pipes 1 profiles 2 overhead 24",
+            "qos 1 subport 0 rate 125000000 size 0 period 40",
+            "qos 1 subport 0 queue 0 percent 100 size 0",
+            "qos 1 param subport 0 0 limit packets 64",
+            "qos 1 subport 0 queue 1 percent 100 size 0",
+            "qos 1 param subport 0 1 limit packets 64",
+            "qos 1 subport 0 queue 2 percent 100 size 0",
+            "qos 1 param subport 0 2 limit packets 64",
+            "qos 1 subport 0 queue 3 percent 100 size 0",
+            "qos 1 param subport 0 3 limit packets 64",
+            "qos 1 vlan 0 0",
+            "qos 1 profile 0 percent 100 size 0 period 10",
+            "qos 1 profile 0 queue 0 percent 100 size 0",
+            "qos 1 profile 0 queue 1 percent 100 size 0",
+            "qos 1 profile 0 queue 2 percent 100 size 0",
+            "qos 1 profile 0 queue 3 percent 100 size 0",
+            "qos 1 pipe 0 0 0",
+            "qos 1 subport 1 rate 250000000 size 0 period 40",
+            "qos 1 subport 1 queue 0 percent 100 size 0",
+            "qos 1 param subport 1 0 limit packets 64",
+            "qos 1 subport 1 queue 1 percent 100 size 0",
+            "qos 1 param subport 1 1 limit packets 64",
+            "qos 1 subport 1 queue 2 percent 100 size 0",
+            "qos 1 param subport 1 2 limit packets 64",
+            "qos 1 subport 1 queue 3 percent 100 size 0",
+            "qos 1 param subport 1 3 limit packets 64",
+            "qos 1 vlan 10 1",
+            "qos 1 profile 1 percent 100 size 0 period 10",
+            "qos 1 profile 1 queue 0 percent 100 size 0",
+            "qos 1 profile 1 queue 1 percent 100 size 0",
+            "qos 1 profile 1 queue 2 percent 100 size 0",
+            "qos 1 profile 1 queue 3 percent 100 size 0",
+            "qos 1 pipe 1 0 1",
+            "qos 1 enable"
+        ]
     )
 ]
 
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
 def test_interface(test_input, expected_result):
     """ Unit-test the interface class with simple configs """
-    interface = Interface(test_input, QOS_POLICY_DICT)
+    if_type, if_dict = test_input
+    interface = Interface(if_type, if_dict, QOS_POLICY_DICT)
     assert interface is not None
     assert interface.commands() == expected_result

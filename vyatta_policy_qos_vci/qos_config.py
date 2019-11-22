@@ -83,9 +83,10 @@ class QosConfig:
     def _process_interfaces(self, if_dict):
         """ Process interfaces that have QoS policies attached to them """
         if if_dict is not None:
-            for interfaces in if_dict.values():
+            for key, interfaces in if_dict.items():
+                if_type = key.split(':')[1]
                 for interface in interfaces:
-                    int_obj = Interface(interface, self._policies)
+                    int_obj = Interface(if_type, interface, self._policies)
                     self._interfaces[int_obj.name] = int_obj
 
     @property

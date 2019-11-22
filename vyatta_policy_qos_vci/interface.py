@@ -8,16 +8,26 @@ A module to define the Interface class of objects
 # SPDX-License-Identifier: LGPL-2.1-only
 #
 
+import logging
+
 from vyatta_policy_qos_vci.subport import Subport
+
+LOG = logging.getLogger('Policy QoS VCI')
+
+POLICY_KEY = {
+    'bonding': 'vyatta-interfaces-bonding-qos-v1',
+    'dataplane': 'vyatta-policy-qos-v1'
+}
 
 class Interface:
     """
     A class for interface objects.  We will have one Interface object for
     each physical port that has QoS configured on it.
     """
-    def __init__(self, if_dict, qos_policy_dict):
+    def __init__(self, if_type, if_dict, qos_policy_dict):
         """
         Create an interface object for a physical port
+        if_type is one of "dataplane" or "bonding"
         """
         self._if_dict = if_dict
         self._name = if_dict.get('tagnode')
@@ -42,7 +52,11 @@ class Interface:
             except KeyError:
                 pass
 
-        if_policy_name = if_policy_dict['vyatta-policy-qos-v1:qos']
+        # We have two different namespaces choices to deal with:
+        # vyatta-policy-qos-v1 - the standard and switch qos namespace
+        # vyatta-interfaces-bonding-qos-v1 - for bonded interfaces
+        namespace = POLICY_KEY[if_type]
+        if_policy_name = if_policy_dict.get(f"{namespace}:qos")
         policy = qos_policy_dict[if_policy_name]
         self._subports.append(Subport(self, 0, 0, policy))
         # cross-link the policy and the interface
@@ -58,8 +72,10 @@ class Interface:
             for vif in vif_list:
                 vlan_id = vif['tagnode']
                 if_policy_dict = vif['vyatta-interfaces-policy-v1:policy']
-                if_policy_name = if_policy_dict['vyatta-policy-qos-v1:qos']
-                policy = qos_policy_dict[if_policy_name]
+                if_policy_name = if_policy_dict.get(f"{namespace}:qos")
+                policy = None
+                if if_policy_name is not None:
+                    policy = qos_policy_dict[if_policy_name]
                 self._subports.append(Subport(self, subport_id, vlan_id,
                                               policy))
                 # cross-link the policy and interface
@@ -83,8 +99,10 @@ class Interface:
             for vlan in vlan_list:
                 vlan_id = vlan['vlan-id']
                 if_policy_dict = vlan['vyatta-interfaces-switch-policy-v1:policy']
-                if_policy_name = if_policy_dict['vyatta-policy-qos-v1:qos']
-                policy = qos_policy_dict[if_policy_name]
+                if_policy_name = if_policy_dict.get(f"{namespace}:qos")
+                policy = None
+                if if_policy_name is not None:
+                    policy = qos_policy_dict[if_policy_name]
                 self._subports.append(Subport(self, subport_id, vlan_id,
                                               policy))
                 # cross-link the policy and interface
