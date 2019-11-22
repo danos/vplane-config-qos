@@ -165,64 +165,90 @@ class Provisioner:
         """
         Detach the QoS policy from the specified interface.
         """
+        cmd_count = 0
         key = f"qos {interface.ifindex}"
         cmd = f"{key} disable"
         for dataplane in ctrl.get_dataplanes():
             with dataplane:
                 ctrl.store(key, cmd, interface.name, action="DELETE")
+                LOG.debug(f"delete {cmd}")
+                cmd_count += 1
+
+        return cmd_count
 
     def _delete_interfaces(self, ctrl):
         """
         Disable QoS policies from all the interfaces on the deletes list
         """
+        cmd_count = 0
         for interface in self._if_deletes:
-            self._detach_policy(ctrl, interface)
+            cmd_count += self._detach_policy(ctrl, interface)
+
+        return cmd_count
 
     def _attach_policy(self, ctrl, interface):
         """
         Attach a QoS policy to the specified interface
         """
+        cmd_count = 0
         key = f"qos {interface.ifindex}"
         for dataplane in ctrl.get_dataplanes():
             with dataplane:
                 for cmd in interface.commands():
                     path = f"{key} {cmd}"
                     ctrl.store(path, cmd, interface.name, "SET")
+                    LOG.debug(f"set {cmd}")
+                    cmd_count += 1
+
+        return cmd_count
 
     def _create_interfaces(self, ctrl):
         """
         Attach QoS policies to interfaces that didn't have them before
         """
+        cmd_count = 0
         for interface in self._if_creates:
-            self._attach_policy(ctrl, interface)
+            cmd_count += self._attach_policy(ctrl, interface)
+
+        return cmd_count
 
     def _update_interfaces(self, ctrl):
         """
         Update the interfaces with modified QoS policies, by first detaching the
         old policy, then attaching the new policy
         """
-        cmd_list = []
+        cmd_count = 0
         for interface in self._if_updates:
-            self._detach_policy(ctrl, interface)
-            self._attach_policy(ctrl, interface)
+            cmd_count += self._detach_policy(ctrl, interface)
+            cmd_count += self._attach_policy(ctrl, interface)
 
-        return cmd_list
+        return cmd_count
 
     def _delete_objects(self, ctrl):
         """ Delete any old mark-maps or action-groups"""
+        cmd_count = 0
         for dataplane in ctrl.get_dataplanes():
             with dataplane:
                 for obj in self._obj_delete:
                     (path, cmd) = obj.delete_cmd()
                     ctrl.store(path, cmd, "ALL", "DELETE")
+                    LOG.debug(f"delete {cmd}")
+                    cmd_count += 1
+
+        return cmd_count
 
     def _create_objects(self, ctrl):
         """ Create any new or modified mark-maps or action-groups"""
+        cmd_count = 0
         for dataplane in ctrl.get_dataplanes():
             with dataplane:
                 for obj in self._obj_create:
                     for (path, cmd) in obj.commands():
                         ctrl.store(path, cmd, "ALL", "SET")
+                        LOG.debug(f"set {cmd}")
+                        cmd_count += 1
+
+        return cmd_count
 
     def _qos_commit(self, ctrl):
         """
@@ -232,15 +258,20 @@ class Provisioner:
         for dataplane in ctrl.get_dataplanes():
             with dataplane:
                 ctrl.store("qos commit", "qos commit", "ALL", "SET")
+                LOG.debug("set qos commit")
 
     def commands(self, ctrl):
         """
         Write the necessary commands to vplaned's cstore to delete, modify
         and create the required QoS objects
         """
-        self._delete_objects(ctrl)
-        self._create_objects(ctrl)
-        self._delete_interfaces(ctrl)
-        self._update_interfaces(ctrl)
-        self._create_interfaces(ctrl)
-        self._qos_commit(ctrl)
+        cmd_count = 0
+        cmd_count += self._delete_objects(ctrl)
+        cmd_count += self._create_objects(ctrl)
+        cmd_count += self._delete_interfaces(ctrl)
+        cmd_count += self._update_interfaces(ctrl)
+        cmd_count += self._create_interfaces(ctrl)
+        if cmd_count != 0:
+            self._qos_commit(ctrl)
+
+        return
