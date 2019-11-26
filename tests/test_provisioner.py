@@ -107,6 +107,37 @@ TEST_DATA = [
                         }
                     ]
                 }
+            },
+            'vyatta-resources-v1:resources': {
+	        'vyatta-resources-group-misc-v1:group': {
+		    'vyatta-resources-dscp-group-v1:dscp-group': [
+			{
+			    'group-name': 'group-a',
+			    'dscp': [
+                                '0', '1', '2', '3', '4', '5', '6', '7', '8',
+                                '9', '10', '11', '12', '13', '14', '15'
+                            ]
+			}, {
+			    'group-name': 'group-b',
+			    'dscp': [
+                                '16', '17', '18', '19', '20', '21', '22', '23',
+                                '24', '25', '26', '27', '28', '29', '30', '31'
+                            ]
+			}, {
+			    'group-name': 'group-c',
+			    'dscp': [
+                                '32', '33', '34', '35', '36', '37', '38', '39',
+                                '40', '41', '42', '43', '44', '45', '46', '47'
+                            ]
+			}, {
+			    'group-name': 'group-d',
+			    'dscp': [
+                                '48', '49', '50', '51', '52', '53', '54', '55',
+                                '56', '57', '58', '59', '60', '61', '62', '63'
+                            ]
+			}
+		    ]
+	        }
             }
         },
         # expected_result
@@ -378,6 +409,30 @@ TEST_DATA = [
             (
                 'qos commit',
                 'qos commit',
+                'ALL',
+                'SET'
+            ),
+            (
+                'resources group dscp-group group-a dscp',
+                'npf-cfg add dscp-group:group-a 0 0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15',
+                'ALL',
+                'SET'
+            ),
+            (
+                'resources group dscp-group group-b dscp',
+                'npf-cfg add dscp-group:group-b 0 16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31',
+                'ALL',
+                'SET'
+            ),
+            (
+                'resources group dscp-group group-c dscp',
+                'npf-cfg add dscp-group:group-c 0 32;33;34;35;36;37;38;39;40;41;42;43;44;45;46;47',
+                'ALL',
+                'SET'
+            ),
+            (
+                'resources group dscp-group group-d dscp',
+                'npf-cfg add dscp-group:group-d 0 48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63',
                 'ALL',
                 'SET'
             )

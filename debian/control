@@ -4,7 +4,8 @@ Priority: extra
 Maintainer: Vyatta Package Maintainers <DL-vyatta-help@att.com>
 Build-Depends: debhelper (>= 9), autotools-dev,
 	       autoconf, automake, cpio, dh-yang, dh-vci, dh-python,
-	       python3, python3-all, python3-setuptools, python3-pytest
+	       python3, python3-all, python3-setuptools, python3-pytest,
+	       vyatta-resources-group-lib
 Standards-Version: 3.9.6
 
 Package: vplane-config-qos

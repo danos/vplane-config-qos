@@ -20,6 +20,7 @@ vyatta-dataplane configuration commands to vplaned's cstore.
 import logging
 import json
 
+from vyatta.npf.npf_config import NpfConfig
 from vyatta_policy_qos_vci.qos_config import QosConfig
 
 LOG = logging.getLogger('Policy QoS VCI')
@@ -87,7 +88,7 @@ class Provisioner:
     has changed (if anything) between the old configuration and the new one.
     Based on the changes it decides which interfaces need to disabled and
     then re-enabled with the new configuration.  Changes to global objects
-    like global profiles, mark-maps or action-groups make affect multiple
+    like global profiles, mark-maps or action-groups may affect multiple
     interfaces.
     """
     def __init__(self, old, new):
@@ -101,6 +102,14 @@ class Provisioner:
         self._obj_update = []
         self._obj_create = []
 
+        # First process the NPF resources group config so that the resources
+        # group end up at the beginning of the object lists.
+        old_config = NpfConfig(old)
+        new_config = NpfConfig(new)
+
+        self._check_dscp_groups(old_config, new_config)
+
+        # Now process the QoS config
         old_config = QosConfig(old)
         new_config = QosConfig(new)
 
@@ -199,6 +208,26 @@ class Provisioner:
     def _check_for_deferred_interfaces(self, new_config):
         """ Build a list of deferred interface names """
         self._if_deferred = new_config.deferred_interfaces
+
+    def _check_dscp_groups(self, old_config, new_config):
+        """ Check for any changes to dscp-groups """
+        for dscp_group in new_config.dscp_groups.values():
+            old_dscp_group = old_config.get_dscp_group(dscp_group.name)
+            if old_dscp_group is not None:
+                # We have an existing dscp-group, has it changed?
+                if dscp_group != old_dscp_group:
+                    # It has changed, delete the old, create the new
+                    self._obj_delete.append(old_dscp_group)
+                    self._obj_create.append(dscp_group)
+            else:
+                # We have a new dscp-group
+                self._obj_create.append(dscp_group)
+
+        for dscp_group in old_config.dscp_groups.values():
+            new_dscp_group = new_config.get_dscp_group(dscp_group.name)
+            if new_dscp_group is None:
+                # Delete the old dscp-group
+                self._obj_delete.append(dscp_group)
 
     @property
     def deferred_interfaces(self):
