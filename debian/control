@@ -81,6 +81,7 @@ Package: vyatta-policy-qos-vci
 Architecture: any
 Priority: extra
 Depends: python3, python3-vci, python3-systemd, ${misc:Depends},
+	 vyatta-resources-group-v1-yang (>= 4.1.0),
 	 ${shlibs:depends}
 Built-Using: ${misc:Built-Using}
 Description: Policy QoS VCI Service

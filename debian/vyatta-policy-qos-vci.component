@@ -6,6 +6,7 @@ ConfigFile=/etc/vyatta/policy-qos-requested.json, /etc/vyatta/policy-qos-actione
 
 [Model net.vyatta.vci.policy.qos.v1]
 Modules=vyatta-policy-qos-v1, vyatta-policy-action-v1, \
-vyatta-interfaces-bonding-qos-v1, vyatta-interfaces-vhost-qos-v1
+vyatta-interfaces-bonding-qos-v1, vyatta-interfaces-vhost-qos-v1, \
+vyatta-resources-dscp-group-v1
 
 ModelSets=vyatta-v1

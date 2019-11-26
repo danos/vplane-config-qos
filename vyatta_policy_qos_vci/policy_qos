@@ -20,177 +20,12 @@ import vci
 
 from vplaned import Controller, ControllerException
 
-from vyatta import configd
-
 from vyatta_policy_qos_vci.provisioner import Provisioner
 from vyatta_policy_qos_vci.provisioner import get_requested_config
 from vyatta_policy_qos_vci.provisioner import get_actioned_config
 from vyatta_policy_qos_vci.provisioner import save_requested_config
 from vyatta_policy_qos_vci.provisioner import save_actioned_config
 from vyatta_policy_qos_vci.qos_op_mode import convert_if_list
-
-DSCP_GROUPS_PATH = "resources group dscp-group"
-
-def if_plug_unplug(notification):
-    """
-    Called whenever a deferred interface gets plugged in or out.
-    On software VMs tunnels are deferred interfaces, but dataplane
-    interfaces are not.  On VNF systems, vhost interfaces are also deferred.
-    On hardware platforms, both tunnels and dataplane interfaces are deferred.
-    """
-    global deferred_interfaces
-
-    LOG.debug(f"if-plug-unplug: {notification}")
-    if_name = notification['vyatta-ifmgr-v1:interface']['name']
-    if_state = notification['vyatta-ifmgr-v1:interface']['state']
-
-    if if_name in deferred_interfaces:
-        if if_state == 'plugged':
-            # We have a new interface to configure
-            deferred_interfaces.remove(if_name)
-
-            # At this point we need to compare the saved-requested verses the
-            # saved-actioned configs.  The saved-requested should have the
-            # recently plugged-in interface, the saved-actioned config won't.
-            requested_config = get_requested_config()
-            send_qos_config_to_dataplane(requested_config)
-
-
-def npf_get_dscp_groups():
-    """
-    Called when the Policy QoS VCI process is started.  It gathers the names
-    of the dscp-group currently stored in configd to establish the correct
-    initial context.  This context is then updated by NPF notifications that
-    are handled by npf_updates.
-    """
-    try:
-        client = configd.Client()
-    except configd.Exception as exc:
-        LOG.error(f"Cannot establish client session {str(exc).strip()}")
-        return []
-
-    try:
-        value = client.node_get(configd.Client.RUNNING, DSCP_GROUPS_PATH)
-    except configd.Exception as exc:
-        LOG.error(f"Cannot get node {DSCP_GROUPS_PATH}, {str(exc).strip()}")
-        return []
-
-    return value
-
-#def npf_get_dscp_groups():
-#    """
-#    Called when the Policy QoS VCI process is started.  It gathers the names
-#    of the dscp-group currently programmed in the dataplane to establish the
-#    correct initial context.  This context is then updated by NPF notifications
-#    that are handled by npf_updates.
-#    """
-#    op_mode_state = None
-#    name_list = []
-#    try:
-#        with Controller() as ctrl:
-#            for dataplane in ctrl.get_dataplanes():
-#                with dataplane:
-#                    op_mode_state = dataplane.json_command("npf-op dump groups")
-#
-#                    rule_groups_list = op_mode_state["rule_groups"]
-#                    if rule_groups_list:
-#                        for rule_group in rule_groups_list:
-#                            if rule_group["group_class"] == "dscp-group":
-#                                name_list.append(rule_group["group"])
-#
-#    except ControllerException:
-#        LOG.error("Failed to connect with vplane-controller")
-#
-#    LOG.debug(f"dscp-groups: {name_list}")
-#    return name_list
-
-def issue_qos_commit():
-    """
-    Send a 'qos commit' to the dataplane telling it to re-evaluate any QoS
-    config that uses dscp-groups.
-    """
-    try:
-        with Controller() as ctrl:
-            for dataplane in ctrl.get_dataplanes():
-                with dataplane:
-                    ctrl.store("qos commit", "qos commit", "ALL", "SET")
-
-    except ControllerException:
-        LOG.error("Failed to connect with vplane-controller")
-
-
-def npf_update(notification):
-    """
-    Called when the NPF configuration has been updated.  If the QoS config
-    arrived first, it will be waiting to be provisioned.
-    """
-#    global qos_config
-#    global dscp_groups
-#
-#    if 'vyatta-npf-v1:dscp-groups' in notification:
-#        groups = notification['vyatta-npf-v1:dscp-groups']
-#        created = groups.get('created')
-#        if created:
-#            for group in created:
-#                if group not in dscp_groups:
-#                    dscp_groups.append(group)
-#
-#        deleted = groups.get('deleted')
-#        if deleted:
-#            for group in deleted:
-#                if group in dscp_groups:
-#                    dscp_groups.remove(group)
-
-    if 'vyatta-npf-v1:dscp-groups' in notification:
-        groups = notification['vyatta-npf-v1:dscp-groups']
-        created = groups.get('created')
-        modified = groups.get('modified')
-        deleted = groups.get('deleted')
-        LOG.debug(f"NPF update: created: {created}, modified: {modified}, deleted: {deleted}")
-
-    if qos_config is None:
-        # We must send down a qos-commit command to the dataplane to tell it
-        # to re-evaluate any config that uses dscp-groups
-        LOG.debug(f"NPF update: no QoS config waiting - issuing qos-commit")
-        issue_qos_commit()
-    else:
-        LOG.debug("NPF update: QoS config waiting to be provisioned")
-        send_qos_config_to_dataplane(qos_config)
-
-
-#def ispresent(name, data):
-#    """
-#    Does the specified name appears anywhere as a key in the config JSON
-#    """
-#    if isinstance(data, list):
-#        for item in data:
-#            if isinstance(item, dict):
-#                return ispresent(name, item)
-#    elif isinstance(data, dict):
-#        if name in data:
-#            return True
-#        for value in data.values():
-#            result = ispresent(name, value)
-#            if result is True:
-#                return result
-#
-#    return False
-
-def find(name, data, name_list):
-    """
-    Does the specified name appear anywhere as a key in the data dict,
-    if so build a list of values attached to it.
-    """
-    if isinstance(data, list):
-        for item in data:
-            if isinstance(item, dict):
-                find(name, item, name_list)
-    elif isinstance(data, dict):
-        if name in data:
-            name_list.append(data[name])
-            return
-        for value in data.values():
-            find(name, value, name_list)
 
 
 def remove_deferred_interfaces(config, deferred_if_list):
@@ -213,7 +48,6 @@ def send_qos_config_to_dataplane(new_config):
     """
     We are now ready to send the QoS configuration down to the vyatta-dataplane.
     """
-    global qos_config
     global deferred_interfaces
 
     actioned_config = get_actioned_config()
@@ -222,7 +56,6 @@ def send_qos_config_to_dataplane(new_config):
         with Controller() as ctrl:
             prov.commands(ctrl)
             save_requested_config(new_config)
-            qos_config = None
 
     except ControllerException:
         LOG.error("Failed to connect to vplane-controller")
@@ -234,6 +67,33 @@ def send_qos_config_to_dataplane(new_config):
     remove_deferred_interfaces(actioned_config, prov.deferred_interfaces)
     save_actioned_config(actioned_config)
 
+    return actioned_config
+
+
+def if_plug_unplug(notification):
+    """
+    Called whenever a deferred interface gets plugged in or out.
+    On software VMs, tunnels are deferred interfaces, but dataplane
+    interfaces are not.  On VNF systems, vhost interfaces are also deferred.
+    On hardware platforms, both tunnels and dataplane interfaces are deferred.
+    """
+    global deferred_interfaces
+
+    LOG.debug(f"if-plug-unplug: {notification}")
+    if_name = notification['vyatta-ifmgr-v1:interface']['name']
+    if_state = notification['vyatta-ifmgr-v1:interface']['state']
+
+    if if_name in deferred_interfaces:
+        if if_state == 'plugged':
+            # We have a new interface to configure
+            deferred_interfaces.remove(if_name)
+
+            # At this point we need to compare the saved-requested verses the
+            # saved-actioned configs.  The saved-requested should have the
+            # recently plugged-in interface, the saved-actioned config won't.
+            requested_config = get_requested_config()
+            send_qos_config_to_dataplane(requested_config)
+
 
 class Config(vci.Config):
     """
@@ -244,31 +104,11 @@ class Config(vci.Config):
         """
         Update the QoS config down in the dataplane from the VCI JSON
         """
-        global qos_config
-
         LOG.debug(f"Config:set - {new_config}")
-        self.config = new_config
 
-        # Get currently configured NPF's dscp-groups
-        dscp_groups = npf_get_dscp_groups()
-
-        wait_for_npf_update = False
-        dscp_group_name_list = []
-        find('group-name', new_config, dscp_group_name_list)
-        for dscp_group_name in dscp_group_name_list:
-            if dscp_group_name not in dscp_groups:
-                wait_for_npf_update = True
-                LOG.debug(f"Config:set - waiting for NPF update for {dscp_group_name}")
-
-        if wait_for_npf_update:
-            # Just save the QoS config until the NPF update is received
-            LOG.debug("Config:set - save QoS config until NPF update")
-            qos_config = new_config
-        else:
-            # NPF has already been configured or there is no dependency on
-            # any dscp-groups, so we can issue the QoS commands
-            send_qos_config_to_dataplane(new_config)
-
+        # Issue the required NPF and QoS commands, and save the actioned
+        # configuration
+        self.config = send_qos_config_to_dataplane(new_config)
         return
 
     def get(self):
@@ -335,7 +175,7 @@ if __name__ == "__main__":
                 .config(Config())
                 .state(State())
                )
-         .subscribe("vyatta-npf-v1", "configuration-updated", npf_update)
+#         .subscribe("vyatta-npf-v1", "configuration-updated", npf_update)
          .subscribe("vyatta-ifmgr-v1", "interface-state", if_plug_unplug)
          .run()
          .wait())

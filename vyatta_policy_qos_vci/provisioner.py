@@ -20,7 +20,7 @@ vyatta-dataplane configuration commands to vplaned's cstore.
 import logging
 import json
 
-from vyatta.npf.npf_config import NpfConfig
+from vyatta.npf.npf_rg_config import RgConfig
 from vyatta_policy_qos_vci.qos_config import QosConfig
 
 LOG = logging.getLogger('Policy QoS VCI')
@@ -104,8 +104,8 @@ class Provisioner:
 
         # First process the NPF resources group config so that the resources
         # group end up at the beginning of the object lists.
-        old_config = NpfConfig(old)
-        new_config = NpfConfig(new)
+        old_config = RgConfig(old)
+        new_config = RgConfig(new)
 
         self._check_dscp_groups(old_config, new_config)
 
