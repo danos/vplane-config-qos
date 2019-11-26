@@ -13,6 +13,7 @@ import logging
 import logging.handlers
 import sys
 
+from copy import deepcopy
 from systemd.journal import JournalHandler
 
 import vci
@@ -22,11 +23,38 @@ from vplaned import Controller, ControllerException
 from vyatta import configd
 
 from vyatta_policy_qos_vci.provisioner import Provisioner
-from vyatta_policy_qos_vci.provisioner import get_existing_config
-from vyatta_policy_qos_vci.provisioner import save_new_config
+from vyatta_policy_qos_vci.provisioner import get_requested_config
+from vyatta_policy_qos_vci.provisioner import get_actioned_config
+from vyatta_policy_qos_vci.provisioner import save_requested_config
+from vyatta_policy_qos_vci.provisioner import save_actioned_config
 from vyatta_policy_qos_vci.qos_op_mode import convert_if_list
 
 DSCP_GROUPS_PATH = "resources group dscp-group"
+
+def if_plug_unplug(notification):
+    """
+    Called whenever a deferred interface gets plugged in or out.
+    On software VMs tunnels are deferred interfaces, but dataplane
+    interfaces are not.  On VNF systems, vhost interfaces are also deferred.
+    On hardware platforms, both tunnels and dataplane interfaces are deferred.
+    """
+    global deferred_interfaces
+
+    LOG.debug(f"if-plug-unplug: {notification}")
+    if_name = notification['vyatta-ifmgr-v1:interface']['name']
+    if_state = notification['vyatta-ifmgr-v1:interface']['state']
+
+    if if_name in deferred_interfaces:
+        if if_state == 'plugged':
+            # We have a new interface to configure
+            deferred_interfaces.remove(if_name)
+
+            # At this point we need to compare the saved-requested verses the
+            # saved-actioned configs.  The saved-requested should have the
+            # recently plugged-in interface, the saved-actioned config won't.
+            requested_config = get_requested_config()
+            send_qos_config_to_dataplane(requested_config)
+
 
 def npf_get_dscp_groups():
     """
@@ -165,23 +193,46 @@ def find(name, data, name_list):
             find(name, value, name_list)
 
 
+def remove_deferred_interfaces(config, deferred_if_list):
+    """
+    Remove all references to interface names listed in the deferred_if_list
+    from the JSON config dictionary.
+    """
+    for ifname in deferred_if_list:
+        if_dict = config.get('vyatta-interfaces-v1:interfaces')
+        if if_dict:
+            for if_type_list in if_dict.values():
+                for index, if_type_dict in enumerate(if_type_list):
+                    for value in if_type_dict.values():
+                        if value == ifname:
+                            del if_type_list[index]
+                            break
+
+
 def send_qos_config_to_dataplane(new_config):
     """
     We are now ready to send the QoS configuration down to the vyatta-dataplane.
     """
     global qos_config
+    global deferred_interfaces
 
-    existing_config = get_existing_config()
-    prov = Provisioner(existing_config, new_config)
+    actioned_config = get_actioned_config()
+    prov = Provisioner(actioned_config, new_config)
     try:
         with Controller() as ctrl:
             prov.commands(ctrl)
-            LOG.debug("QoS config sent to vyatta-dataplane")
-            save_new_config(new_config)
+            save_requested_config(new_config)
             qos_config = None
 
     except ControllerException:
         LOG.error("Failed to connect to vplane-controller")
+
+    LOG.debug(f"deferred interfaces: {prov.deferred_interfaces}")
+    # Copy the requested config, then remove any deferred interface, then
+    # save it as the actioned config.
+    actioned_config = deepcopy(new_config)
+    remove_deferred_interfaces(actioned_config, prov.deferred_interfaces)
+    save_actioned_config(actioned_config)
 
 
 class Config(vci.Config):
@@ -240,7 +291,6 @@ class State(vci.State):
         Ask the vyatta-dataplane to generate the JSON for the
         current QoS state and return it
         """
-        sys.stdout.flush()
         op_mode_state = None
         with Controller() as ctrl:
             for dataplane in ctrl.get_dataplanes():
@@ -255,7 +305,7 @@ class State(vci.State):
 
         # We must include the namespace at the top level, and everywhere that
         # the namespace changes
-        if not if_list:
+        if not yang_state:
             return {}
 
         return {'vyatta-policy-v1:policy': {'vyatta-policy-qos-v1:qos':
@@ -276,6 +326,7 @@ if __name__ == "__main__":
             LOG.debug("Debug enabled")
 
         qos_config = None
+        deferred_interfaces = []
 
         LOG.debug("About to register with VCI")
 
@@ -285,6 +336,7 @@ if __name__ == "__main__":
                 .state(State())
                )
          .subscribe("vyatta-npf-v1", "configuration-updated", npf_update)
+         .subscribe("vyatta-ifmgr-v1", "interface-state", if_plug_unplug)
          .run()
          .wait())
 

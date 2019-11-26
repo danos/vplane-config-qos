@@ -29,6 +29,14 @@ TEST_DATA = {
                     "vyatta-policy-qos-v1:qos": "policy-1"
                 }
             }
+        ],
+        "vyatta-interfaces-vhost-v1:vhost": [
+            {
+                "name": "dp0vhost0",
+                "vyatta-interfaces-vhost-policy-v1:policy": {
+                    "vyatta-interfaces-vhost-qos-v1:qos": "policy-1"
+                }
+            }
         ]
     },
     "vyatta-policy-v1:policy": {
@@ -109,7 +117,7 @@ def test_qosconfig():
     """ Simple Unit Test for the QoSConfig class """
     config = QosConfig(TEST_DATA)
     assert config is not None
-    assert len(config.interfaces) == 1
+    assert len(config.interfaces) == 2
     assert config.find_interface("lo") is not None
     assert len(config.global_profiles) == 1
     assert config.find_global_profile("global-profile-1") is not None
@@ -117,3 +125,4 @@ def test_qosconfig():
     assert config.get_mark_map("test123") is not None
     assert config.get_action_group("action-group-1") is not None
     assert config.get_action_group("action-group-2") is not None
+    assert "dp0vhost0" in config.deferred_interfaces

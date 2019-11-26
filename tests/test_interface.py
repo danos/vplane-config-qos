@@ -143,6 +143,28 @@ VM_BONDED_VLAN_DICT = {
     ]
 }
 
+VNF_VHOST_IF_DICT = {
+    'name': 'lo',
+    'vyatta-interfaces-vhost-policy-v1:policy': {
+        'vyatta-interfaces-vhost-qos-v1:qos': 'policy-1'
+    }
+}
+
+VNF_VHOST_VLAN_DICT = {
+    'name': 'lo',
+    'vyatta-interfaces-vhost-policy-v1:policy': {
+        'vyatta-interfaces-vhost-qos-v1:qos': 'policy-1'
+    },
+    'vyatta-interfaces-vhost-vif-v1:vif': [
+        {
+            'tagnode': 10,
+            'vyatta-interfaces-vhost-policy-v1:policy': {
+                'vyatta-interfaces-vhost-qos-v1:qos': 'policy-2'
+            }
+        }
+    ]
+}
+
 SIAD_POLICY_3_DICT = {
     "id": "policy-3",
     "shaper": {
@@ -389,6 +411,74 @@ TEST_DATA = [
         # expected_data
         [
             # Bonded interface trunk and vlan commands
+            "qos 1 port subports 2 pipes 1 profiles 2 overhead 24",
+            "qos 1 subport 0 rate 125000000 size 0 period 40",
+            "qos 1 subport 0 queue 0 percent 100 size 0",
+            "qos 1 param subport 0 0 limit packets 64",
+            "qos 1 subport 0 queue 1 percent 100 size 0",
+            "qos 1 param subport 0 1 limit packets 64",
+            "qos 1 subport 0 queue 2 percent 100 size 0",
+            "qos 1 param subport 0 2 limit packets 64",
+            "qos 1 subport 0 queue 3 percent 100 size 0",
+            "qos 1 param subport 0 3 limit packets 64",
+            "qos 1 vlan 0 0",
+            "qos 1 profile 0 percent 100 size 0 period 10",
+            "qos 1 profile 0 queue 0 percent 100 size 0",
+            "qos 1 profile 0 queue 1 percent 100 size 0",
+            "qos 1 profile 0 queue 2 percent 100 size 0",
+            "qos 1 profile 0 queue 3 percent 100 size 0",
+            "qos 1 pipe 0 0 0",
+            "qos 1 subport 1 rate 250000000 size 0 period 40",
+            "qos 1 subport 1 queue 0 percent 100 size 0",
+            "qos 1 param subport 1 0 limit packets 64",
+            "qos 1 subport 1 queue 1 percent 100 size 0",
+            "qos 1 param subport 1 1 limit packets 64",
+            "qos 1 subport 1 queue 2 percent 100 size 0",
+            "qos 1 param subport 1 2 limit packets 64",
+            "qos 1 subport 1 queue 3 percent 100 size 0",
+            "qos 1 param subport 1 3 limit packets 64",
+            "qos 1 vlan 10 1",
+            "qos 1 profile 1 percent 100 size 0 period 10",
+            "qos 1 profile 1 queue 0 percent 100 size 0",
+            "qos 1 profile 1 queue 1 percent 100 size 0",
+            "qos 1 profile 1 queue 2 percent 100 size 0",
+            "qos 1 profile 1 queue 3 percent 100 size 0",
+            "qos 1 pipe 1 0 1",
+            "qos 1 enable"
+        ]
+    ),
+    (
+        # test_input
+        ('vhost', VNF_VHOST_IF_DICT),
+        # expected_data
+        [
+            # vhost interface trunk commands
+            "qos 1 port subports 1 pipes 1 profiles 1 overhead 24",
+            "qos 1 subport 0 rate 125000000 size 0 period 40",
+            "qos 1 subport 0 queue 0 percent 100 size 0",
+            "qos 1 param subport 0 0 limit packets 64",
+            "qos 1 subport 0 queue 1 percent 100 size 0",
+            "qos 1 param subport 0 1 limit packets 64",
+            "qos 1 subport 0 queue 2 percent 100 size 0",
+            "qos 1 param subport 0 2 limit packets 64",
+            "qos 1 subport 0 queue 3 percent 100 size 0",
+            "qos 1 param subport 0 3 limit packets 64",
+            "qos 1 vlan 0 0",
+            "qos 1 profile 0 percent 100 size 0 period 10",
+            "qos 1 profile 0 queue 0 percent 100 size 0",
+            "qos 1 profile 0 queue 1 percent 100 size 0",
+            "qos 1 profile 0 queue 2 percent 100 size 0",
+            "qos 1 profile 0 queue 3 percent 100 size 0",
+            "qos 1 pipe 0 0 0",
+            "qos 1 enable"
+        ]
+    ),
+    (
+        # test_input
+        ('vhost', VNF_VHOST_VLAN_DICT),
+        # expected_data
+        [
+            # vhost interface trunk and vlan commands
             "qos 1 port subports 2 pipes 1 profiles 2 overhead 24",
             "qos 1 subport 0 rate 125000000 size 0 period 40",
             "qos 1 subport 0 queue 0 percent 100 size 0",

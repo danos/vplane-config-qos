@@ -16,7 +16,8 @@ LOG = logging.getLogger('Policy QoS VCI')
 
 POLICY_KEY = {
     'bonding': 'vyatta-interfaces-bonding-qos-v1',
-    'dataplane': 'vyatta-policy-qos-v1'
+    'dataplane': 'vyatta-policy-qos-v1',
+    'vhost': 'vyatta-interfaces-vhost-qos-v1'
 }
 
 class Interface:
@@ -27,10 +28,17 @@ class Interface:
     def __init__(self, if_type, if_dict, qos_policy_dict):
         """
         Create an interface object for a physical port
-        if_type is one of "dataplane" or "bonding"
+        if_type is one of "dataplane", "bonding" or "vhost"
         """
         self._if_dict = if_dict
-        self._name = if_dict.get('tagnode')
+        if if_type == 'vhost':
+            self._name = if_dict.get('name')
+            policy_namespace = 'vyatta-interfaces-vhost-policy-v1'
+            vif_namespace = 'vyatta-interfaces-vhost-vif-v1:'
+        else:
+            self._name = if_dict.get('tagnode')
+            policy_namespace = 'vyatta-interfaces-policy-v1'
+            vif_namespace = ''
         self._ifindex = None
         self._subports = []
         self._policies = []
@@ -41,7 +49,7 @@ class Interface:
         # Get the trunk's QoS policy name
         try:
             # Try the normal vyatta VM style
-            if_policy_dict = if_dict['vyatta-interfaces-policy-v1:policy']
+            if_policy_dict = if_dict[f"{policy_namespace}:policy"]
 
         except KeyError:
             try:
@@ -52,9 +60,10 @@ class Interface:
             except KeyError:
                 pass
 
-        # We have two different namespaces choices to deal with:
+        # We have three different namespaces choices to deal with:
         # vyatta-policy-qos-v1 - the standard and switch qos namespace
         # vyatta-interfaces-bonding-qos-v1 - for bonded interfaces
+        # vyatta-interfaces-vhost-qos-v1 - for vhost interfaces
         namespace = POLICY_KEY[if_type]
         if_policy_name = if_policy_dict.get(f"{namespace}:qos")
         policy = qos_policy_dict[if_policy_name]
@@ -66,12 +75,12 @@ class Interface:
         # Look for subports
 
         # Try the normal vyatta VM style
-        vif_list = if_dict.get('vif')
+        vif_list = if_dict.get(f"{vif_namespace}vif")
         if vif_list is not None:
             subport_id = 1
             for vif in vif_list:
                 vlan_id = vif['tagnode']
-                if_policy_dict = vif['vyatta-interfaces-policy-v1:policy']
+                if_policy_dict = vif[f"{policy_namespace}:policy"]
                 if_policy_name = if_policy_dict.get(f"{namespace}:qos")
                 policy = None
                 if if_policy_name is not None:
@@ -177,9 +186,9 @@ class Interface:
                 self._ifindex = if_file.read().replace('\n', '')
 
         except OSError:
-            # If we can't open the file we must be running a unit-test
-            # so set the ifindex to one.
-            self._ifindex = 1
+            # If we can't open the file, then the interface in question
+            # is probably a deferred interface, e.g. a vhost interface.
+            LOG.debug(f"Failed to open {filename} for {self._name}")
 
         return self._ifindex
 

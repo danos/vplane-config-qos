@@ -2,10 +2,10 @@
 Name=net.vyatta.vci.policy.qos
 Description=Policy QOS VCI Component
 ExecName=/opt/vyatta/sbin/policy_qos
-ConfigFile=/etc/vyatta/policy-qos.json
+ConfigFile=/etc/vyatta/policy-qos-requested.json, /etc/vyatta/policy-qos-actioned.json
 
 [Model net.vyatta.vci.policy.qos.v1]
 Modules=vyatta-policy-qos-v1, vyatta-policy-action-v1, \
-vyatta-interfaces-bonding-qos-v1
+vyatta-interfaces-bonding-qos-v1, vyatta-interfaces-vhost-qos-v1
 
 ModelSets=vyatta-v1

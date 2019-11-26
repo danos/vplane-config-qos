@@ -99,6 +99,19 @@ class QosConfig:
         return self._interfaces.get(name)
 
     @property
+    def deferred_interfaces(self):
+        """
+        Return a list of deferred interface names. Deferred interfaces have an
+        ifindex of None.
+        """
+        deferred_list = []
+        for interface in self._interfaces.values():
+            if interface.ifindex is None:
+                deferred_list.append(interface.name)
+
+        return deferred_list
+
+    @property
     def global_profiles(self):
         """ Return a list of global QoS profile objects """
         return self._global_profiles

@@ -51,8 +51,8 @@ def test_qos_op_mode():
     with open("./tests/qos_op_mode_expected_results.json") as results_data:
         expected_results = json.load(results_data)
 
-    with patch('vyatta_policy_qos_vci.qos_op_mode.get_existing_config') as mock_get_existing_config:
-        mock_get_existing_config.return_value = config
+    with patch('vyatta_policy_qos_vci.qos_op_mode.get_actioned_config') as mock_get_actioned_config:
+        mock_get_actioned_config.return_value = config
         with patch('vyatta_policy_qos_vci.qos_op_mode.get_sysfs_value') as mock_get_sysfs_value:
             mock_get_sysfs_value.return_value = "8"
 

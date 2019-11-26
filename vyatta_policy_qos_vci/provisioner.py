@@ -24,28 +24,61 @@ from vyatta_policy_qos_vci.qos_config import QosConfig
 
 LOG = logging.getLogger('Policy QoS VCI')
 
-POLICY_QOS_CONFIG_FILE = '/etc/vyatta/policy-qos.json'
 
-def get_existing_config():
-    """ Try to return the existing JSON QoS configuration """
-    existing_config = {}
+#
+# We have two config files, the requested version that contains all the
+# config information, and the actioned version that contains all the
+# config information that QoS VCI was able to apply at the last commit
+# point.  The main difference between these two files will be that the
+# actioned version will be missing any deferred interface config.
+# When a deferred interface is plugged in, QoS VCI receives a notification
+# and then compares the requested config against the actioned config to see
+# if the newly plugged in interface has some QoS config waiting for it.
+#
+POLICY_QOS_REQUESTED_CONFIG_FILE = '/etc/vyatta/policy-qos-requested.json'
+POLICY_QOS_ACTIONED_CONFIG_FILE = '/etc/vyatta/policy-qos-actioned.json'
+
+
+def get_config(filename):
+    """ Try to return a JSON QoS configuration file """
+    config = {}
     try:
-        with open(POLICY_QOS_CONFIG_FILE) as json_data:
-            existing_config = json.load(json_data)
+        with open(filename) as json_data:
+            config = json.load(json_data)
 
     except OSError:
         pass
 
     except json.JSONDecodeError:
-        LOG.error(f"Failed to decode JSON config file {POLICY_QOS_CONFIG_FILE}")
+        LOG.error(f"Failed to decode JSON config file {filename}")
 
-    return existing_config
+    return config
 
 
-def save_new_config(new_config):
-    """ Save the new JSON QoS configuration to the QoS config file """
-    with open(POLICY_QOS_CONFIG_FILE, "w") as write_file:
-        write_file.write(json.dumps(new_config, indent=4, sort_keys=True))
+def get_actioned_config():
+    """ Return the actioned QoS config file """
+    return get_config(POLICY_QOS_ACTIONED_CONFIG_FILE)
+
+
+def get_requested_config():
+    """ Return the requested QoS config file """
+    return get_config(POLICY_QOS_REQUESTED_CONFIG_FILE)
+
+
+def save_config(filename, config):
+    """ Save the JSON QoS configuration to the appropriate QoS config file """
+    with open(filename, "w") as write_file:
+        write_file.write(json.dumps(config, indent=4, sort_keys=True))
+
+
+def save_requested_config(config):
+    """ Save the config in the requested QoS config file """
+    save_config(POLICY_QOS_REQUESTED_CONFIG_FILE, config)
+
+
+def save_actioned_config(config):
+    """ Save the config in the actioned QoS config file """
+    save_config(POLICY_QOS_ACTIONED_CONFIG_FILE, config)
 
 
 class Provisioner:
@@ -62,6 +95,7 @@ class Provisioner:
         self._if_deletes = []
         self._if_updates = []
         self._if_creates = []
+        self._if_deferred = []
 
         self._obj_delete = []
         self._obj_update = []
@@ -75,6 +109,7 @@ class Provisioner:
         self._check_global_profiles(old_config, new_config)
         self._check_mark_maps(old_config, new_config)
         self._check_action_groups(old_config, new_config)
+        self._check_for_deferred_interfaces(new_config)
 
     def _check_interfaces(self, old_config, new_config):
         """ Check for any changes to interface config """
@@ -161,18 +196,29 @@ class Provisioner:
                 # Delete the old action-group
                 self._obj_delete.append(action_group)
 
+    def _check_for_deferred_interfaces(self, new_config):
+        """ Build a list of deferred interface names """
+        self._if_deferred = new_config.deferred_interfaces
+
+    @property
+    def deferred_interfaces(self):
+        """ Return the list of interface names that have been deferred """
+        return self._if_deferred
+
     def _detach_policy(self, ctrl, interface):
         """
         Detach the QoS policy from the specified interface.
         """
+        # Deferred interfaces won't have an ifindex yet
         cmd_count = 0
-        key = f"qos {interface.ifindex}"
-        cmd = f"{key} disable"
-        for dataplane in ctrl.get_dataplanes():
-            with dataplane:
-                ctrl.store(key, cmd, interface.name, action="DELETE")
-                LOG.debug(f"delete {cmd}")
-                cmd_count += 1
+        if interface.ifindex is not None:
+            key = f"qos {interface.ifindex}"
+            cmd = f"{key} disable"
+            for dataplane in ctrl.get_dataplanes():
+                with dataplane:
+                    ctrl.store(key, cmd, interface.name, action="DELETE")
+                    LOG.debug(f"delete {cmd}")
+                    cmd_count += 1
 
         return cmd_count
 
@@ -190,15 +236,17 @@ class Provisioner:
         """
         Attach a QoS policy to the specified interface
         """
+        # Deferred interfaces won't have an ifindex yet
         cmd_count = 0
-        key = f"qos {interface.ifindex}"
-        for dataplane in ctrl.get_dataplanes():
-            with dataplane:
-                for cmd in interface.commands():
-                    path = f"{key} {cmd}"
-                    ctrl.store(path, cmd, interface.name, "SET")
-                    LOG.debug(f"set {cmd}")
-                    cmd_count += 1
+        if interface.ifindex is not None:
+            key = f"qos {interface.ifindex}"
+            for dataplane in ctrl.get_dataplanes():
+                with dataplane:
+                    for cmd in interface.commands():
+                        path = f"{key} {cmd}"
+                        ctrl.store(path, cmd, interface.name, "SET")
+                        LOG.debug(f"set {cmd}")
+                        cmd_count += 1
 
         return cmd_count
 
