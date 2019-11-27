@@ -2,7 +2,7 @@
 """
 A module to define the Subport class of object"
 """
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019-2020, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -34,8 +34,13 @@ class Subport:
 
     def build_profile_index(self, interface):
         """ Build the profile index table for this subport """
-        self._policy.shaper.build_profile_index(interface, self._vlan_id)
+        if self._policy is not None:
+            self._policy.shaper.build_profile_index(interface, self._vlan_id)
 
     def commands(self, interface):
         """ Issue the required 'subport' commands """
-        return self._policy.commands(interface, self._id, self._vlan_id)
+        cmd_list = []
+        if self._policy is not None:
+            cmd_list = self._policy.commands(interface, self._id, self._vlan_id)
+
+        return cmd_list

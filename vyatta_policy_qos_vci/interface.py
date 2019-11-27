@@ -2,7 +2,7 @@
 """
 A module to define the Interface class of objects
 """
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019-2020, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -10,6 +10,7 @@ A module to define the Interface class of objects
 
 import logging
 
+from vyatta_policy_qos_vci.ingress_map_binding import IngressMapBinding
 from vyatta_policy_qos_vci.subport import Subport
 
 LOG = logging.getLogger('Policy QoS VCI')
@@ -25,7 +26,7 @@ class Interface:
     A class for interface objects.  We will have one Interface object for
     each physical port that has QoS configured on it.
     """
-    def __init__(self, if_type, if_dict, qos_policy_dict):
+    def __init__(self, if_type, if_dict, qos_policy_dict, ingress_map_dict):
         """
         Create an interface object for a physical port
         if_type is one of "dataplane", "bonding" or "vhost"
@@ -41,6 +42,7 @@ class Interface:
             vif_namespace = ''
         self._ifindex = None
         self._subports = []
+        self._ingress_map_bindings = []
         self._policies = []
         self._profile_index = {}
 
@@ -53,7 +55,7 @@ class Interface:
 
         except KeyError:
             try:
-                # Try the SIAD hardware-switch platform style
+                # Try the hardware-switch platform style
                 if_policy_dict = if_dict['vyatta-interfaces-dataplane-switch-v1:switch-group']
                 port_params_dict = if_policy_dict['port-parameters']
                 if_policy_dict = port_params_dict['vyatta-interfaces-switch-policy-v1:policy']
@@ -65,12 +67,29 @@ class Interface:
         # vyatta-interfaces-bonding-qos-v1 - for bonded interfaces
         # vyatta-interfaces-vhost-qos-v1 - for vhost interfaces
         namespace = POLICY_KEY[if_type]
-        if_policy_name = if_policy_dict.get(f"{namespace}:qos")
-        policy = qos_policy_dict[if_policy_name]
-        self._subports.append(Subport(self, 0, 0, policy))
-        # cross-link the policy and the interface
-        self._policies.append(policy)
-        policy.add_interface(self)
+        if_policy_name = if_policy_dict.get(f'{namespace}:qos')
+        policy = None
+        if if_policy_name is not None:
+            policy = qos_policy_dict[if_policy_name]
+
+        if policy is not None:
+            subport = Subport(self, 0, 0, policy)
+            self._subports.append(subport)
+            # cross-link the policy and the interface
+            self._policies.append(policy)
+            policy.add_interface(self)
+
+        try:
+            ingress_map_name = if_policy_dict['vyatta-policy-qos-v1:ingress-map']
+            ingress_map = ingress_map_dict[ingress_map_name]
+            binding = IngressMapBinding(self, 0, ingress_map)
+            # cross-link the ingress-map and the binding
+            self._ingress_map_bindings.append(binding)
+            ingress_map.add_binding(binding)
+
+        except KeyError:
+            # Maybe there is no ingress map for this interface
+            pass
 
         # Look for subports
 
@@ -81,15 +100,19 @@ class Interface:
             for vif in vif_list:
                 vlan_id = vif['tagnode']
                 if_policy_dict = vif[f"{policy_namespace}:policy"]
-                if_policy_name = if_policy_dict.get(f"{namespace}:qos")
+                if_policy_name = if_policy_dict.get(f'{namespace}:qos')
                 policy = None
                 if if_policy_name is not None:
                     policy = qos_policy_dict[if_policy_name]
-                self._subports.append(Subport(self, subport_id, vlan_id,
-                                              policy))
-                # cross-link the policy and interface
-                self._policies.append(policy)
-                policy.add_interface(self)
+
+                subport = Subport(self, subport_id, vlan_id, policy)
+                self._subports.append(subport)
+                if policy is not None:
+                    # cross-link the policy and interface
+                    self._policies.append(policy)
+                    policy.add_interface(self)
+
+                # no ingress-maps on normal vyatta VMs
                 subport_id += 1
 
         # Try the SIAD hardware-switch platform style
@@ -108,16 +131,31 @@ class Interface:
             for vlan in vlan_list:
                 vlan_id = vlan['vlan-id']
                 if_policy_dict = vlan['vyatta-interfaces-switch-policy-v1:policy']
-                if_policy_name = if_policy_dict.get(f"{namespace}:qos")
+                if_policy_name = if_policy_dict.get(f'{namespace}:qos')
                 policy = None
                 if if_policy_name is not None:
                     policy = qos_policy_dict[if_policy_name]
-                self._subports.append(Subport(self, subport_id, vlan_id,
-                                              policy))
-                # cross-link the policy and interface
-                self._policies.append(policy)
-                policy.add_interface(self)
-                subport_id += 1
+
+                if policy is not None:
+                    subport = Subport(self, subport_id, vlan_id, policy)
+                    self._subports.append(subport)
+                    # cross-link the policy and interface
+                    self._policies.append(policy)
+                    policy.add_interface(self)
+                    subport_id += 1
+
+                try:
+                    ingress_map_name = if_policy_dict['vyatta-policy-qos-v1:ingress-map']
+                    ingress_map = ingress_map_dict[ingress_map_name]
+                    binding = IngressMapBinding(self, vlan_id, ingress_map)
+                    # cross-link the ingress-map and the binding
+                    self._ingress_map_bindings.append(binding)
+                    ingress_map.add_binding(binding)
+
+                except KeyError:
+                    # Maybe there's no ingress map for this vlan
+                    pass
+
 
         for subport in self._subports:
             subport.build_profile_index(self)
@@ -200,6 +238,14 @@ class Interface:
         """
         return self._policies
 
+    @property
+    def ingress_map_bindings(self):
+        """
+        Return the list of ingress-maps that are bound to this interface or
+        any vlans associated with this interface.
+        """
+        return self._ingress_map_bindings
+
     def commands(self):
         """
         Issue the QoS config to the vyatta-dataplane commands for QoS policy
@@ -210,17 +256,23 @@ class Interface:
         max_subports = len(self._subports)
         max_pipes = 0
         for subport in self._subports:
-            max_pipes = subport.policy.max_pipes(max_pipes)
-            # Only the trunk policy on subport 0 has a frame-overhead
-            if subport.id == 0:
-                overhead = subport.policy.overhead
+            if subport.policy is not None:
+                max_pipes = subport.policy.max_pipes(max_pipes)
+                # Only the trunk policy on subport 0 has a frame-overhead
+                if subport.id == 0:
+                    overhead = subport.policy.overhead
 
-        cmd = (f"{cmd_prefix} port subports {max_subports} pipes {max_pipes} "
-               f"profiles {self.profile_index_size} overhead {overhead}")
-        cmd_list.append(cmd)
+        if max_pipes != 0:
+            cmd = (f"{cmd_prefix} port subports {max_subports} "
+                   f"pipes {max_pipes} profiles {self.profile_index_size} "
+                   f"overhead {overhead}")
+            cmd_list.append(cmd)
+
 
         for subport in self._subports:
             cmd_list += subport.commands(self)
 
-        cmd_list.append(f"{cmd_prefix} enable")
+        if max_pipes != 0:
+            cmd_list.append(f"{cmd_prefix} enable")
+
         return cmd_list

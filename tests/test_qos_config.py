@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019-2020, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -109,7 +109,29 @@ TEST_DATA = {
                     "id": "global-profile-1"
                 }
             ]
-        }
+        },
+        'vyatta-policy-qos-v1:ingress-map': [
+            {
+                'id': 'in-map-1',
+                'pcp': [
+                    {'id': 0, 'designation': 0},
+                    {'id': 1, 'designation': 1},
+                    {'id': 2, 'designation': 2},
+                    {'id': 3, 'designation': 3},
+                    {'id': 4, 'designation': 4},
+                    {'id': 5, 'designation': 5},
+                    {'id': 6, 'designation': 6},
+                    {'id': 7, 'designation': 7}
+                ]
+            }, {
+                'id': 'in-map-2',
+                'dscp-group': [
+                    {'id': 'group-1', 'designation': 0},
+                    {'id': 'group-2', 'designation': 1},
+                    {'id': 'group-3', 'designation': 2}
+                ]
+            }
+        ]
     }
 }
 
@@ -125,4 +147,6 @@ def test_qosconfig():
     assert config.get_mark_map("test123") is not None
     assert config.get_action_group("action-group-1") is not None
     assert config.get_action_group("action-group-2") is not None
+    assert config.get_ingress_map("in-map-1") is not None
+    assert config.get_ingress_map("in-map-2") is not None
     assert "dp0vhost0" in config.deferred_interfaces

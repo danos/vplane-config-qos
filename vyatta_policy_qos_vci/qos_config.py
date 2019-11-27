@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019-2020, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -10,6 +10,7 @@ The module that defines the QosConfig class.
 """
 
 from vyatta_policy_qos_vci.action import Action
+from vyatta_policy_qos_vci.ingress_map import IngressMap
 from vyatta_policy_qos_vci.interface import Interface
 from vyatta_policy_qos_vci.mark_map import MarkMap
 from vyatta_policy_qos_vci.policy import Policy
@@ -26,6 +27,7 @@ class QosConfig:
         self._action_groups = {}
         self._mark_maps = {}
         self._global_profiles = {}
+        self._ingress_maps = {}
         self._interfaces = {}
         self._policies = {}
 
@@ -36,8 +38,11 @@ class QosConfig:
         action_dict = policy_dict.get('vyatta-policy-action-v1:action')
         self._process_action(action_dict)
 
-        qos_dict = policy_dict['vyatta-policy-qos-v1:qos']
+        qos_dict = policy_dict.get('vyatta-policy-qos-v1:qos')
         self._process_qos(qos_dict)
+
+        in_map_dict = policy_dict.get('vyatta-policy-qos-v1:ingress-map')
+        self._process_ingress_map(in_map_dict)
 
         if_dict = config_dict.get('vyatta-interfaces-v1:interfaces')
         self._process_interfaces(if_dict)
@@ -56,6 +61,9 @@ class QosConfig:
         Process the qos dictionary to create mark-map, global-profile and
         policy objects
         """
+        if qos_dict is None:
+            return
+
         # Process mark-maps
         mark_maps_list = qos_dict.get('mark-map')
         if mark_maps_list is not None:
@@ -86,8 +94,16 @@ class QosConfig:
             for key, interfaces in if_dict.items():
                 if_type = key.split(':')[1]
                 for interface in interfaces:
-                    int_obj = Interface(if_type, interface, self._policies)
+                    int_obj = Interface(if_type, interface, self._policies,
+                                        self._ingress_maps)
                     self._interfaces[int_obj.name] = int_obj
+
+    def _process_ingress_map(self, ingress_map_list):
+        """ Process the ingress-map list """
+        if ingress_map_list is not None:
+            for ingress_map_dict in ingress_map_list:
+                in_map_obj = IngressMap(ingress_map_dict)
+                self._ingress_maps[in_map_obj.name] = in_map_obj
 
     @property
     def interfaces(self):
@@ -146,3 +162,12 @@ class QosConfig:
     def get_action_group(self, name):
         """ Return the named action-group object or None """
         return self._action_groups.get(name)
+
+    @property
+    def ingress_maps(self):
+        """ Return the dictionary of ingress-map objects """
+        return self._ingress_maps
+
+    def get_ingress_map(self, name):
+        """ Return the named ingress-map or None """
+        return self._ingress_maps.get(name)

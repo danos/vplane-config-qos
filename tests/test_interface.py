@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019-2020, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -12,6 +12,7 @@ Unit-tests for the interface.py module.
 
 import pytest
 
+from vyatta_policy_qos_vci.ingress_map import IngressMap
 from vyatta_policy_qos_vci.interface import Interface
 from vyatta_policy_qos_vci.policy import Policy
 
@@ -86,7 +87,8 @@ SIAD_IF_DICT = {
     "vyatta-interfaces-dataplane-switch-v1:switch-group": {
         "port-parameters": {
             "vyatta-interfaces-switch-policy-v1:policy": {
-                "vyatta-policy-qos-v1:qos": "policy-3"
+                "vyatta-policy-qos-v1:qos": "policy-3",
+                "vyatta-policy-qos-v1:ingress-map": "in-map-1"
             }
         }
     }
@@ -108,7 +110,8 @@ SIAD_VLAN_DICT = {
                         {
                             "vlan-id": 20,
                             "vyatta-interfaces-switch-policy-v1:policy": {
-                                "vyatta-policy-qos-v1:qos": "policy-5"
+                                "vyatta-policy-qos-v1:qos": "policy-5",
+                                "vyatta-policy-qos-v1:ingress-map": "in-map-2"
                             }
                         },
                     ]
@@ -517,10 +520,38 @@ TEST_DATA = [
     )
 ]
 
+IN_MAP_1_DICT = {
+    'id': 'in-map-1',
+    'pcp': [
+        {'id': 0, 'designation': 0},
+        {'id': 1, 'designation': 1},
+        {'id': 2, 'designation': 2},
+        {'id': 3, 'designation': 3},
+        {'id': 4, 'designation': 4},
+        {'id': 5, 'designation': 5},
+        {'id': 6, 'designation': 6},
+        {'id': 7, 'designation': 7}
+    ]
+}
+
+IN_MAP_2_DICT = {
+    'id': 'in-map-2',
+    'dscp-group': [
+        {'id': 'group-1', 'designation': 0},
+        {'id': 'group-2', 'designation': 1},
+        {'id': 'group-3', 'designation': 2}
+    ],
+    'system-default': 1
+}
+
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
 def test_interface(test_input, expected_result):
     """ Unit-test the interface class with simple configs """
+    ingress_map_dict = {}
+    ingress_map_dict['in-map-1'] = IngressMap(IN_MAP_1_DICT)
+    ingress_map_dict['in-map-2'] = IngressMap(IN_MAP_2_DICT)
     if_type, if_dict = test_input
-    interface = Interface(if_type, if_dict, QOS_POLICY_DICT)
+    interface = Interface(if_type, if_dict, QOS_POLICY_DICT, ingress_map_dict)
+
     assert interface is not None
     assert interface.commands() == expected_result

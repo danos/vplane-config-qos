@@ -113,6 +113,7 @@ class Provisioner:
         self._check_mark_maps(old_config, new_config)
         self._check_action_groups(old_config, new_config)
         self._check_for_deferred_interfaces(new_config)
+        self._check_ingress_maps(old_config, new_config)
 
     def _check_interfaces(self, old_config, new_config):
         """ Check for any changes to interface config """
@@ -252,6 +253,23 @@ class Provisioner:
 
         return cmd_count
 
+    def _detach_ingress_map(self, ctrl, interface):
+        """
+        Detach any QoS ingress-maps from the specified interface.
+        """
+        # Deferred interfaces won't have an ifindex yet
+        cmd_count = 0
+        if interface.ifindex is not None:
+            for dataplane in ctrl.get_dataplanes():
+                with dataplane:
+                    for binding in interface.ingress_map_bindings:
+                        key, cmd = binding.delete_binding()
+                        ctrl.store(key, cmd, interface.name, "DELETE")
+                        LOG.debug(f"delete: {cmd}")
+                        cmd_count += 1
+
+        return cmd_count
+
     def _delete_interfaces(self, ctrl):
         """
         Disable QoS policies from all the interfaces on the deletes list
@@ -259,6 +277,24 @@ class Provisioner:
         cmd_count = 0
         for interface in self._if_deletes:
             cmd_count += self._detach_policy(ctrl, interface)
+            cmd_count += self._detach_ingress_map(ctrl, interface)
+
+        return cmd_count
+
+    def _attach_ingress_map(self, ctrl, interface):
+        """
+        Attach a QoS ingress-map to the specified interface
+        """
+        # Deferred interfaces won't have an ifindex yet
+        cmd_count = 0
+        if interface.ifindex is not None:
+            for dataplane in ctrl.get_dataplanes():
+                with dataplane:
+                    # bind any ingress-maps to this interface and its vlans
+                    for binding in interface.ingress_map_bindings:
+                        path, cmd = binding.create_binding()
+                        ctrl.store(path, cmd, interface.name, "SET")
+                        LOG.debug(f"set: {cmd}")
 
         return cmd_count
 
@@ -287,6 +323,7 @@ class Provisioner:
         """
         cmd_count = 0
         for interface in self._if_creates:
+            cmd_count += self._attach_ingress_map(ctrl, interface)
             cmd_count += self._attach_policy(ctrl, interface)
 
         return cmd_count
@@ -304,7 +341,7 @@ class Provisioner:
         return cmd_count
 
     def _delete_objects(self, ctrl):
-        """ Delete any old mark-maps or action-groups"""
+        """ Delete any old action-groups, ingress-maps or mark-maps """
         cmd_count = 0
         for dataplane in ctrl.get_dataplanes():
             with dataplane:
@@ -317,7 +354,9 @@ class Provisioner:
         return cmd_count
 
     def _create_objects(self, ctrl):
-        """ Create any new or modified mark-maps or action-groups"""
+        """
+        Create any new or modified action-groups, ingress-maps or mark-maps.
+        """
         cmd_count = 0
         for dataplane in ctrl.get_dataplanes():
             with dataplane:
