@@ -10,7 +10,7 @@ A module to define Profile objects
 """
 
 from vyatta_policy_qos_vci.bandwidth import Bandwidth
-from vyatta_policy_qos_vci.policy_map import PolicyMap
+from vyatta_policy_qos_vci.profile_map import ProfileMap
 from vyatta_policy_qos_vci.pipe_queue import PipeQueues
 from vyatta_policy_qos_vci.traffic_class_block import TrafficClassBlock
 
@@ -48,7 +48,7 @@ class Profile:
             dscp_group = map_dict.get('dscp-group')
             dscp = map_dict.get('dscp')
             pcp = map_dict.get('pcp')
-            self._policy_map = PolicyMap(self, dscp_group, dscp, pcp)
+            self._policy_map = ProfileMap(self, dscp_group, dscp, pcp)
 
     def __eq__(self, profile):
         """ Compare the original JSON of two profiles """
