@@ -1,2 +1,3 @@
 vyatta_policy_qos_vci/policy_qos opt/vyatta/sbin
 vyatta_policy_qos_vci/*.py usr/lib/python3/dist-packages/vyatta_policy_qos_vci
+vyatta_policy_qos_vci/*.pm opt/vyatta/share/perl5/Vyatta/QoS

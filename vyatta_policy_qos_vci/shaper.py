@@ -18,7 +18,7 @@ PERIOD_DEFAULT_MS = 40
 
 class Shaper:
     """ Define the shaper class """
-    def __init__(self, shaper_dict, global_profiles, mark_maps):
+    def __init__(self, policy_name, shaper_dict, global_profiles, mark_maps):
         """ Create a shaper object """
         self._global_profiles = global_profiles
         self._classes = []
@@ -46,7 +46,7 @@ class Shaper:
         class_list = shaper_dict.get('class')
         if class_list is not None:
             for class_item in class_list:
-                qos_class = Class(class_item)
+                qos_class = Class(policy_name, class_item)
                 self._classes.append(qos_class)
                 for name, global_profile in global_profiles.items():
                     if name == qos_class.profile_name:

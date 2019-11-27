@@ -17,7 +17,7 @@ class Class:
     between a QoS class number, its match rules and the profile that
     is applied to packets that conform to the match rules.
     """
-    def __init__(self, class_dict):
+    def __init__(self, policy_name, class_dict):
         """ Create a QoS class object """
         self._id = class_dict.get('id')
         self._profile_name = class_dict.get('profile')
@@ -25,7 +25,7 @@ class Class:
         match_list = class_dict.get('match')
         if match_list is not None:
             for rule in match_list:
-                self._rules.append(Rule(self._id, rule))
+                self._rules.append(Rule(policy_name, self._id, rule))
 
     @property
     def profile_name(self):
