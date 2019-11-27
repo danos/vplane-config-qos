@@ -156,7 +156,6 @@ class Interface:
                     # Maybe there's no ingress map for this vlan
                     pass
 
-
         for subport in self._subports:
             subport.build_profile_index(self)
 

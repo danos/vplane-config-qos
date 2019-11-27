@@ -235,6 +235,11 @@ class Provisioner:
         """ Return the list of interface names that have been deferred """
         return self._if_deferred
 
+    @property
+    def deferred_ingress_maps(self):
+        """ Return the list of ingress-map names that have been deferred """
+        return self._in_map_deferred
+
     def _detach_policy(self, ctrl, interface):
         """
         Detach the QoS policy from the specified interface.

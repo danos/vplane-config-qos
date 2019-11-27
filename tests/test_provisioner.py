@@ -30,7 +30,8 @@ TEST_DATA = [
                         "vyatta-interfaces-dataplane-switch-v1:switch-group": {
                             "port-parameters": {
                                 "vyatta-interfaces-switch-policy-v1:policy": {
-                                    "vyatta-policy-qos-v1:qos": "policy-1"
+                                    "vyatta-policy-qos-v1:qos": "policy-1",
+                                    "vyatta-policy-qos-v1:ingress-map": "bill"
                                 }
                             }
                         }
@@ -55,6 +56,39 @@ TEST_DATA = [
                         }
                     ]
                 },
+                "vyatta-policy-qos-v1:ingress-map": [
+                    {
+                        "id": "bill",
+                        "pcp": [
+                            {
+                                "designation": 0,
+                                "id": 0
+                            }, {
+                                "designation": 1,
+                                "id": 1
+                            }, {
+                                "designation": 2,
+                                "id": 2
+                            }, {
+                                "designation": 3,
+                                "id": 3
+                            }, {
+                                "designation": 4,
+                                "id": 4
+                            }, {
+                                "designation": 5,
+                                "id": 5
+                            }, {
+                                "designation": 6,
+                                "id": 6
+                            }, {
+                                "designation": 7,
+                                "id": 7
+                            }
+                        ],
+                        'system-default': [None]
+                    }
+                ],
                 "vyatta-policy-qos-v1:qos": {
                     "name": [
                         {
@@ -117,6 +151,60 @@ TEST_DATA = [
             # 3rd element: the interface that the command applies to
             #              for unit-testing it is either "lo" or "ALL"
             # 4th element: the store command, can be "SET" or "DELETE"
+            (
+                'qos 0 ingress-map bill pcp 0',
+                'qos 0 ingress-map bill pcp 0 designation 0',
+                'ALL',
+                'SET'
+            ),
+            (
+                'qos 0 ingress-map bill pcp 1',
+                'qos 0 ingress-map bill pcp 1 designation 1',
+                'ALL',
+                'SET'
+            ),
+            (
+                'qos 0 ingress-map bill pcp 2',
+                'qos 0 ingress-map bill pcp 2 designation 2',
+                'ALL',
+                'SET'
+            ),
+            (
+                'qos 0 ingress-map bill pcp 3',
+                'qos 0 ingress-map bill pcp 3 designation 3',
+                'ALL',
+                'SET'
+            ),
+            (
+                'qos 0 ingress-map bill pcp 4',
+                'qos 0 ingress-map bill pcp 4 designation 4',
+                'ALL',
+                'SET'
+            ),
+            (
+                'qos 0 ingress-map bill pcp 5',
+                'qos 0 ingress-map bill pcp 5 designation 5',
+                'ALL',
+                'SET'
+            ),
+            (
+                'qos 0 ingress-map bill pcp 6',
+                'qos 0 ingress-map bill pcp 6 designation 6',
+                'ALL',
+                'SET'
+            ),
+            (
+                'qos 0 ingress-map bill pcp 7',
+                'qos 0 ingress-map bill pcp 7 designation 7',
+                'ALL',
+                'SET'
+            ),
+            (
+                'qos-in-map 1 ingress-map bill vlan 0',
+                'qos 1 ingress-map bill vlan 0',
+                'lo',
+                'SET'
+            ),
             (
                 'qos mark-map test123 dscp-group bert',
                 'qos 0 mark-map test123 dscp-group bert pcp 3',

@@ -123,10 +123,14 @@ class IngressMap:
 
         if self._map_type == 'pcp':
             for pcp in range(MIN_PCP, MAX_PCP+1):
-                designation = self._pcp_map[pcp]
-                path = f"{cmd_prefix} pcp {pcp}"
-                cmd = f"{path} designation {designation}"
-                cmd_list.append((path, cmd))
+                designation = self._pcp_map.get(pcp)
+                if designation is None:
+                    LOG.error(f"Ingress map {self._name} missing PCP value "
+                              f"{pcp}")
+                else:
+                    path = f"{cmd_prefix} pcp {pcp}"
+                    cmd = f"{path} designation {designation}"
+                    cmd_list.append((path, cmd))
 
         if self._system_default is not None:
             path = cmd = f"{cmd_prefix} system-default"

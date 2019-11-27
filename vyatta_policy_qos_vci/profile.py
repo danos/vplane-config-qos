@@ -48,7 +48,9 @@ class Profile:
             dscp_group = map_dict.get('dscp-group')
             dscp = map_dict.get('dscp')
             pcp = map_dict.get('pcp')
-            self._policy_map = ProfileMap(self, dscp_group, dscp, pcp)
+            designation = map_dict.get('designation')
+            self._policy_map = ProfileMap(self, dscp_group, dscp, pcp,
+                                          designation)
 
     def __eq__(self, profile):
         """ Compare the original JSON of two profiles """

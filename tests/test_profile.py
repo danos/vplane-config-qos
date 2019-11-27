@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019-2020, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -148,7 +148,7 @@ TEST_DATA = [
             "qos 1 profile 0 queue 1 rate 250000000 size 0",
             "qos 1 profile 0 queue 2 rate 375000000 size 0",
             "qos 1 profile 0 queue 3 rate 500000000 size 0",
-            "qos 1 profile 0 dscp-group  real-time-group 1",
+            "qos 1 profile 0 dscp-group real-time-group 0x1",
             "qos 1 profile 0 queue 0x1 wrr-weight 1 0"
         ]
     ),
@@ -192,12 +192,12 @@ TEST_DATA = [
             "qos 1 profile 0 queue 1 rate 250000000 size 0",
             "qos 1 profile 0 queue 2 rate 375000000 size 0",
             "qos 1 profile 0 queue 3 rate 500000000 size 0",
-            "qos 1 profile 0 dscp-group  default-group-high-drop 7",
-            "qos 1 profile 0 dscp-group  default-group-low-drop 3",
-            "qos 1 profile 0 dscp-group  priority-group-high-drop 6",
-            "qos 1 profile 0 dscp-group  priority-group-low-drop 2",
-            "qos 1 profile 0 dscp-group  real-time-group 1",
-            "qos 1 profile 0 dscp-group  synch-group 0",
+            "qos 1 profile 0 dscp-group default-group-high-drop 0x7",
+            "qos 1 profile 0 dscp-group default-group-low-drop 0x3",
+            "qos 1 profile 0 dscp-group priority-group-high-drop 0x6",
+            "qos 1 profile 0 dscp-group priority-group-low-drop 0x2",
+            "qos 1 profile 0 dscp-group real-time-group 0x1",
+            "qos 1 profile 0 dscp-group synch-group 0x0",
             "qos 1 profile 0 queue 0x1 wrr-weight 1 0",
             "qos 1 profile 0 queue 0 wrr-weight 1 1",
             "qos 1 profile 0 queue 0x2 wrr-weight 80 2",
@@ -374,7 +374,7 @@ TEST_DATA = [
     ),
     (
         # A profile with a dscp-group map and a pipe-queue that has two
-        # wred-maps
+        # wred-maps so we have some non-zero drop-precedences
         # test_input
         {
             "bandwidth": "1Gbit",
@@ -424,12 +424,12 @@ TEST_DATA = [
             "qos 1 profile 0 queue 1 percent 100 size 0",
             "qos 1 profile 0 queue 2 percent 100 size 0",
             "qos 1 profile 0 queue 3 percent 100 size 0",
-            "qos 1 profile 0 dscp-group  default-group-high 6",
-            "qos 1 profile 0 dscp-group  default-group-low 6",
-            "qos 1 profile 0 dscp-group  priority-group-high 2",
-            "qos 1 profile 0 dscp-group  priority-group-low 2",
-            "qos 1 profile 0 dscp-group  real-time-group 1",
-            "qos 1 profile 0 dscp-group  synch-group 0",
+            "qos 1 profile 0 dscp-group default-group-high 0x6",
+            "qos 1 profile 0 dscp-group default-group-low 0x26",
+            "qos 1 profile 0 dscp-group priority-group-high 0x2",
+            "qos 1 profile 0 dscp-group priority-group-low 0x22",
+            "qos 1 profile 0 dscp-group real-time-group 0x1",
+            "qos 1 profile 0 dscp-group synch-group 0x0",
             "qos 1 profile 0 queue 0 wrr-weight 1 0",
             "qos 1 profile 0 queue 0x1 wrr-weight 1 1",
             "qos 1 profile 0 queue 0x2 wrr-weight 1 2",
@@ -437,6 +437,66 @@ TEST_DATA = [
             "qos 1 profile 0 queue 0x2 dscp-group priority-group-low packets 50000 40000 10",
             "qos 1 profile 0 queue 0x2 wred-weight 10",
             "qos 1 profile 0 queue 0x6 wrr-weight 1 3"
+        ]
+    ),
+    (
+        # A profile with a to-classifier map - drop-precedence always 0
+        # test_input
+        {
+            "bandwidth": "1Gbit",
+            "id": "profile-1",
+            "map": {
+                "designation": [
+                    {"id": 0, "to": 7},
+                    {"id": 1, "to": 6},
+                    {"id": 2, "to": 5},
+                    {"id": 3, "to": 4},
+                    {"id": 4, "to": 3},
+                    {"id": 5, "to": 2},
+                    {"id": 6, "to": 1},
+                    {"id": 7, "to": 0}
+                ]
+            },
+            "queue": [
+                {"id": 0, "traffic-class": 0, "weight": 1},
+                {"id": 1, "traffic-class": 0, "weight": 1},
+                {"id": 2, "traffic-class": 1, "weight": 1},
+                {"id": 3, "traffic-class": 1, "weight": 1},
+                {"id": 4, "traffic-class": 2, "weight": 1},
+                {"id": 5, "traffic-class": 2, "weight": 1},
+                {"id": 6, "traffic-class": 3, "weight": 1},
+                {"id": 7, "traffic-class": 3, "weight": 1}
+            ],
+            "traffic-class": [
+                {"bandwidth": "1Gbit", "id": 0},
+                {"bandwidth": "2Gbit", "id": 1},
+                {"bandwidth": "3Gbit", "id": 2},
+                {"bandwidth": "4Gbit", "id": 3}
+            ]
+        },
+        # expected_result
+        [
+            "qos 1 profile 0 rate 125000000 size 0 period 10",
+            "qos 1 profile 0 queue 0 rate 125000000 size 0",
+            "qos 1 profile 0 queue 1 rate 250000000 size 0",
+            "qos 1 profile 0 queue 2 rate 375000000 size 0",
+            "qos 1 profile 0 queue 3 rate 500000000 size 0",
+            "qos 1 profile 0 designation 0 queue 0x7",
+            "qos 1 profile 0 designation 1 queue 0x3",
+            "qos 1 profile 0 designation 2 queue 0x6",
+            "qos 1 profile 0 designation 3 queue 0x2",
+            "qos 1 profile 0 designation 4 queue 0x5",
+            "qos 1 profile 0 designation 5 queue 0x1",
+            "qos 1 profile 0 designation 6 queue 0x4",
+            "qos 1 profile 0 designation 7 queue 0x0",
+            "qos 1 profile 0 queue 0 wrr-weight 1 0",
+            "qos 1 profile 0 queue 0x4 wrr-weight 1 1",
+            "qos 1 profile 0 queue 0x1 wrr-weight 1 2",
+            "qos 1 profile 0 queue 0x5 wrr-weight 1 3",
+            "qos 1 profile 0 queue 0x2 wrr-weight 1 4",
+            "qos 1 profile 0 queue 0x6 wrr-weight 1 5",
+            "qos 1 profile 0 queue 0x3 wrr-weight 1 6",
+            "qos 1 profile 0 queue 0x7 wrr-weight 1 7"
         ]
     )
 ]

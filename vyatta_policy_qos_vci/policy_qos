@@ -2,7 +2,7 @@
 """
 The Policy QoS VCI entrypoint module
 """
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019-2020, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -33,15 +33,36 @@ def remove_deferred_interfaces(config, deferred_if_list):
     Remove all references to interface names listed in the deferred_if_list
     from the JSON config dictionary.
     """
+    if_dict = config.get('vyatta-interfaces-v1:interfaces')
+    if if_dict is None:
+        return
+
     for ifname in deferred_if_list:
-        if_dict = config.get('vyatta-interfaces-v1:interfaces')
-        if if_dict:
-            for if_type_list in if_dict.values():
-                for index, if_type_dict in enumerate(if_type_list):
-                    for value in if_type_dict.values():
-                        if value == ifname:
-                            del if_type_list[index]
-                            break
+        for if_type_list in if_dict.values():
+            for index, if_type_dict in enumerate(if_type_list):
+                for value in if_type_dict.values():
+                    if value == ifname:
+                        del if_type_list[index]
+                        break
+
+
+def remove_deferred_ingress_maps(config, deferred_in_map_list):
+    """
+    Delete any deferred ingress-maps from the JSON config dictionary.
+    """
+    policy_dict = config.get('vyatta-policy-v1:policy')
+    if policy_dict is None:
+        return
+
+    in_map_list = policy_dict.get('vyatta-policy-qos-v1:ingress-map')
+    if in_map_list is None:
+        return
+
+    for in_map_name in deferred_in_map_list:
+        for index, in_map_dict in enumerate(in_map_list):
+            if in_map_dict['id'] == in_map_name:
+                del in_map_list[index]
+                break
 
 
 def send_qos_config_to_dataplane(new_config):
@@ -51,6 +72,8 @@ def send_qos_config_to_dataplane(new_config):
     global deferred_interfaces
 
     actioned_config = get_actioned_config()
+    LOG.debug(f'actioned-config: {actioned_config}')
+    LOG.debug(f'new-config:      {new_config}')
     prov = Provisioner(actioned_config, new_config)
     try:
         with Controller() as ctrl:
@@ -61,10 +84,12 @@ def send_qos_config_to_dataplane(new_config):
         LOG.error("Failed to connect to vplane-controller")
 
     LOG.debug(f"deferred interfaces: {prov.deferred_interfaces}")
+    LOG.debug(f"deferred ingress-maps: {prov.deferred_ingress_maps}")
     # Copy the requested config, then remove any deferred interface, then
     # save it as the actioned config.
     actioned_config = deepcopy(new_config)
     remove_deferred_interfaces(actioned_config, prov.deferred_interfaces)
+    remove_deferred_ingress_maps(actioned_config, prov.deferred_ingress_maps)
     save_actioned_config(actioned_config)
 
     return actioned_config
@@ -175,7 +200,6 @@ if __name__ == "__main__":
                 .config(Config())
                 .state(State())
                )
-#         .subscribe("vyatta-npf-v1", "configuration-updated", npf_update)
          .subscribe("vyatta-ifmgr-v1", "interface-state", if_plug_unplug)
          .run()
          .wait())
