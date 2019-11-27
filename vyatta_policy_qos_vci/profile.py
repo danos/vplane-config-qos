@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019-2020, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -10,7 +10,7 @@ A module to define Profile objects
 """
 
 from vyatta_policy_qos_vci.bandwidth import Bandwidth
-from vyatta_policy_qos_vci.ingress_map import IngressMap
+from vyatta_policy_qos_vci.policy_map import PolicyMap
 from vyatta_policy_qos_vci.pipe_queue import PipeQueues
 from vyatta_policy_qos_vci.traffic_class_block import TrafficClassBlock
 
@@ -37,7 +37,7 @@ class Profile:
         tc_list = profile_dict.get('traffic-class')
         self._tcs = TrafficClassBlock(tc_list, self._bandwidth)
 
-        self._ingress_map = None
+        self._policy_map = None
 
         # Cross-link the pipe-queues to the traffic-classes to generate the
         # traffic-classes's wrr-queues
@@ -48,7 +48,7 @@ class Profile:
             dscp_group = map_dict.get('dscp-group')
             dscp = map_dict.get('dscp')
             pcp = map_dict.get('pcp')
-            self._ingress_map = IngressMap(self, dscp_group, dscp, pcp)
+            self._policy_map = PolicyMap(self, dscp_group, dscp, pcp)
 
     def __eq__(self, profile):
         """ Compare the original JSON of two profiles """
@@ -95,7 +95,7 @@ class Profile:
             period = self._period
         cmd_list.append(self._bandwidth.commands(cmd_prefix, period))
         cmd_list = cmd_list + self._tcs.commands(cmd_prefix)
-        if self._ingress_map is not None:
-            cmd_list = cmd_list + self._ingress_map.commands(cmd_prefix)
+        if self._policy_map is not None:
+            cmd_list = cmd_list + self._policy_map.commands(cmd_prefix)
         cmd_list = cmd_list + self._pipe_queues.commands(cmd_prefix)
         return cmd_list

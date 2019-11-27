@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019-2020, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
 #
 """
-A module that defines the IngressMap class that defines different types
-of ingress maps.
+A module that defines the ProfileMap class that defines different types
+of profile maps.
 """
 
 import logging
@@ -21,16 +21,16 @@ MAX_PCP = 7
 MIN_DSCP = 0
 MAX_DSCP = 63
 
-class IngressMap:
+class ProfileMap:
     """
-    The IngressMap class provides three different types of mappings:
+    The ProfileMap class provides three different types of mappings:
     1: dscp-group-name to pipe-queue-id
     2: dscp-value to pipe-queue-id
     3: pcp-value to pipe-queue-id
-    only one of these mappings can be used by any IngressMap object.
+    only one of these mappings can be used by any ProfileMap object.
     """
     def __init__(self, parent_profile, dscp_group, dscp, pcp):
-        """ Create an ingress-map object """
+        """ Create an profile-map object """
         self._parent_profile = parent_profile
         self._map_type = None
         self._handle_dscp_group(dscp_group)
@@ -49,7 +49,7 @@ class IngressMap:
                 self._dscp_group_map[entry_dict['group-name']] = entry_dict['to']
 
         except KeyError:
-            LOG.error("IngressMap missing dscp-group data")
+            LOG.error("ProfileMap missing dscp-group data")
 
     def _handle_dscp(self, dscp_map_list):
         """ Process a list of dscp-values to pipe-queue-ids """
@@ -65,7 +65,7 @@ class IngressMap:
                     self._dscp_map[dscp] = entry_dict['to']
 
         except KeyError:
-            LOG.error("IngressMap missing dscp data")
+            LOG.error("ProfileMap missing dscp data")
 
     def _handle_pcp(self, pcp_map_list):
         """ Process a list of pcp-values to pipe-queue-ids """
@@ -79,11 +79,11 @@ class IngressMap:
                 self._pcp_map[entry_dict['id']] = entry_dict['to']
 
         except KeyError:
-            LOG.error("IngressMap missing pcp data")
+            LOG.error("ProfileMap missing pcp data")
 
     @property
     def map_type(self):
-        """ Return this ingress-map's map-type """
+        """ Return this profile-map's map-type """
         return self._map_type
 
     def dscp_group_map(self, dscp_group_name):
@@ -101,7 +101,7 @@ class IngressMap:
         return self._pcp_map.get(pcp)
 
     def commands(self, cmd_prefix):
-        """ Generate the necessary commands for this ingress map """
+        """ Generate the necessary commands for this profile map """
         cmd_list = []
         pipe_queues = self._parent_profile.pipe_queues
 
