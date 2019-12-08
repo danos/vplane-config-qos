@@ -544,10 +544,39 @@ sub show_bcm_summary {
     }
 }
 
+sub show_bcm_buffer_errors {
+    my ( $decoded, $fmt ) = @_;
+    my $buf_num;
+    my $buf_errs;
+    my $buf_del;
+    return unless defined($decoded);
+    my $memerrs = %{$decoded}{'fal-bcm-memerr'};
+    return unless defined( $memerrs->{buf} );
+
+    foreach ( @{ $memerrs->{buf} } ) {
+        $buf_num  = $_->{'buf-num'};
+        $buf_errs = $_->{'buf-errs'};
+        if ( $_->{'buf-del'} ) {
+            $buf_del = "yes";
+        } else {
+            $buf_del = "no";
+        }
+        printf $fmt, $buf_num, $buf_errs, $buf_del;
+    }
+}
+
 sub show_platform_info {
     my $fmt = "%-11s %8d %16d\n";
 
     walk_fabrics( "qos show platform", \&show_bcm_summary, $fmt );
+}
+
+sub show_buffer_errors {
+    my $fmt = "%-12s %6s %16s\n";
+    my $hdr = sprintf $fmt, 'Buffer #', 'Errors', 'Quarantined';
+    print $hdr, '-' x length($hdr), "\n";
+
+    walk_fabrics( "qos show buffer-errors", \&show_bcm_buffer_errors, $fmt );
 }
 
 # Show shapers on all interfaces
@@ -1098,21 +1127,22 @@ sub usage {
 }
 
 my (
-    $brief, $dscp,    $mark,    $pcp, $monitor,
-    $class, $summary, $platmap, $platinfo
+    $brief, $dscp,    $mark,    $pcp,      $monitor,
+    $class, $summary, $platmap, $platinfo, $buf_errs
 );
 
 GetOptions(
-    '64'        => \$bits64,
-    'brief=s'   => \$brief,
-    'monitor'   => \$monitor,
-    'dscp=s'    => \$dscp,
-    'platmap=s' => \$platmap,
-    'platinfo'  => \$platinfo,
-    'mark=s'    => \$mark,
-    'cos=s'     => \$pcp,
-    'class:s'   => \$class,
-    'summary'   => \$summary,
+    '64'            => \$bits64,
+    'brief=s'       => \$brief,
+    'monitor'       => \$monitor,
+    'dscp=s'        => \$dscp,
+    'platmap=s'     => \$platmap,
+    'platinfo'      => \$platinfo,
+    'buffer-errors' => \$buf_errs,
+    'mark=s'        => \$mark,
+    'cos=s'         => \$pcp,
+    'class:s'       => \$class,
+    'summary'       => \$summary,
 ) or usage();
 
 show_brief($brief)          if $brief;
@@ -1124,6 +1154,7 @@ show_pcp($pcp)              if $pcp;
 show_class($class)          if defined($class);
 show_summary()              if $summary;
 show_platform_info()        if $platinfo;
+show_buffer_errors()        if $buf_errs;
 
 foreach my $ifname (@ARGV) {
     show($ifname);
