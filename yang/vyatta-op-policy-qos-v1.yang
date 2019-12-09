@@ -60,9 +60,10 @@ module vyatta-op-policy-qos-v1 {
 
 		 YANG module for policy QoS operational mode commands.";
 
-	revision 2019-12-03 {
-		description "Add buffer-utilization errors to the platform
-			     subcommand";
+	revision 2019-12-16 {
+		description "Add support for showing buffer congestion information:
+			    buffer-threshold, buffer-utilization and buffer-utilization
+			    errors";
 	}
 	revision 2019-02-25 {
 		description "Fix option name confusion between yang and perl
@@ -206,8 +207,14 @@ module vyatta-op-policy-qos-v1 {
 				opd:help "Show platform DSCP to queue information";
 				opd:on-enter "show-queueing.pl --platinfo";
 
+				opd:command buffer-threshold {
+					opd:help "Show buffer congestion threshold";
+					opd:on-enter "show-ext-buf.pl --threshold";
+				}
+
 				opd:command buffer-utilization {
 					opd:help "Show current buffer utilization";
+					opd:on-enter "show-ext-buf.pl --utilization";
 
 					opd:command errors {
 						opd:help "Show buffer errors";
