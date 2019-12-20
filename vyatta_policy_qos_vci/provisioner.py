@@ -20,7 +20,6 @@ vyatta-dataplane configuration commands to vplaned's cstore.
 import logging
 import json
 
-from vyatta.npf.npf_rg_config import RgConfig
 from vyatta_policy_qos_vci.qos_config import QosConfig
 
 LOG = logging.getLogger('Policy QoS VCI')
@@ -101,13 +100,6 @@ class Provisioner:
         self._obj_delete = []
         self._obj_update = []
         self._obj_create = []
-
-        # First process the NPF resources group config so that the resources
-        # group end up at the beginning of the object lists.
-        old_config = RgConfig(old)
-        new_config = RgConfig(new)
-
-        self._check_dscp_groups(old_config, new_config)
 
         # Now process the QoS config
         old_config = QosConfig(old)
@@ -209,25 +201,28 @@ class Provisioner:
         """ Build a list of deferred interface names """
         self._if_deferred = new_config.deferred_interfaces
 
-    def _check_dscp_groups(self, old_config, new_config):
-        """ Check for any changes to dscp-groups """
-        for dscp_group in new_config.dscp_groups.values():
-            old_dscp_group = old_config.get_dscp_group(dscp_group.name)
-            if old_dscp_group is not None:
-                # We have an existing dscp-group, has it changed?
-                if dscp_group != old_dscp_group:
+    def _check_ingress_maps(self, old_config, new_config):
+        """ Check for any changes to ingress_maps """
+        for ingress_map in new_config.ingress_maps.values():
+            old_ingress_map = old_config.get_ingress_map(ingress_map.name)
+            if old_ingress_map is not None:
+                # We have an existing ingress_map, has it changed?
+                if ingress_map != old_ingress_map:
                     # It has changed, delete the old, create the new
-                    self._obj_delete.append(old_dscp_group)
-                    self._obj_create.append(dscp_group)
+                    self._obj_delete.append(old_ingress_map)
+                    self._obj_create.append(ingress_map)
             else:
-                # We have a new dscp-group
-                self._obj_create.append(dscp_group)
+                # We have a new ingress-map - is it being used by any subports?
+                if ingress_map.subports or ingress_map.system_default:
+                    self._obj_create.append(ingress_map)
+                else:
+                    self._in_map_deferred.append(ingress_map.name)
 
-        for dscp_group in old_config.dscp_groups.values():
-            new_dscp_group = new_config.get_dscp_group(dscp_group.name)
-            if new_dscp_group is None:
-                # Delete the old dscp-group
-                self._obj_delete.append(dscp_group)
+        for ingress_map in old_config.ingress_maps.values():
+            new_ingress_map = new_config.get_ingress_map(ingress_map.name)
+            if new_ingress_map is None:
+                # Delete the old ingress-map
+                self._obj_delete.append(ingress_map)
 
     @property
     def deferred_interfaces(self):
