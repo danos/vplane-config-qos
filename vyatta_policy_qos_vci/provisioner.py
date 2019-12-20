@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019-2020, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -19,6 +19,7 @@ vyatta-dataplane configuration commands to vplaned's cstore.
 
 import logging
 import json
+import sys
 
 from vyatta_policy_qos_vci.qos_config import QosConfig
 
@@ -47,7 +48,7 @@ def get_config(filename):
             config = json.load(json_data)
 
     except OSError:
-        pass
+        LOG.error(f"Failed to open JSON config file {filename} {sys.exc_info()[0]}")
 
     except json.JSONDecodeError:
         LOG.error(f"Failed to decode JSON config file {filename}")
@@ -96,6 +97,7 @@ class Provisioner:
         self._if_updates = []
         self._if_creates = []
         self._if_deferred = []
+        self._in_map_deferred = []
 
         self._obj_delete = []
         self._obj_update = []
@@ -208,12 +210,15 @@ class Provisioner:
             if old_ingress_map is not None:
                 # We have an existing ingress_map, has it changed?
                 if ingress_map != old_ingress_map:
-                    # It has changed, delete the old, create the new
+                    # It has changed, delete the old, create the new one if it
+                    # is being used by any vlan or it is the system-default
                     self._obj_delete.append(old_ingress_map)
-                    self._obj_create.append(ingress_map)
+                    if ingress_map.bindings or ingress_map.system_default:
+                        self._obj_create.append(ingress_map)
             else:
-                # We have a new ingress-map - is it being used by any subports?
-                if ingress_map.subports or ingress_map.system_default:
+                # We have a new ingress-map - is it being used by any port or
+                # vlan, or is it the system-default?
+                if ingress_map.bindings or ingress_map.system_default:
                     self._obj_create.append(ingress_map)
                 else:
                     self._in_map_deferred.append(ingress_map.name)
@@ -236,13 +241,14 @@ class Provisioner:
         # Deferred interfaces won't have an ifindex yet
         cmd_count = 0
         if interface.ifindex is not None:
-            key = f"qos {interface.ifindex}"
-            cmd = f"{key} disable"
-            for dataplane in ctrl.get_dataplanes():
-                with dataplane:
-                    ctrl.store(key, cmd, interface.name, action="DELETE")
-                    LOG.debug(f"delete {cmd}")
-                    cmd_count += 1
+            if interface.policies:
+                key = f"qos {interface.ifindex}"
+                cmd = f"{key} disable"
+                for dataplane in ctrl.get_dataplanes():
+                    with dataplane:
+                        ctrl.store(key, cmd, interface.name, "DELETE")
+                        LOG.debug(f"delete: {cmd}")
+                        cmd_count += 1
 
         return cmd_count
 
@@ -266,10 +272,11 @@ class Provisioner:
             key = f"qos {interface.ifindex}"
             for dataplane in ctrl.get_dataplanes():
                 with dataplane:
+                    # Attach any QoS policies to this interface and its vlans
                     for cmd in interface.commands():
                         path = f"{key} {cmd}"
                         ctrl.store(path, cmd, interface.name, "SET")
-                        LOG.debug(f"set {cmd}")
+                        LOG.debug(f"set: {cmd}")
                         cmd_count += 1
 
         return cmd_count
@@ -304,7 +311,7 @@ class Provisioner:
                 for obj in self._obj_delete:
                     (path, cmd) = obj.delete_cmd()
                     ctrl.store(path, cmd, "ALL", "DELETE")
-                    LOG.debug(f"delete {cmd}")
+                    LOG.debug(f"delete: {cmd}")
                     cmd_count += 1
 
         return cmd_count
@@ -317,7 +324,7 @@ class Provisioner:
                 for obj in self._obj_create:
                     for (path, cmd) in obj.commands():
                         ctrl.store(path, cmd, "ALL", "SET")
-                        LOG.debug(f"set {cmd}")
+                        LOG.debug(f"set: {cmd}")
                         cmd_count += 1
 
         return cmd_count
@@ -330,7 +337,7 @@ class Provisioner:
         for dataplane in ctrl.get_dataplanes():
             with dataplane:
                 ctrl.store("qos commit", "qos commit", "ALL", "SET")
-                LOG.debug("set qos commit")
+                LOG.debug("set: qos commit")
 
     def commands(self, ctrl):
         """
