@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 
-# Copyright (c) 2017-2019, AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2020, AT&T Intellectual Property. All rights reserved.
 # Copyright (c) 2013-2017, Brocade Communications Systems, Inc.
 # All rights reserved.
 #
@@ -50,8 +50,9 @@ sub split_ifname {
 # Parse resulting JSON output
 #  only returns portion for this interface (or undef)
 sub get_interface {
-    my $ifname = shift;
-    my $cmd    = shift;
+    my $ifname     = shift;
+    my $cmd        = shift;
+    my $return_all = shift;
 
     die "Interface $ifname does not exist\n"
       unless ( -d "/sys/class/net/$ifname" );
@@ -77,7 +78,9 @@ sub get_interface {
     exit 1 unless defined($response);
 
     my $decoded = decode_json($response);
-    return $decoded->{$ifname};
+    return $decoded->{$ifname} unless defined($return_all);
+
+    return $decoded;
 }
 
 # For a particular interface name (trunk or subinterface) interogate the
@@ -448,12 +451,15 @@ sub walk_interfaces {
 
     # Sort the interfaces alphabetically by name
     foreach my $ifname ( sort( keys %{$interfaces} ) ) {
+        next if ( $ifname eq 'sysdef-map' );
+
         my $data = %{$interfaces}{$ifname};
 
         # For now only have 'shaper' => ...
         while ( my ( $policy, $value ) = each %{$data} ) {
             if ( $policy ne 'shaper' ) {
-                warn "$ifname: unknown policy $policy\n";
+                warn "$ifname: unknown policy $policy\n"
+                  if ( $policy ne 'ingress-maps' );
                 next;
             }
             $func->( @_, $ifname, $value );
@@ -517,31 +523,8 @@ sub show_bcm_summary {
     my $intf = each %{$decoded};
     return unless defined($intf);
 
-    my $data     = %{$decoded}{$intf};
-    my $shaper   = $data->{shaper};
-    my $subport  = $shaper->{subports}->[0];
-    my $bcm_info = $subport->{'fal-bcm-qossub'};
-
-    if ( defined($bcm_info) ) {
-        print "\nTC/WRR -> BCM TC\n";
-        for my $tc ( 0 .. 7 ) {
-            if ( defined( $bcm_info->{'q2tc'}->[$tc] ) ) {
-                my $q2tc = $bcm_info->{'q2tc'}->[$tc];
-
-                if ( $q2tc->{'priority-local'} ) {
-                    printf " PLQ   -> %6d\n", $q2tc->{'bcm-tc'};
-                } else {
-                    printf "%2d/%d   -> %6d\n",
-                      $q2tc->{'pipe-q-tc'},
-                      $q2tc->{'pipe-q-wrr'},
-                      $q2tc->{'bcm-tc'};
-                }
-            }
-        }
-
-        print "\nPort[.Vlan]  VOQ/QID  VOQ Conn/FlowID\n";
-        walk_interfaces( \&show_bcm_port, $decoded, $fmt );
-    }
+    print "\nPort[.Vlan]  VOQ/QID  VOQ Conn/FlowID\n";
+    walk_interfaces( \&show_bcm_port, $decoded, $fmt );
 }
 
 sub show_bcm_buffer_errors {
@@ -665,67 +648,35 @@ sub show_monitor {
     }
 }
 
-sub show_bcm_platform_map {
+sub show_bcm_platform_egress_map {
     my $subport     = shift;
     my $pipe        = $subport->{pipes}->[0];
-    my $platdscpmap = $pipe->{'fal-bcm-qos-dscpmap'};
-    my $platpcpmap  = $pipe->{'fal-bcm-qos-pcpmap'};
+    my $platdscpmap = $pipe->{'fal-bcm-qos-dscp2dot1p'};
+    my $platdesmap  = $pipe->{'fal-bcm-qos-des2dot1p'};
 
-    if ( defined($platdscpmap) ) {
-        print "\nDSCP->PipeQ->TC/DP    DSCP->PipeQ->TC/DP";
-        print "    DSCP->PipeQ->TC/DP\n";
+    if ( defined($platdesmap) ) {
+        print "\nDes->PCP\n";
+        for my $i ( 0 .. 7 ) {
+            my $map_entry;
 
-        # Print output in columns for readability
-        for my $i ( 0 .. MAX_DSCP ) {
-            my $dscp;
-            my $dscp_map_entry;
+            $map_entry = $platdesmap->[$i];
 
-            if ( $i eq MAX_DSCP ) {
-                $dscp = $i;
-            } else {
-                $dscp = ( $i % 3 ) * 21 + ( $i / 3 );
-            }
-
-            if ( $dscp eq MAX_DSCP ) {
-                print "                                            ";
-            }
-
-            $dscp_map_entry = $platdscpmap->[$dscp];
-
-            printf " %2d -> %d/%d -> %d/%d",
-              $dscp,
-              $dscp_map_entry->{'pipe-q-tc'},
-              $dscp_map_entry->{'pipe-q-wrr'},
-              $dscp_map_entry->{'bcm-tc'},
-              $dscp_map_entry->{'dp'};
-
-            if ( ( $i + 1 ) % 3 ) {
-                print "     ";
-            } else {
-                print "\n";
-            }
+            printf " %d -> %d\n", $i, $map_entry->{'pcp'};
         }
     }
 
-    if ( defined($platpcpmap) ) {
-        if ( defined($platdscpmap) ) {
-            print "\n";
-        }
-        print "\nDSCP->PCP  DSCP->PCP  DSCP->PCP  DSCP->PCP";
-        print "  DSCP->PCP  DSCP->PCP  DSCP->PCP\n";
+    if ( defined($platdscpmap) ) {
+
+        # Print output in columns for readability
+        print "\nDSCP->PCP  DSCP->PCP  DSCP->PCP  DSCP->PCP\n";
         for my $i ( 0 .. MAX_DSCP ) {
             my $dscp;
-            my $pcp_map_entry;
+            my $map_entry;
 
-            if ( $i eq MAX_DSCP ) {
-                $dscp = $i;
-                printf( "%66s", " " );
-            } else {
-                $dscp = ( $i % 7 ) * 9 + ( $i / 7 );
-            }
-            $pcp_map_entry = $platpcpmap->[$dscp];
-            printf " %2d -> %d", $dscp, $pcp_map_entry->{'pcp'};
-            if ( ( $i % 7 ) == 6 ) {
+            $dscp = ( $i % 4 ) * 16 + ( $i / 4 );
+            $map_entry = $platdscpmap->[$dscp];
+            printf " %2d -> %d", $dscp, $map_entry->{'pcp'};
+            if ( ( $i % 4 ) == 3 ) {
                 print "\n";
             } else {
                 print "   ";
@@ -734,18 +685,108 @@ sub show_bcm_platform_map {
     }
 }
 
+sub show_bcm_platform_ingress_map {
+    my ( $platdscpmap, $platpcpmap ) = @_;
+
+    if ( defined($platpcpmap) ) {
+        print "\nPCP->Des/DP\n";
+        for my $i ( 0 .. 7 ) {
+            my $map_entry;
+
+            $map_entry = $platpcpmap->[$i];
+
+            printf " %d -> %d/%d\n", $i, $map_entry->{'des'},
+              $map_entry->{'dp'};
+        }
+    }
+
+    if ( defined($platdscpmap) ) {
+
+        # Print output in columns for readability
+        print "\nDSCP->Des/DP  DSCP->Des/DP  DSCP->Des/DP  DSCP->Des/DP\n";
+        for my $i ( 0 .. MAX_DSCP ) {
+            my $dscp;
+            my $map_entry;
+
+            $dscp = ( $i % 4 ) * 16 + ( $i / 4 );
+
+            $map_entry = $platdscpmap->[$dscp];
+            printf " %2d -> %d/%d",
+              $dscp, $map_entry->{'des'}, $map_entry->{'dp'};
+            if ( ( $i % 4 ) == 3 ) {
+                print "\n";
+            } else {
+                print "    ";
+            }
+        }
+    }
+}
+
+sub show_platform_ingress_maps {
+    my ( $ifname, $data, $intf_data, $vif ) = @_;
+
+    my $platdscpmap;
+    my $platpcpmap;
+    my $maps = $intf_data->{'ingress-maps'} if ( defined($intf_data) );
+
+    if ( defined($maps) ) {
+
+        if ( !defined($vif) ) {
+            $vif = 0;
+        }
+
+        for my $binding ( @{$maps} ) {
+            if ( $binding->{'vlan'} eq $vif ) {
+                $platdscpmap = $binding->{'fal-bcm-qos-dscp2des'};
+                $platpcpmap  = $binding->{'fal-bcm-qos-dot1p2des'};
+                last;
+            }
+        }
+    }
+
+    if ( !defined($platdscpmap) && !defined($platpcpmap) ) {
+        my $sysdef_map = $data->{'sysdef-map'};
+
+        if ( defined($sysdef_map) ) {
+            $platdscpmap = $sysdef_map->{'fal-bcm-qos-dscp2des'};
+            $platpcpmap  = $sysdef_map->{'fal-bcm-qos-dot1p2des'};
+
+            print "\n$ifname has no specific ingress map, ";
+            print "showing system default classification:\n\n";
+        }
+    }
+
+    show_bcm_platform_ingress_map( $platdscpmap, $platpcpmap );
+}
+
 sub show_platform_map {
-    my $ifname = shift;
-    my ( $port, $vif ) = split_ifname($ifname);
-    my $data = get_interface( $port, "qos show platform" );
+    my ( $ifname, $ingress ) = @_;
+    my ( $port,   $vif )     = split_ifname($ifname);
+    my $data = get_interface( $port, "qos show platform", 1 );
+    my $intf_data = $data->{$port};
+
+    if ( $ingress == 1 ) {
+        show_platform_ingress_maps( $ifname, $data, $intf_data, $vif );
+        return;
+    }
 
     # Skip interfaces with no QoS
-    return unless defined($data);
+    return unless defined($intf_data);
 
-    my $shaper = $data->{shaper};
+    my $shaper = $intf_data->{shaper};
     return unless defined($shaper);
 
-    show_bcm_platform_map( $shaper->{subports}->[0] );
+    if ( defined($vif) ) {
+        my $id = find_vif( $shaper, $vif );
+
+        if ( defined($id) ) {
+            show_bcm_platform_egress_map( $shaper->{subports}->[$id] );
+            return;
+        }
+
+        # If no QoS policy defined for vif then treat as untagged.
+    }
+    show_bcm_platform_egress_map( $shaper->{subports}->[0] );
 }
 
 # show DSCP map for interface
@@ -1119,7 +1160,8 @@ sub usage {
     print "       $0 --dscp INTERFACE\n";
     print "       $0 --mark INTERFACE\n";
     print "       $0 --cos INTERFACE\n";
-    print "       $0 --platmap INTERFACE\n";
+    print "       $0 --platmapegr INTERFACE\n";
+    print "       $0 --platmaping INTERFACE\n";
     print "       $0 --platinfo\n";
     print "       $0 [--64] --summary\n";
     print "       $0 [--64] INTERFACE...\n";
@@ -1127,8 +1169,9 @@ sub usage {
 }
 
 my (
-    $brief, $dscp,    $mark,    $pcp,      $monitor,
-    $class, $summary, $platmap, $platinfo, $buf_errs
+    $brief,      $dscp,     $mark,    $pcp,
+    $monitor,    $class,    $summary, $platmapegr,
+    $platmaping, $platinfo, $buf_errs
 );
 
 GetOptions(
@@ -1136,7 +1179,8 @@ GetOptions(
     'brief=s'       => \$brief,
     'monitor'       => \$monitor,
     'dscp=s'        => \$dscp,
-    'platmap=s'     => \$platmap,
+    'platmapegr=s'  => \$platmapegr,
+    'platmaping=s'  => \$platmaping,
     'platinfo'      => \$platinfo,
     'buffer-errors' => \$buf_errs,
     'mark=s'        => \$mark,
@@ -1145,16 +1189,17 @@ GetOptions(
     'summary'       => \$summary,
 ) or usage();
 
-show_brief($brief)          if $brief;
-show_monitor()              if $monitor;
-show_dscp($dscp)            if $dscp;
-show_platform_map($platmap) if $platmap;
-show_mark($mark)            if $mark;
-show_pcp($pcp)              if $pcp;
-show_class($class)          if defined($class);
-show_summary()              if $summary;
-show_platform_info()        if $platinfo;
-show_buffer_errors()        if $buf_errs;
+show_brief($brief) if $brief;
+show_monitor()     if $monitor;
+show_dscp($dscp)   if $dscp;
+show_platform_map( $platmapegr, 0 ) if $platmapegr;
+show_platform_map( $platmaping, 1 ) if $platmaping;
+show_mark($mark)     if $mark;
+show_pcp($pcp)       if $pcp;
+show_class($class)   if defined($class);
+show_summary()       if $summary;
+show_platform_info() if $platinfo;
+show_buffer_errors() if $buf_errs;
 
 foreach my $ifname (@ARGV) {
     show($ifname);
