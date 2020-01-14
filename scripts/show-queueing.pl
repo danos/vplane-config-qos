@@ -914,22 +914,31 @@ sub show_mark_map {
         if ( $mark_maps[$map]->{'map-name'} eq $map_name ) {
             my @pcp_values = @{ $mark_maps[$map]->{'pcp-values'} };
 
-            print "DSCP->PCP mark map for $ifname: (dscp=d1d2)\n\n";
-            print
-              "     d2 |    0    1    2    3    4    5    6    7    8    9\n";
-            print "  d1    |\n";
-            print
-              "  ------+---------------------------------------------------\n";
+            if ( $mark_maps[$map]->{'map-type'} eq 'designation' ) {
+                print "Designation->PCP mark map for $ifname:\n\n";
 
-            for my $d2 ( 0 .. 6 ) {
-                printf "     %u  |", $d2;
-                for my $d1 ( 0 .. 9 ) {
-                    my $dscp = $d2 * 10 + $d1;
-                    last if $dscp >= 64;
-
-                    printf "    %u", $pcp_values[$dscp];
+                print "\nDes->PCP\n";
+                for my $des ( 0 .. 7 ) {
+                    printf " %d -> %d\n", $des, $pcp_values[$des];
                 }
-                print "\n";
+            } else {
+                print "DSCP->PCP mark map for $ifname: (dscp=d1d2)\n\n";
+                print
+"     d2 |    0    1    2    3    4    5    6    7    8    9\n";
+                print "  d1    |\n";
+                print
+"  ------+---------------------------------------------------\n";
+
+                for my $d2 ( 0 .. 6 ) {
+                    printf "     %u  |", $d2;
+                    for my $d1 ( 0 .. 9 ) {
+                        my $dscp = $d2 * 10 + $d1;
+                        last if $dscp >= 64;
+
+                        printf "    %u", $pcp_values[$dscp];
+                    }
+                    print "\n";
+                }
             }
         }
     }
