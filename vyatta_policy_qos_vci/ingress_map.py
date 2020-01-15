@@ -96,7 +96,7 @@ class IngressMap:
         """ Return the appropriate map-tuple for the requested pcp value """
         return self._pcp_map.get(pcp)
 
-    def add_bindings(self, binding):
+    def add_binding(self, binding):
         """
         Add the binding to the list of bindings using this ingress map
         """
