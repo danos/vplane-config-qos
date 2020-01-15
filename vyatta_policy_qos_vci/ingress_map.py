@@ -86,6 +86,14 @@ class IngressMap:
         """ Return the original JSON for this ingress-map """
         return self._in_map_dict
 
+    @property
+    def system_default(self):
+        """ Is this ingress-map the system default? """
+        if self._system_default is not None:
+            return True
+
+        return False
+
     def dscp_group_map(self, dscp_group_name):
         """
         Return the appropriate map-tuple for the requested dscp-group name
@@ -136,6 +144,8 @@ class IngressMap:
             path = cmd = f"{cmd_prefix} system-default"
             cmd_list.append((path, cmd))
 
+        path = cmd = f"{cmd_prefix} complete"
+        cmd_list.append((path, cmd))
         return cmd_list
 
     def delete_cmd(self):

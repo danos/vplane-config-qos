@@ -195,16 +195,10 @@ class ProfileMap:
                     queue = pipe_queues.pipe_queue(pipe_queue_id)
                     tc_id = queue.tc_id
                     wrr_id = queue.wrr_id
-
+                    qmap = (dp << 5 | wrr_id << 2 | tc_id)
+                    cmd_list.append(f"{cmd_prefix} designation {designation} "
+                                    f"queue {hex(qmap)}")
                 except KeyError:
-                    # Provide the default mapping for unconfigured designation
-                    # values
-                    tc_id = int((MAX_DESIGNATION - designation) / 2)
-                    wrr_id = 0
-                    dp = 0
-
-                qmap = (dp << 5 | wrr_id << 2 | tc_id)
-                cmd_list.append(f"{cmd_prefix} designation {designation} "
-                                f"queue {hex(qmap)}")
+                    pass
 
         return cmd_list

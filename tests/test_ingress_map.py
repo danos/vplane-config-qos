@@ -55,6 +55,8 @@ TEST_DATA = [
              "qos 0 ingress-map in-map-1 pcp 6 designation 6"),
             ("qos 0 ingress-map in-map-1 pcp 7",
              "qos 0 ingress-map in-map-1 pcp 7 designation 7"),
+            ("qos 0 ingress-map in-map-1 complete",
+             "qos 0 ingress-map in-map-1 complete"),
             ("qos 0 ingress-map in-map-2 dscp-group group-1",
              "qos 0 ingress-map in-map-2 dscp-group group-1 designation 0"),
             ("qos 0 ingress-map in-map-2 dscp-group group-2",
@@ -62,7 +64,9 @@ TEST_DATA = [
             ("qos 0 ingress-map in-map-2 dscp-group group-3",
              "qos 0 ingress-map in-map-2 dscp-group group-3 designation 2"),
             ("qos 0 ingress-map in-map-2 system-default",
-             "qos 0 ingress-map in-map-2 system-default")
+             "qos 0 ingress-map in-map-2 system-default"),
+            ("qos 0 ingress-map in-map-2 complete",
+             "qos 0 ingress-map in-map-2 complete")
         ]
     )
 ]

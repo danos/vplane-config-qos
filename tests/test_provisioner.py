@@ -200,6 +200,12 @@ TEST_DATA = [
                 'SET'
             ),
             (
+                'qos 0 ingress-map bill complete',
+                'qos 0 ingress-map bill complete',
+                'ALL',
+                'SET'
+            ),
+            (
                 'qos-in-map 1 ingress-map bill vlan 0',
                 'qos 1 ingress-map bill vlan 0',
                 'lo',
