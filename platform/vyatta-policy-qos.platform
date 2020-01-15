@@ -3,6 +3,7 @@ Yang=vyatta-policy-qos-deviation-siad-v1.yang
 Features=vyatta-policy-qos-groupings-v1:mark-map, \
 vyatta-policy-qos-groupings-v1:byte-limits,       \
 vyatta-op-policy-qos-v1:show-platform,            \
+vyatta-op-policy-qos-v1:ingress-map,              \
 vyatta-policy-qos-v1:ingress-map,		  \
 vyatta-policy-qos-groupings-v1:ingress-map
 

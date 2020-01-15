@@ -60,8 +60,9 @@ module vyatta-op-policy-qos-v1 {
 
 		 YANG module for policy QoS operational mode commands.";
 
-	revision 2020-01-09 {
-		description "Update platform show commands to support new ingress map commands";
+	revision 2020-01-25 {
+		description "Update the show commands to support the
+			    ingress map commands and add a feature flag";
 	}
 	revision 2019-12-16 {
 		description "Add support for showing buffer congestion information:
@@ -86,6 +87,10 @@ module vyatta-op-policy-qos-v1 {
 
 	feature show-platform {
 		description "QoS platform show command support";
+	}
+
+	feature ingress-map {
+		description "QoS ingress-map show command support";
 	}
 
 	opd:augment /clear:clear {
@@ -182,6 +187,11 @@ module vyatta-op-policy-qos-v1 {
 			opd:help "Show brief queuing summary";
 			opd:on-enter "show-queueing.pl --64 --brief $4";
 		}
+		opd:command ingress-map {
+			if-feature ingress-map;
+			opd:help "Show the ingress-map used in the dataplane";
+			opd:on-enter "show-queueing.pl --ingress-maps $4";
+		}
 	}
 
 	opd:augment /show:show {
@@ -245,6 +255,12 @@ module vyatta-op-policy-qos-v1 {
 				type string;
 
 				uses qos-interface-64;
+			}
+
+			opd:command ingress-maps {
+				if-feature ingress-map;
+				opd:help "Show all ingress-maps downloaded to the dataplane";
+				opd:on-enter "show-queueing.pl --ingress-maps";
 			}
 		}
 	}

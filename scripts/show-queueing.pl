@@ -20,6 +20,8 @@ use Vyatta::Dataplane;
 use Vyatta::Interface;
 use Vyatta::Config;
 use Vyatta::QoS::Profile;
+use Math::BigInt;
+use Data::Dumper;
 
 use constant MAX_DSCP => Vyatta::QoS::Profile::MAX_DSCP;
 use constant TC_SHIFT => 2;
@@ -548,6 +550,87 @@ sub show_bcm_buffer_errors {
     }
 }
 
+sub show_ingress_map {
+    my ($decoded) = @_;
+    return unless defined($decoded);
+
+    return unless defined( $decoded->{'ingress-maps'} );
+
+    foreach my $map ( @{ $decoded->{'ingress-maps'} } ) {
+        my $proto  = $map->{type};
+        my $str    = "";
+        my $sysdef = "";
+
+        $str = "dscp to designator"
+          if ( $proto eq "dscp" );
+        $str = "pcp to designator"
+          if ( $proto eq "pcp" );
+        if ( $map->{'system-default'} ) {
+            $sysdef = "system-default";
+        } else {
+            $sysdef = "";
+        }
+        print "\nIngress-map: $map->{name}   type: $str   $sysdef\n";
+        my @values;
+
+        for my $entry ( @{ $map->{map} } ) {
+	    my $designation = $entry->{designation};
+	    my $dp          = $entry->{DPs}[0]->{DP};
+
+	    if ( $proto eq "dscp" ) {
+		my $x    = Math::BigInt->new( $entry->{DPs}[0]->{'pcp/mask'} );
+		my $mask = $x->as_int();
+
+		for my $dp ( @{ $entry->{DPs} } ) {
+		    for my $i ( 0 .. MAX_DSCP ) {
+		        if ( $mask & ( 1 << $i ) ) {
+			    $values[$i]->{designator} = $designation;
+			    $values[$i]->{DP}         = $dp->{DP};
+		        }
+		    }
+		}
+	    }
+	    if ( $proto eq "pcp" ) {
+		for my $dp ( @{ $entry->{DPs} } ) {
+		    my $pcp = $dp->{'pcp/mask'};
+		    $values[ $pcp ]->{designator} = $designation;
+		    $values[ $pcp ]->{DP}         = $dp->{DP};
+		}
+	    }
+        }
+        if ( $proto eq "dscp" ) {
+            print "\nDSCP->Des/DP   DSCP->Des/DP   DSCP->Des/DP   DSCP->Des/DP\n";
+            for my $i ( 0 .. MAX_DSCP ) {
+                my $dscp;
+
+                $dscp = int( ( $i % 4 ) * 16 + ( $i / 4 ) );
+		if ( defined( $values[$dscp] ) ) {
+		    printf " %2d -> %d/%d", $dscp,
+		      $values[$dscp]->{designator}, $values[$dscp]->{DP};
+		} else {
+		    printf " %2d -> 0/0", $dscp;
+		}
+		if ( ( $i % 4 ) == 3 ) {
+		    print "\n";
+		} else {
+		    print "     ";
+		}
+            }
+        }
+        if ( $proto eq "pcp" ) {
+            print "\nPCP->Des/DP\n";
+            for my $i ( 0 .. 7 ) {
+		if ( defined( $values[$i] ) ) {
+		    printf " %d -> %d/%d\n", $i, $values[$i]->{designator},
+			$values[$i]->{DP};
+		} else {
+		    print " $i -> 0/0\n";
+		}
+            }
+        }
+    }
+}
+
 sub show_platform_info {
     my $fmt = "%-11s %8d %16d\n";
 
@@ -560,6 +643,22 @@ sub show_buffer_errors {
     print $hdr, '-' x length($hdr), "\n";
 
     walk_fabrics( "qos show buffer-errors", \&show_bcm_buffer_errors, $fmt );
+}
+
+sub show_ingress_maps {
+    my $interface = shift;
+
+    if ( $interface  eq '' ) {
+	walk_fabrics( "qos show ingress-maps", \&show_ingress_map );
+	return;
+    }
+
+    my ( $port, $vif ) = split_ifname($interface);
+    if ( defined($vif) ) {
+	walk_fabrics( "qos show ingress-maps vlan $vif $port", \&show_ingress_map );
+    } else {
+	walk_fabrics( "qos show ingress-maps vlan 0 $port", \&show_ingress_map );
+    }
 }
 
 # Show shapers on all interfaces
@@ -1174,13 +1273,14 @@ sub usage {
     print "       $0 --platinfo\n";
     print "       $0 [--64] --summary\n";
     print "       $0 [--64] INTERFACE...\n";
+    print "       $0 --ingress-maps\n";
     exit 1;
 }
 
 my (
-    $brief,      $dscp,     $mark,    $pcp,
-    $monitor,    $class,    $summary, $platmapegr,
-    $platmaping, $platinfo, $buf_errs
+    $brief,      $dscp,     $mark,     $pcp,
+    $monitor,    $class,    $summary,  $platmapegr,
+    $platmaping, $platinfo, $buf_errs, $ingress_maps
 );
 
 GetOptions(
@@ -1196,6 +1296,7 @@ GetOptions(
     'cos=s'         => \$pcp,
     'class:s'       => \$class,
     'summary'       => \$summary,
+    'ingress-maps:s'=> \$ingress_maps,
 ) or usage();
 
 show_brief($brief) if $brief;
@@ -1209,6 +1310,7 @@ show_class($class)   if defined($class);
 show_summary()       if $summary;
 show_platform_info() if $platinfo;
 show_buffer_errors() if $buf_errs;
+show_ingress_maps($ingress_maps)  if defined($ingress_maps);
 
 foreach my $ifname (@ARGV) {
     show($ifname);
