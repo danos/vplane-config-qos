@@ -20,7 +20,7 @@ class IngressMap:
     1: dscp-group-name to designation
     2: pcp-values to designation
     Only one of these mappings can be used by any IngressMap object.
-    If we hae any IngressMaps, then one of them must be marked as the
+    If we have any IngressMaps, then one of them must be marked as the
     system-default.
     """
     def __init__(self, ingress_map_dict):

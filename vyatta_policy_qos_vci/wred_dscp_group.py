@@ -14,7 +14,7 @@ from pathlib import Path
 def byte_limits():
     """ Check the feature file to see if we are using byte or packet limits? """
     byte_limit_feature = Path(
-        "/run/vyatta-platform/features/vyatta-policy-qos-grouping-v1/byte-limits")
+        "/run/vyatta-platform/features/vyatta-policy-qos-groupings-v1/byte-limits")
     return byte_limit_feature.is_file()
 
 
