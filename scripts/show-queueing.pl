@@ -574,58 +574,59 @@ sub show_ingress_map {
         my @values;
 
         for my $entry ( @{ $map->{map} } ) {
-	    my $designation = $entry->{designation};
-	    my $dp          = $entry->{DPs}[0]->{DP};
+            my $designation = $entry->{designation};
+            my $dp          = $entry->{DPs}[0]->{DP};
 
-	    if ( $proto eq "dscp" ) {
-		my $x    = Math::BigInt->new( $entry->{DPs}[0]->{'pcp/mask'} );
-		my $mask = $x->as_int();
+            if ( $proto eq "dscp" ) {
+                my $x    = Math::BigInt->new( $entry->{DPs}[0]->{'pcp/mask'} );
+                my $mask = $x->as_int();
 
-		for my $dp ( @{ $entry->{DPs} } ) {
-		    for my $i ( 0 .. MAX_DSCP ) {
-		        if ( $mask & ( 1 << $i ) ) {
-			    $values[$i]->{designator} = $designation;
-			    $values[$i]->{DP}         = $dp->{DP};
-		        }
-		    }
-		}
-	    }
-	    if ( $proto eq "pcp" ) {
-		for my $dp ( @{ $entry->{DPs} } ) {
-		    my $pcp = $dp->{'pcp/mask'};
-		    $values[ $pcp ]->{designator} = $designation;
-		    $values[ $pcp ]->{DP}         = $dp->{DP};
-		}
-	    }
+                for my $dp ( @{ $entry->{DPs} } ) {
+                    for my $i ( 0 .. MAX_DSCP ) {
+                        if ( $mask & ( 1 << $i ) ) {
+                            $values[$i]->{designator} = $designation;
+                            $values[$i]->{DP}         = $dp->{DP};
+                        }
+                    }
+                }
+            }
+            if ( $proto eq "pcp" ) {
+                for my $dp ( @{ $entry->{DPs} } ) {
+                    my $pcp = $dp->{'pcp/mask'};
+                    $values[$pcp]->{designator} = $designation;
+                    $values[$pcp]->{DP}         = $dp->{DP};
+                }
+            }
         }
         if ( $proto eq "dscp" ) {
-            print "\nDSCP->Des/DP   DSCP->Des/DP   DSCP->Des/DP   DSCP->Des/DP\n";
+            print
+              "\nDSCP->Des/DP   DSCP->Des/DP   DSCP->Des/DP   DSCP->Des/DP\n";
             for my $i ( 0 .. MAX_DSCP ) {
                 my $dscp;
 
                 $dscp = int( ( $i % 4 ) * 16 + ( $i / 4 ) );
-		if ( defined( $values[$dscp] ) ) {
-		    printf " %2d -> %d/%d", $dscp,
-		      $values[$dscp]->{designator}, $values[$dscp]->{DP};
-		} else {
-		    printf " %2d -> 0/0", $dscp;
-		}
-		if ( ( $i % 4 ) == 3 ) {
-		    print "\n";
-		} else {
-		    print "     ";
-		}
+                if ( defined( $values[$dscp] ) ) {
+                    printf " %2d -> %d/%d", $dscp,
+                      $values[$dscp]->{designator}, $values[$dscp]->{DP};
+                } else {
+                    printf " %2d -> 0/0", $dscp;
+                }
+                if ( ( $i % 4 ) == 3 ) {
+                    print "\n";
+                } else {
+                    print "     ";
+                }
             }
         }
         if ( $proto eq "pcp" ) {
             print "\nPCP->Des/DP\n";
             for my $i ( 0 .. 7 ) {
-		if ( defined( $values[$i] ) ) {
-		    printf " %d -> %d/%d\n", $i, $values[$i]->{designator},
-			$values[$i]->{DP};
-		} else {
-		    print " $i -> 0/0\n";
-		}
+                if ( defined( $values[$i] ) ) {
+                    printf " %d -> %d/%d\n", $i, $values[$i]->{designator},
+                      $values[$i]->{DP};
+                } else {
+                    print " $i -> 0/0\n";
+                }
             }
         }
     }
@@ -648,16 +649,18 @@ sub show_buffer_errors {
 sub show_ingress_maps {
     my $interface = shift;
 
-    if ( $interface  eq '' ) {
-	walk_fabrics( "qos show ingress-maps", \&show_ingress_map );
-	return;
+    if ( $interface eq '' ) {
+        walk_fabrics( "qos show ingress-maps", \&show_ingress_map );
+        return;
     }
 
     my ( $port, $vif ) = split_ifname($interface);
     if ( defined($vif) ) {
-	walk_fabrics( "qos show ingress-maps vlan $vif $port", \&show_ingress_map );
+        walk_fabrics( "qos show ingress-maps vlan $vif $port",
+            \&show_ingress_map );
     } else {
-	walk_fabrics( "qos show ingress-maps vlan 0 $port", \&show_ingress_map );
+        walk_fabrics( "qos show ingress-maps vlan 0 $port",
+            \&show_ingress_map );
     }
 }
 
@@ -1284,19 +1287,19 @@ my (
 );
 
 GetOptions(
-    '64'            => \$bits64,
-    'brief=s'       => \$brief,
-    'monitor'       => \$monitor,
-    'dscp=s'        => \$dscp,
-    'platmapegr=s'  => \$platmapegr,
-    'platmaping=s'  => \$platmaping,
-    'platinfo'      => \$platinfo,
-    'buffer-errors' => \$buf_errs,
-    'mark=s'        => \$mark,
-    'cos=s'         => \$pcp,
-    'class:s'       => \$class,
-    'summary'       => \$summary,
-    'ingress-maps:s'=> \$ingress_maps,
+    '64'             => \$bits64,
+    'brief=s'        => \$brief,
+    'monitor'        => \$monitor,
+    'dscp=s'         => \$dscp,
+    'platmapegr=s'   => \$platmapegr,
+    'platmaping=s'   => \$platmaping,
+    'platinfo'       => \$platinfo,
+    'buffer-errors'  => \$buf_errs,
+    'mark=s'         => \$mark,
+    'cos=s'          => \$pcp,
+    'class:s'        => \$class,
+    'summary'        => \$summary,
+    'ingress-maps:s' => \$ingress_maps,
 ) or usage();
 
 show_brief($brief) if $brief;
@@ -1304,13 +1307,13 @@ show_monitor()     if $monitor;
 show_dscp($dscp)   if $dscp;
 show_platform_map( $platmapegr, 0 ) if $platmapegr;
 show_platform_map( $platmaping, 1 ) if $platmaping;
-show_mark($mark)     if $mark;
-show_pcp($pcp)       if $pcp;
-show_class($class)   if defined($class);
-show_summary()       if $summary;
-show_platform_info() if $platinfo;
-show_buffer_errors() if $buf_errs;
-show_ingress_maps($ingress_maps)  if defined($ingress_maps);
+show_mark($mark)                 if $mark;
+show_pcp($pcp)                   if $pcp;
+show_class($class)               if defined($class);
+show_summary()                   if $summary;
+show_platform_info()             if $platinfo;
+show_buffer_errors()             if $buf_errs;
+show_ingress_maps($ingress_maps) if defined($ingress_maps);
 
 foreach my $ifname (@ARGV) {
     show($ifname);
