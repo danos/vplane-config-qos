@@ -63,21 +63,28 @@ def test_action():
 
     expected_results = [
         [("policy action name joey",
-          "npf-cfg add action-group:joey 0 rproc=markpcp(1,none)")],
+          "npf-cfg add action-group:joey 0 rproc=markpcp(1,none)",
+          "ALL")],
         [("policy action name fred",
-          "npf-cfg add action-group:fred 0 rproc=markdscp(2)")],
+          "npf-cfg add action-group:fred 0 rproc=markdscp(2)",
+          "ALL")],
         [("policy action name paul",
-          "npf-cfg add action-group:paul 0 rproc=markdscp(32)")],
+          "npf-cfg add action-group:paul 0 rproc=markdscp(32)",
+          "ALL")],
         [("policy action name bill",
-          "npf-cfg add action-group:bill 0 rproc=policer(0,12500000,50000,drop,,0,20)")],
+          "npf-cfg add action-group:bill 0 rproc=policer(0,12500000,50000,drop,,0,20)",
+          "ALL")],
         [("policy action name gary",
-          "npf-cfg add action-group:gary 0 rproc=policer(0,25000000,100000,drop,,0,20)")],
+          "npf-cfg add action-group:gary 0 rproc=policer(0,25000000,100000,drop,,0,20)",
+          "ALL")],
         [("policy action name bert",
           "npf-cfg add action-group:bert 0 rproc=markpcp(4,none);" \
-          "policer(0,125000000,10000,drop,,0,20)")],
+          "policer(0,125000000,10000,drop,,0,20)",
+          "ALL")],
         [("policy action name jack",
           "npf-cfg add action-group:jack 0 rproc=markpcp(7,inner);" \
-          "policer(0,250000000,20000,drop,,0,20)")]
+          "policer(0,250000000,20000,drop,,0,20)",
+          "ALL")]
     ]
 
     for test_input, expected_result in zip(test_data, expected_results):

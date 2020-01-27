@@ -72,19 +72,24 @@ class MarkMap:
                 path = f"qos mark-map {self._name} dscp-group {group_name}"
                 cmd = (f"qos 0 mark-map {self._name} dscp-group {group_name} "
                        f"pcp {pcp_mark}")
-                cmd_list.append((path, cmd))
+                ifname = "ALL"
+                cmd_list.append((path, cmd, ifname))
 
         if self._designations:
             for des, pcp_mark in sorted(self._designations.items()):
                 path = f"qos mark-map {self._name} designation {des}"
                 cmd = (f"qos 0 mark-map {self._name} designation {des} "
                        f"pcp {pcp_mark}")
-                cmd_list.append((path, cmd))
+                ifname = "ALL"
+                cmd_list.append((path, cmd, ifname))
 
         return cmd_list
 
     def delete_cmd(self):
         """ Generate the necessary path and command to delete this mark-map """
+        cmd_list = []
         path = f"qos mark-map {self._name}"
         cmd = f"qos 0 mark-map {self._name} delete"
-        return (path, cmd)
+        ifname = "ALL"
+        cmd_list.append((path, cmd, ifname))
+        return cmd_list

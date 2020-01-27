@@ -18,16 +18,18 @@ class IngressMapBinding:
 
     def create_binding(self):
         """
-        Return the path, command tuple necessary to bind this ingress-map
+        Return the path, command, ifname tuple necessary to bind this ingress-map
         to the interface/vlan.
         """
-        return self._ingress_map.create_binding(self._interface.ifindex,
+        return self._ingress_map.create_binding(self._interface.name,
+                                                self._interface.ifindex,
                                                 self._vlan_id)
 
     def delete_binding(self):
         """
-        Return the path, command tuple necessary to unbind this ingress-map
+        Return the path, command, ifname tuple necessary to unbind this ingress-map
         from the interface/vlan.
         """
-        return self._ingress_map.delete_binding(self._interface.ifindex,
+        return self._ingress_map.delete_binding(self._interface.name,
+                                                self._interface.ifindex,
                                                 self._vlan_id)

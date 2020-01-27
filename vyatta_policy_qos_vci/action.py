@@ -89,7 +89,8 @@ class Action:
         if rproc is not None:
             path = f"policy action name {self._name}"
             cmd = f"npf-cfg add action-group:{self._name} 0 {rproc}"
-            cmd_list.append((path, cmd))
+            ifname = "ALL"
+            cmd_list.append((path, cmd, ifname))
 
         return cmd_list
 
@@ -97,6 +98,10 @@ class Action:
         """
         Generate the necessary path and command to delete this action-group
         """
+        cmd_list = []
         path = f"policy action name {self._name}"
         cmd = f"npf-cfg delete action-group:{self._name}"
-        return (path, cmd)
+        ifname = "ALL"
+        cmd_list.append((path, cmd, ifname))
+
+        return cmd_list
