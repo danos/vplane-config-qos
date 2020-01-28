@@ -32,7 +32,7 @@ module vyatta-policy-qos-groupings-v1 {
 		 Web: www.att.com";
 
 	description
-		"Copyright (c) 2017-2019 AT&T Intellectual Property
+		"Copyright (c) 2017-2020 AT&T Intellectual Property
 		 All rights reserved.
 
 		 Redistribution and use in source and binary forms, with or without
@@ -66,13 +66,15 @@ module vyatta-policy-qos-groupings-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
-	revision 2019-11-21 {
+	revision 2020-01-28 {
 		description "Add the designation keyword to policy qos
 			     map command and mark-map commands.
 			     Add the feature ingress-map.
 			     Add configuration option to give burst size in
 			     milliseconds.
-			     Move to VCI for commit processing.";
+			     Move to VCI for commit processing.
+			     Explicitly specify drop precedence in ingress
+			     classification maps and WRED parameters.";
 	}
 
 	revision 2019-07-17 {
@@ -563,6 +565,13 @@ module vyatta-policy-qos-groupings-v1 {
 			list dscp-group {
 				description "Group of DSCP values to match in an incoming IP header";
 				configd:help "Group of DSCP values to match in an incoming IP header";
+				must "not(../drop-precedence)" {
+					error-message "WRED configuration must be specified using either dscp-group or drop-precedence";
+				}
+				must "not(/policy:policy/ingress-map)" {
+					error-message "DSCP group configuration is incompatible with the use of an ingress map";
+				}
+
 				key "group-name";
 				max-elements "4";
 				leaf group-name {
@@ -572,6 +581,36 @@ module vyatta-policy-qos-groupings-v1 {
 					}
 					type leafref {
 						path "/resources:resources/res-group:group/res-group:dscp-group/res-group:group-name";
+					}
+				}
+				uses wred-base-bytes;
+			}
+			list drop-precedence {
+				if-feature ingress-map;
+				description "Drop precedence marked at ingress";
+				configd:help "Drop precedence marked at ingress";
+				must "not(../dscp-group)" {
+					error-message "WRED configuration must be specified using either dscp-group or drop-precedence";
+				}
+				must "/policy:policy/ingress-map" {
+					error-message "Drop-precedence configuration requires the use of an ingress map";
+				}
+				key "colour";
+				max-elements "3";
+				leaf colour {
+					type enumeration {
+						enum "green" {
+							description "Packets marked with drop precedence green";
+							configd:help "Packets marked with drop precedence green";
+						}
+						enum "yellow" {
+							description "Packets marked with drop precedence yellow";
+							configd:help "Packets marked with drop precedence yellow";
+						}
+						enum "red" {
+							description "Packets marked with drop precedence red";
+							configd:help "Packets marked with drop precedence red";
+						}
 					}
 				}
 				uses wred-base-bytes;

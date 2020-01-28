@@ -44,7 +44,7 @@ module vyatta-policy-qos-v1 {
 		 Web: www.att.com";
 
 	description
-		"Copyright (c) 2017-2019 AT&T Intellectual Property
+		"Copyright (c) 2017-2020 AT&T Intellectual Property
 		 All rights reserved.
 
 		 Copyright (c) 2014-2017 by Brocade Communications Systems, Inc.
@@ -81,14 +81,13 @@ module vyatta-policy-qos-v1 {
 
 		 This module implements vyatta-policy-qos-v1.";
 
-	revision 2019-12-02 {
-		description "Add support for buffer congestion";
-	}
-
-	revision 2019-11-18 {
+	revision 2020-01-28 {
 		description "Add ingress-map definitions and attachment
 			     points to switch interfaces.
-			     Move to VCI for commit processing.";
+			     Move to VCI for commit processing.
+			     Add support for buffer congestion.
+			     Explicitly specify drop precedence in ingress
+			     classification maps and WRED parameters.";
 	}
 
 	revision 2019-06-20 {
@@ -466,6 +465,28 @@ module vyatta-policy-qos-v1 {
 		}
 	}
 
+	grouping drop-precedence {
+		leaf drop-precedence {
+			description "Drop precedence associated with packet";
+			configd:help "Drop precedence associated with packet";
+			type enumeration {
+				enum "green" {
+					description "Mark packets with drop precedence green";
+					configd:help "Mark packets with drop precedence green";
+				}
+				enum "yellow" {
+					description "Mark packets with drop precedence yellow";
+					configd:help "Mark packets with drop precedence yellow";
+				}
+				enum "red" {
+					description "Mark packets with drop precedence red";
+					configd:help "Mark packets with drop precedence red";
+				}
+			}
+			default "green";
+		}
+	}
+
 	augment /policy:policy {
 		container qos {
 			configd:priority "400";
@@ -521,6 +542,7 @@ module vyatta-policy-qos-v1 {
 						path "/resources:resources/res-group:group/res-group:dscp-group/res-group:group-name";
 					}
 				}
+				uses drop-precedence;
 				uses designation;
 			}
 			list pcp {
@@ -533,6 +555,7 @@ module vyatta-policy-qos-v1 {
 				leaf id {
 					type pcp-value-type;
 				}
+				uses drop-precedence;
 				uses designation;
 			}
 			leaf system-default {
