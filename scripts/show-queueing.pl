@@ -1122,6 +1122,7 @@ sub show_rules {
             my $rule_rproc;
             my $exceed_pkts;
             my $exceed_bytes;
+            my $state = '';
 
             if ( !defined($pcptag) ) {
                 $pcptag = "";
@@ -1158,6 +1159,10 @@ sub show_rules {
                         $exceed_pkts  = $policer->{'exceed-packets'};
                         $exceed_bytes = $policer->{'exceed-bytes'};
                     }
+                    if ( index( $rule_rproc, "markpcp" ) != -1 ) {
+                        my $markpcp = $act_grp->{markpcp};
+                        $state = $markpcp->{state};
+                    }
                 }
             }
             if ( index( $oper, "policer" ) != -1 ) {
@@ -1168,12 +1173,21 @@ sub show_rules {
             if ($bits64) {
                 printf $fmt, $ifname, $prio, $packets, $bytes, '';
                 $ifname = '';
-                printf( "%16s %6s %s %s %s\n",
-                    '', 'Match:', $match, $oper, $pcptag )
-                  if ( defined $oper && $oper ne '' );
-
+                if ( defined $oper && $oper ne '' ) {
+                    if ( $state ne '' ) {
+                        $oper = $oper . " " . $state;
+                    }
+                    printf( "%16s %6s %s %s %s\n",
+                        '', 'Match:', $match, $oper, $pcptag );
+                }
                 if ( defined $rule_rproc ) {
-                    printf( "%23s %s %s\n", ' ', $rule_rproc, $pcptag );
+                    if ( $state ne '' ) {
+                        $rule_rproc = $rule_rproc . " " . $state;
+                    }
+                    if ( $pcptag ne '' ) {
+                        $rule_rproc = $rule_rproc . " " . $pcptag;
+                    }
+                    printf( "%23s %s\n", ' ', $rule_rproc );
                 }
                 if ( defined $policer ) {
                     printf( "%22s %20s %20s  exceeded\n",
@@ -1181,11 +1195,21 @@ sub show_rules {
                 }
             } else {
                 printf $fmt, $ifname, $prio, $packets, $bytes, $match, "";
-                printf $fmt, '', '', '', '', $oper, $pcptag
-                  if ( defined $oper && $oper ne '' );
+                if ( defined $oper && $oper ne '' ) {
+                    if ( $state ne '' ) {
+                        $oper = $oper . " " . $state;
+                    }
+                    printf $fmt, '', '', '', '', $oper, $pcptag;
+                }
                 $ifname = '';
                 if ( defined $rule_rproc ) {
-                    printf( "%50s %s %s\n", ' ', $rule_rproc, $pcptag );
+                    if ( $state ne "" ) {
+                        $rule_rproc = $rule_rproc . " " . $state;
+                    }
+                    if ( $pcptag ne "" ) {
+                        $rule_rproc = $rule_rproc . " " . $pcptag;
+                    }
+                    printf( "%50s %s\n", ' ', $rule_rproc );
                 }
                 if ( defined $policer ) {
                     printf( "%21s %10s %16s  exceeded\n",
