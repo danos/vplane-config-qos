@@ -511,7 +511,13 @@ module vyatta-policy-qos-groupings-v1 {
 				leaf id {
 					type designation-type;
 				}
-				uses to-pipe-queue;
+				uses to-pipe-queue {
+					refine to {
+						must "count(../../designation[to=current()]) <= 1" {
+							error-message "Cannot map multiple designations to one pipe queue";
+						}
+					}
+				}
 				must "(not(/policy:policy/qos/name/shaper/profile/map/dscp-group))" {
 					error-message "Cannot mix dscp-groups and designation in same profile map";
 				}
