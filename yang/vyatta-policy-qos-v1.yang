@@ -462,6 +462,7 @@ module vyatta-policy-qos-v1 {
 			description "Designation associated with packet";
 			configd:help "Designation associated with packet";
 			type qos-groupings:designation-type;
+			mandatory true;
 		}
 	}
 
