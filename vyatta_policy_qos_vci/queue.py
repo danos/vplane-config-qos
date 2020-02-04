@@ -9,7 +9,7 @@
 A module to define a class of Queue objects
 """
 
-from vyatta_policy_qos_vci.wred_dscp_group import WredDscpGroup
+from vyatta_policy_qos_vci.wred_map import WredMap
 
 class Queue:
     """
@@ -28,11 +28,19 @@ class Queue:
         self._wred_filter_weight = None
 
         if wred_map_dict is not None:
+            self._wred_filter_weight = wred_map_dict['filter-weight']
             try:
-                self._wred_filter_weight = wred_map_dict['filter-weight']
                 dscp_group_list = wred_map_dict['dscp-group']
                 for wred_group_dict in dscp_group_list:
-                    self._wred_maps.append(WredDscpGroup(wred_group_dict))
+                    self._wred_maps.append(WredMap(wred_group_dict, 1))
+
+            except KeyError:
+                pass
+
+            try:
+                drop_prec_list = wred_map_dict['drop-precedence']
+                for wred_dp_dict in drop_prec_list:
+                    self._wred_maps.append(WredMap(wred_dp_dict, 0))
 
             except KeyError:
                 pass
@@ -73,9 +81,9 @@ class Queue:
 
         cmd_list.append(cmd)
 
-        # Add any wred-dscp-group commands
-        for wred_dscp_group in self._wred_maps:
-            cmd_list.append(wred_dscp_group.commands(cmd_prefix))
+        # Add any wred-map commands
+        for wred_map in self._wred_maps:
+            cmd_list.append(wred_map.commands(cmd_prefix))
 
         if self._wred_filter_weight is not None:
             cmd = f"{cmd_prefix} wred-weight {self._wred_filter_weight}"

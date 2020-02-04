@@ -10,7 +10,7 @@ A module to define a block of four TrafficClass objects
 """
 
 from vyatta_policy_qos_vci.traffic_class import TrafficClass
-from vyatta_policy_qos_vci.wred_dscp_group import byte_limits
+from vyatta_policy_qos_vci.wred_map import byte_limits
 
 MAX_TRAFFIC_CLASS = 4
 

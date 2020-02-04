@@ -7,12 +7,12 @@
 #
 
 """
-Unit-tests for the wred_dscp_group.py module.
+Unit-tests for the wred_map.py module.
 """
 
 import pytest
 
-from vyatta_policy_qos_vci.wred_dscp_group import WredDscpGroup, byte_limits
+from vyatta_policy_qos_vci.wred_map import WredMap, byte_limits
 
 TEST_DATA = [
     (
@@ -40,9 +40,9 @@ TEST_DATA = [
 ]
 
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
-def test_wred_dscp_group(test_input, expected_result):
-    """ Unit-test the WredDscpGroup class """
-    group = WredDscpGroup(test_input)
+def test_wred_map(test_input, expected_result):
+    """ Unit-test the WredMap class """
+    group = WredMap(test_input, 1)
     assert group is not None
     assert group.commands("") == expected_result
 
