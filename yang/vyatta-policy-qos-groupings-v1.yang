@@ -1048,9 +1048,9 @@ module vyatta-policy-qos-groupings-v1 {
 				must "(not(../dscp-group))" {
 					error-message "Mark-map can only use DSCP or designation as classifier not both";
 				}
-				key "pcp-value-type";
-				leaf pcp-value-type {
-					type pcp-value-type;
+				key "designation-type";
+				leaf designation-type {
+					type designation-type;
 				}
 				uses pcp-mark;
 			}
