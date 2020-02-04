@@ -524,6 +524,12 @@ module vyatta-policy-qos-v1 {
 			if-feature ingress-map;
 			description "Ingress classification map";
 			key "id";
+			must "(count(/policy:policy/qos/name/shaper/profile) = count(/policy:policy/qos/name/shaper/profile/map)) and not(/policy:policy/qos/name/shaper/profile/map/dscp-group) " {
+				error-message "If ingress maps are used, all profiles must contain a map with designation values, not dscp-groups";
+			}
+			must "(count(/policy:policy/qos/profile) = count(/policy:policy/qos/profile/map)) and not(/policy:policy/qos/profile/map/dscp-group) " {
+				error-message "If ingress maps are used, all profiles must contain a map with designation values, not dscp-groups";
+			}
 			leaf id {
 				type name;
 				description "Ingress-map name";

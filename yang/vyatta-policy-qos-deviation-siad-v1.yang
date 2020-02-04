@@ -50,7 +50,7 @@ module vyatta-policy-qos-deviation-siad-v1 {
           Web: www.att.com";
 
 	description
-		"Copyright (c) 2019, AT&T Intellectual Property.
+		"Copyright (c) 2019-2020, AT&T Intellectual Property.
 		 All rights reserved.
 
 		 Redistribution and use in source and binary forms, with or without
@@ -84,9 +84,11 @@ module vyatta-policy-qos-deviation-siad-v1 {
 
 		 Deviations for QoS policies on the SIAD platform";
 
-	revision 2019-09-16 {
+	revision 2020-01-28 {
 		description "Add configuration option to give burst size in
-			     milliseconds";
+                             milliseconds.
+                             Relax restriction on pipe queue to traffic class
+                             mappings if ingress maps are used.";
 	}
 
 	revision 2019-06-20 {
@@ -130,9 +132,9 @@ module vyatta-policy-qos-deviation-siad-v1 {
 
 	deviation /policy:policy/qos:qos/qos:name/qos:shaper/qos:profile/qos:queue {
 		deviate add {
-			must "count(../../../../qos:name/qos:shaper/qos:profile) + count(../../../../qos:profile) = " +
+			must "/policy:policy/qos:ingress-map or (count(../../../../qos:name/qos:shaper/qos:profile) + count(../../../../qos:profile) = " +
 			     "count(../../../../qos:name/qos:shaper/qos:profile/qos:queue[qos:id=current()/qos:id and qos:traffic-class = current()/qos:traffic-class]) + " +
-			     "count(../../../../qos:profile/qos:queue[qos:id=current()/qos:id and qos:traffic-class = current()/qos:traffic-class])" {
+			     "count(../../../../qos:profile/qos:queue[qos:id=current()/qos:id and qos:traffic-class = current()/qos:traffic-class]))" {
 				configd:must "verify-queue-id-and-traffic-class(.)";
 				error-message "Traffic-class id for each pipe-queue id must be the same in all profiles";
 			}
@@ -141,9 +143,9 @@ module vyatta-policy-qos-deviation-siad-v1 {
 
 	deviation /policy:policy/qos:qos/qos:profile/qos:queue {
 		deviate add {
-			must "count(../../qos:name/qos:shaper/qos:profile) + count(../../qos:profile) = " +
+			must "/policy:policy/qos:ingress-map or (count(../../qos:name/qos:shaper/qos:profile) + count(../../qos:profile) = " +
 			     "count(../../qos:name/qos:shaper/qos:profile/qos:queue[qos:id=current()/qos:id and qos:traffic-class = current()/qos:traffic-class]) + " +
-			     "count(../../qos:profile/qos:queue[qos:id=current()/qos:id and qos:traffic-class = current()/qos:traffic-class])" {
+			     "count(../../qos:profile/qos:queue[qos:id=current()/qos:id and qos:traffic-class = current()/qos:traffic-class]))" {
 				configd:must "verify-queue-id-and-traffic-class(.)";
 				error-message "Traffic-class id for each pipe-queue id must be the same in all profiles";
 			}
