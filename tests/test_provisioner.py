@@ -62,28 +62,36 @@ TEST_DATA = [
                         "pcp": [
                             {
                                 "designation": 0,
-                                "id": 0
+                                "id": 0,
+                                "drop-precedence": "green"
                             }, {
                                 "designation": 1,
-                                "id": 1
+                                "id": 1,
+                                "drop-precedence": "green"
                             }, {
                                 "designation": 2,
-                                "id": 2
+                                "id": 2,
+                                "drop-precedence": "green"
                             }, {
                                 "designation": 3,
-                                "id": 3
+                                "id": 3,
+                                "drop-precedence": "green"
                             }, {
                                 "designation": 4,
-                                "id": 4
+                                "id": 4,
+                                "drop-precedence": "green"
                             }, {
                                 "designation": 5,
-                                "id": 5
+                                "id": 5,
+                                "drop-precedence": "green"
                             }, {
                                 "designation": 6,
-                                "id": 6
+                                "id": 6,
+                                "drop-precedence": "green"
                             }, {
                                 "designation": 7,
-                                "id": 7
+                                "id": 7,
+                                "drop-precedence": "green"
                             }
                         ],
                         'system-default': [None]
@@ -153,49 +161,49 @@ TEST_DATA = [
             # 4th element: the store command, can be "SET" or "DELETE"
             (
                 'qos 0 ingress-map bill pcp 0',
-                'qos 0 ingress-map bill pcp 0 designation 0',
+                'qos 0 ingress-map bill pcp 0 designation 0 drop-prec green',
                 'ALL',
                 'SET'
             ),
             (
                 'qos 0 ingress-map bill pcp 1',
-                'qos 0 ingress-map bill pcp 1 designation 1',
+                'qos 0 ingress-map bill pcp 1 designation 1 drop-prec green',
                 'ALL',
                 'SET'
             ),
             (
                 'qos 0 ingress-map bill pcp 2',
-                'qos 0 ingress-map bill pcp 2 designation 2',
+                'qos 0 ingress-map bill pcp 2 designation 2 drop-prec green',
                 'ALL',
                 'SET'
             ),
             (
                 'qos 0 ingress-map bill pcp 3',
-                'qos 0 ingress-map bill pcp 3 designation 3',
+                'qos 0 ingress-map bill pcp 3 designation 3 drop-prec green',
                 'ALL',
                 'SET'
             ),
             (
                 'qos 0 ingress-map bill pcp 4',
-                'qos 0 ingress-map bill pcp 4 designation 4',
+                'qos 0 ingress-map bill pcp 4 designation 4 drop-prec green',
                 'ALL',
                 'SET'
             ),
             (
                 'qos 0 ingress-map bill pcp 5',
-                'qos 0 ingress-map bill pcp 5 designation 5',
+                'qos 0 ingress-map bill pcp 5 designation 5 drop-prec green',
                 'ALL',
                 'SET'
             ),
             (
                 'qos 0 ingress-map bill pcp 6',
-                'qos 0 ingress-map bill pcp 6 designation 6',
+                'qos 0 ingress-map bill pcp 6 designation 6 drop-prec green',
                 'ALL',
                 'SET'
             ),
             (
                 'qos 0 ingress-map bill pcp 7',
-                'qos 0 ingress-map bill pcp 7 designation 7',
+                'qos 0 ingress-map bill pcp 7 designation 7 drop-prec green',
                 'ALL',
                 'SET'
             ),

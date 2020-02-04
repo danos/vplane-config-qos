@@ -17,8 +17,8 @@ MAX_PCP = 7
 class IngressMap:
     """
     The IngressMap class provides two different types of mappings:
-    1: dscp-group-name to designation
-    2: pcp-values to designation
+    1: dscp-group-name to designation/drop-precedence
+    2: pcp-values to designation/drop-precedence
     Only one of these mappings can be used by any IngressMap object.
     If we have any IngressMaps, then one of them must be marked as the
     system-default.
@@ -26,7 +26,6 @@ class IngressMap:
     def __init__(self, ingress_map_dict):
         """ Create an ingress-map object """
         self._in_map_dict = ingress_map_dict
-        self._drop_precedence = [0, 0, 0, 0, 0, 0, 0, 0]
         self._name = ingress_map_dict['id']
         self._map_type = None
         self._bindings = []
@@ -38,7 +37,8 @@ class IngressMap:
 
     def _handle_dscp_group(self, dscp_group_map_list):
         """ Process a list of dscp-group names to designations """
-        self._dscp_group_map = {}
+        self._dscp_group2des = {}
+        self._dscp_group2dp = {}
         if dscp_group_map_list is None:
             return
 
@@ -46,8 +46,9 @@ class IngressMap:
             self._map_type = 'dscp-group'
             for entry_dict in dscp_group_map_list:
                 designation = entry_dict['designation']
-                self._dscp_group_map[entry_dict['id']] = designation
-                self._drop_precedence[designation] += 1
+                drop_prec = entry_dict['drop-precedence']
+                self._dscp_group2des[entry_dict['id']] = designation
+                self._dscp_group2dp[entry_dict['id']] = drop_prec
 
         except KeyError:
             LOG.error("IngressMap missing dscp-group data")
@@ -55,7 +56,8 @@ class IngressMap:
 
     def _handle_pcp(self, pcp_map_list):
         """ Process a list of pcp-values to designations """
-        self._pcp_map = {}
+        self._pcp2des = {}
+        self._pcp2dp = {}
         if pcp_map_list is None:
             return
 
@@ -63,8 +65,9 @@ class IngressMap:
             self._map_type = 'pcp'
             for entry_dict in pcp_map_list:
                 designation = entry_dict['designation']
-                self._pcp_map[entry_dict['id']] = designation
-                self._drop_precedence[designation] += 1
+                drop_prec = entry_dict['drop-precedence']
+                self._pcp2des[entry_dict['id']] = designation
+                self._pcp2dp[entry_dict['id']] = drop_prec
 
         except KeyError:
             LOG.error("IngressMap missing pcp data")
@@ -98,11 +101,11 @@ class IngressMap:
         """
         Return the appropriate map-tuple for the requested dscp-group name
         """
-        return self._dscp_group_map.get(dscp_group_name)
+        return self._dscp_group2des.get(dscp_group_name)
 
     def pcp_map(self, pcp):
         """ Return the appropriate map-tuple for the requested pcp value """
-        return self._pcp_map.get(pcp)
+        return self._pcp2des.get(pcp)
 
     def add_binding(self, binding):
         """
@@ -123,22 +126,24 @@ class IngressMap:
         ifname = "ALL"
         cmd_prefix = f"qos 0 ingress-map {self._name}"
         if self._map_type == 'dscp-group':
-            dscp_group_names = sorted(self._dscp_group_map.keys())
+            dscp_group_names = sorted(self._dscp_group2des.keys())
             for dscp_group_name in dscp_group_names:
-                designation = self._dscp_group_map[dscp_group_name]
+                designation = self._dscp_group2des[dscp_group_name]
+                drop_prec = self._dscp_group2dp[dscp_group_name]
                 path = f"{cmd_prefix} dscp-group {dscp_group_name}"
-                cmd = f"{path} designation {designation}"
+                cmd = f"{path} designation {designation} drop-prec {drop_prec}"
                 cmd_list.append((path, cmd, ifname))
 
         if self._map_type == 'pcp':
             for pcp in range(MIN_PCP, MAX_PCP+1):
-                designation = self._pcp_map.get(pcp)
-                if designation is None:
+                designation = self._pcp2des.get(pcp)
+                drop_prec = self._pcp2dp.get(pcp)
+                if designation is None or drop_prec is None:
                     LOG.error(f"Ingress map {self._name} missing PCP value "
                               f"{pcp}")
                 else:
                     path = f"{cmd_prefix} pcp {pcp}"
-                    cmd = f"{path} designation {designation}"
+                    cmd = f"{path} designation {designation} drop-prec {drop_prec}"
                     cmd_list.append((path, cmd, ifname))
 
         if self._system_default is not None:
