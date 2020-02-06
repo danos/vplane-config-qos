@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2020, AT&T Intellectual Property.
 # All rights reserved
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -83,7 +83,15 @@ def get_port_policy_name(if_type_dict):
         except KeyError:
             return None
 
-    return policy_dict['vyatta-policy-qos-v1:qos']
+    try:
+        # Standard dataplane and switch interfaces attachment point
+        policy_name = policy_dict['vyatta-policy-qos-v1:qos']
+
+    except KeyError:
+        # Bonded interfaces attachment point
+        policy_name = policy_dict.get('vyatta-interfaces-bonding-qos-v1:qos')
+
+    return policy_name
 
 
 def get_vlan_policy_name(if_type_dict, vlan_tag):
@@ -96,9 +104,17 @@ def get_vlan_policy_name(if_type_dict, vlan_tag):
     if vif_list is not None:
         # Standard VM vlan policy attachment point
         for vif_dict in vif_list:
-            if vif_dict['tagnode'] == vlan_tag:
+            if vif_dict['tagnode'] == int(vlan_tag):
                 policy_dict = vif_dict['vyatta-interfaces-policy-v1:policy']
-                return policy_dict['vyatta-policy-qos-v1:qos']
+                try:
+                    # Normal dataplane vif interfaces
+                    policy_name = policy_dict['vyatta-policy-qos-v1:qos']
+
+                except KeyError:
+                    # Bonded vif interfaces
+                    policy_name = policy_dict.get('vyatta-interfaces-bonding-qos-v1:qos')
+
+                return policy_name
     else:
         # Hardware switch vlan policy attachment point
         try:
@@ -110,6 +126,7 @@ def get_vlan_policy_name(if_type_dict, vlan_tag):
                 if vlan_dict['vlan-id'] == vlan_tag:
                     policy_dict = port_params_dict['vyatta-interfaces-switch-policy-v1:policy']
                     return policy_dict['vyatta-policy-qos-v1:qos']
+
         except KeyError:
             return None
 
