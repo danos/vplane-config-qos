@@ -12,6 +12,7 @@ import logging
 
 from vyatta_policy_qos_vci.ingress_map_binding import IngressMapBinding
 from vyatta_policy_qos_vci.subport import Subport
+from vyatta_policy_qos_vci.wred_map import byte_limits
 
 LOG = logging.getLogger('Policy QoS VCI')
 
@@ -254,6 +255,8 @@ class Interface:
         cmd_prefix = f"qos {self.ifindex}"
         max_subports = len(self._subports)
         max_pipes = 0
+        queue_limit_type = "ql_bytes" if byte_limits() else "ql_packets"
+
         for subport in self._subports:
             if subport.policy is not None:
                 max_pipes = subport.policy.max_pipes(max_pipes)
@@ -264,7 +267,7 @@ class Interface:
         if max_pipes != 0:
             cmd = (f"{cmd_prefix} port subports {max_subports} "
                    f"pipes {max_pipes} profiles {self.profile_index_size} "
-                   f"overhead {overhead}")
+                   f"overhead {overhead} {queue_limit_type}")
             cmd_list.append(cmd)
 
 

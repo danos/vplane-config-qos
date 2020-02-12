@@ -234,7 +234,7 @@ TEST_DATA = [
         # expected_data
         [
             # Vyatta VM trunk commands
-            'qos 1 port subports 1 pipes 1 profiles 1 overhead 24',
+            'qos 1 port subports 1 pipes 1 profiles 1 overhead 24 ql_packets',
             'qos 1 subport 0 rate 125000000 size 0 period 40',
             'qos 1 subport 0 queue 0 percent 100 size 0',
             'qos 1 param subport 0 0 limit packets 64',
@@ -260,7 +260,7 @@ TEST_DATA = [
         # expected_data
         [
             # Vyatta VM trunk and vlan commands
-            "qos 1 port subports 2 pipes 1 profiles 2 overhead 24",
+            "qos 1 port subports 2 pipes 1 profiles 2 overhead 24 ql_packets",
             "qos 1 subport 0 rate 125000000 size 0 period 40",
             "qos 1 subport 0 queue 0 percent 100 size 0",
             "qos 1 param subport 0 0 limit packets 64",
@@ -303,7 +303,7 @@ TEST_DATA = [
         [
             # SIAD commands
             # During unit-test 'limit packets' commands are issued
-            'qos 1 port subports 1 pipes 1 profiles 1 overhead 6',
+            'qos 1 port subports 1 pipes 1 profiles 1 overhead 6 ql_packets',
             'qos 1 subport 0 rate 375000000 size 16000 period 40',
             'qos 1 subport 0 queue 0 percent 100 size 0',
             'qos 1 param subport 0 0 limit packets 64',
@@ -330,7 +330,7 @@ TEST_DATA = [
         [
             # SIAD trunk and vlan commands
             # During unit-test 'limit packets' commands are issued
-            "qos 1 port subports 3 pipes 1 profiles 3 overhead 6",
+            "qos 1 port subports 3 pipes 1 profiles 3 overhead 6 ql_packets",
             "qos 1 subport 0 rate 375000000 size 16000 period 40",
             "qos 1 subport 0 queue 0 percent 100 size 0",
             "qos 1 param subport 0 0 limit packets 64",
@@ -388,7 +388,7 @@ TEST_DATA = [
         # expected_data
         [
             # Bonded interface trunk commands
-            "qos 1 port subports 1 pipes 1 profiles 1 overhead 24",
+            "qos 1 port subports 1 pipes 1 profiles 1 overhead 24 ql_packets",
             "qos 1 subport 0 rate 125000000 size 0 period 40",
             "qos 1 subport 0 queue 0 percent 100 size 0",
             "qos 1 param subport 0 0 limit packets 64",
@@ -414,7 +414,7 @@ TEST_DATA = [
         # expected_data
         [
             # Bonded interface trunk and vlan commands
-            "qos 1 port subports 2 pipes 1 profiles 2 overhead 24",
+            "qos 1 port subports 2 pipes 1 profiles 2 overhead 24 ql_packets",
             "qos 1 subport 0 rate 125000000 size 0 period 40",
             "qos 1 subport 0 queue 0 percent 100 size 0",
             "qos 1 param subport 0 0 limit packets 64",
@@ -456,7 +456,7 @@ TEST_DATA = [
         # expected_data
         [
             # vhost interface trunk commands
-            "qos 1 port subports 1 pipes 1 profiles 1 overhead 24",
+            "qos 1 port subports 1 pipes 1 profiles 1 overhead 24 ql_packets",
             "qos 1 subport 0 rate 125000000 size 0 period 40",
             "qos 1 subport 0 queue 0 percent 100 size 0",
             "qos 1 param subport 0 0 limit packets 64",
@@ -482,7 +482,7 @@ TEST_DATA = [
         # expected_data
         [
             # vhost interface trunk and vlan commands
-            "qos 1 port subports 2 pipes 1 profiles 2 overhead 24",
+            "qos 1 port subports 2 pipes 1 profiles 2 overhead 24 ql_packets",
             "qos 1 subport 0 rate 125000000 size 0 period 40",
             "qos 1 subport 0 queue 0 percent 100 size 0",
             "qos 1 param subport 0 0 limit packets 64",

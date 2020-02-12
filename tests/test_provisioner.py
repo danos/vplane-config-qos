@@ -245,8 +245,8 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos 1 qos 1 port subports 1 pipes 1 profiles 5 overhead 24',
-                'qos 1 port subports 1 pipes 1 profiles 5 overhead 24',
+                'qos 1 qos 1 port subports 1 pipes 1 profiles 5 overhead 24 ql_packets',
+                'qos 1 port subports 1 pipes 1 profiles 5 overhead 24 ql_packets',
                 'lo',
                 'SET'
             ),
