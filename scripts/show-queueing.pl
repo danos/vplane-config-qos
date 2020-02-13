@@ -573,28 +573,22 @@ sub show_ingress_map {
         print "\nIngress-map: $map->{name}   type: $str   $sysdef\n";
         my @values;
 
+        my $max_entries = 8;
+        $max_entries = MAX_DSCP if ( $proto eq "dscp" );
+
         for my $entry ( @{ $map->{map} } ) {
             my $designation = $entry->{designation};
             my $dp          = $entry->{DPs}[0]->{DP};
 
-            if ( $proto eq "dscp" ) {
-                my $x    = Math::BigInt->new( $entry->{DPs}[0]->{'pcp/mask'} );
-                my $mask = $x->as_int();
+            my $x    = Math::BigInt->new( $entry->{DPs}[0]->{'pcp/mask'} );
+            my $mask = $x->as_int();
 
-                for my $dp ( @{ $entry->{DPs} } ) {
-                    for my $i ( 0 .. MAX_DSCP ) {
-                        if ( $mask & ( 1 << $i ) ) {
-                            $values[$i]->{designator} = $designation;
-                            $values[$i]->{DP}         = $dp->{DP};
-                        }
+            for my $dp ( @{ $entry->{DPs} } ) {
+                for my $i ( 0 .. $max_entries ) {
+                    if ( $mask & ( 1 << $i ) ) {
+                        $values[$i]->{designator} = $designation;
+                        $values[$i]->{DP}         = $dp->{DP};
                     }
-                }
-            }
-            if ( $proto eq "pcp" ) {
-                for my $dp ( @{ $entry->{DPs} } ) {
-                    my $pcp = $dp->{'pcp/mask'};
-                    $values[$pcp]->{designator} = $designation;
-                    $values[$pcp]->{DP}         = $dp->{DP};
                 }
             }
         }
