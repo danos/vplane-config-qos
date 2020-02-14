@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019-2020, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -17,15 +17,20 @@ class Class:
     between a QoS class number, its match rules and the profile that
     is applied to packets that conform to the match rules.
     """
-    def __init__(self, policy_name, class_dict):
+    def __init__(self, class_dict):
         """ Create a QoS class object """
-        self._id = class_dict.get('id')
+        self._class_number = class_dict.get('id')
         self._profile_name = class_dict.get('profile')
         self._rules = []
         match_list = class_dict.get('match')
         if match_list is not None:
             for rule in match_list:
-                self._rules.append(Rule(policy_name, self._id, rule))
+                self._rules.append(Rule(self._class_number, rule))
+
+    @property
+    def class_number(self):
+        """ Return this class's class-number """
+        return self._class_number
 
     @property
     def profile_name(self):
@@ -39,10 +44,12 @@ class Class:
         profile_key = f"{vlan_id} {self._profile_name}"
         profile_id = interface.profile_index_get(profile_key)
 
-        cmd_list.append(f"{cmd_prefix} pipe {subport_id} {self._id} "
+        cmd_list.append(f"{cmd_prefix} pipe {subport_id} {self._class_number} "
                         f"{profile_id}")
 
         for rule in self._rules:
-            cmd_list.append(f"{cmd_prefix} match {subport_id} {self._id} "
-                            f"{rule.commands()}")
+            rule_commands = rule.commands()
+            if rule_commands is not None:
+                cmd_list.append(f"{cmd_prefix} match {subport_id} "
+                                f"{self._class_number} {rule_commands}")
         return cmd_list

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019-2020, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -173,6 +173,6 @@ def test_shaper(test_input, expected_result):
     """ Unit-test the shaper class """
     attrs = {'profile_index_get.return_value':0}
     interface = Mock(ifindex=1, **attrs)
-    shaper = Shaper("policy-1", test_input, {}, {})
+    shaper = Shaper(test_input, {}, {})
     assert shaper is not None
     assert shaper.commands(interface, 0, 0) == expected_result

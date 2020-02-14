@@ -23,8 +23,7 @@ class Policy:
         self._interfaces = []
 
         shaper_dict = policy_dict['shaper']
-        self._shaper = Shaper(self._name, shaper_dict, global_profiles,
-                              mark_maps)
+        self._shaper = Shaper(shaper_dict, global_profiles, mark_maps)
 
     def __eq__(self, policy):
         """ Compare the original JSON of two policies """

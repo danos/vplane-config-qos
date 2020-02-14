@@ -18,7 +18,7 @@ PERIOD_DEFAULT_MS = 40
 
 class Shaper:
     """ Define the shaper class """
-    def __init__(self, policy_name, shaper_dict, global_profiles, mark_maps):
+    def __init__(self, shaper_dict, global_profiles, mark_maps):
         """ Create a shaper object """
         self._global_profiles = global_profiles
         self._classes = []
@@ -46,7 +46,7 @@ class Shaper:
         class_list = shaper_dict.get('class')
         if class_list is not None:
             for class_item in class_list:
-                qos_class = Class(policy_name, class_item)
+                qos_class = Class(class_item)
                 self._classes.append(qos_class)
                 for name, global_profile in global_profiles.items():
                     if name == qos_class.profile_name:
@@ -66,8 +66,13 @@ class Shaper:
     @property
     def max_pipes(self):
         """ Return the number of pipes that this shaper uses """
+        max_class = 0
+        for qos_class in self._classes:
+            if qos_class.class_number > max_class:
+                max_class = qos_class.class_number
+
         # + 1 for the default class
-        return len(self._classes) + 1
+        return max_class + 1
 
     @property
     def max_profiles(self):
@@ -83,7 +88,7 @@ class Shaper:
         """ Add the shaper's profiles to the interface's profile index """
         # First check to see if any global profiles need added
         base_pid = 0
-        for profile_name in self._global_profiles.keys():
+        for profile_name in self._global_profiles:
             key = f"global {profile_name}"
 
             if interface.profile_index_get(key) is None:
@@ -92,7 +97,7 @@ class Shaper:
 
         # Now add the local profiles
         index = 0
-        for profile_name in self._local_profiles.keys():
+        for profile_name in self._local_profiles:
             # Check for a global profile
             key = f"global {profile_name}"
             pid = interface.profile_index_get(key)
