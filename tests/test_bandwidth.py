@@ -17,42 +17,52 @@ PARENT_DATA = [
     {"bandwidth": "1Gbit", "burst": "9000"},
     {"bandwidth": "1Gbit", "burst": "1ms"},
     {"bandwidth": "10Gbit", "burst": "600msec"},
-    {"bandwidth": "0.1Gbit", "burst": "1500"}
+    {"bandwidth": "0.1Gbit", "burst": "1500"},
+    {"bandwidth": "100%", "burst": "1500"}
 ]
 PARENT_BANDWIDTHS = [
     1250000000,
     125000000,
     125000000,
     1250000000,
-    12500000
+    12500000,
+    0
 ]
 PARENT_COMMANDS = [
     " rate 1250000000 size 9000 period 10",
     " rate 125000000 size 9000 period 10",
     " rate 125000000 msec 1 period 10",
     " rate 1250000000 msec 600 period 10",
-    " rate 12500000 size 1500 period 10"
+    " rate 12500000 size 1500 period 10",
+    " percent 100 size 1500 period 10",
+    " rate 2500000 size 9000 period 20",
 ]
 CHILD_DATA = [
     {"bandwidth": "50%", "burst": "6000"},
     {"bandwidth": "10%", "burst": "1000"},
     {"bandwidth": "50%", "burst": "60msec"},
     {"bandwidth": "10%", "burst": "10ms"},
-    {"bandwidth": "50%", "burst": "2345"}
+    {"bandwidth": "50%", "burst": "2345"},
+    {"bandwidth": "10%", "burst": "1500"},
+    {"bandwidth": "20%", "burst": "9000"},
 ]
 CHILD_BANDWIDTHS = [
     (1250000000 / 2),
     (125000000 / 10),
     (125000000 / 2),
     (1250000000 / 10),
-    (12500000 / 2)
+    (12500000 / 2),
+    0,
+    (2500000 / 5),
 ]
 CHILD_COMMANDS = [
     " percent 50 size 6000",
     " percent 10 size 1000",
     " percent 50 msec 60",
     " percent 10 msec 10",
-    " percent 50 size 2345"
+    " percent 50 size 2345",
+    " percent 10 size 1500",
+    " percent 20 size 9000"
 ]
 
 def test_bandwidth():

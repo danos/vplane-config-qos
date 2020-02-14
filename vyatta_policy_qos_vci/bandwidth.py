@@ -39,12 +39,9 @@ class Bandwidth:
             bandwidth = '100%'
         search_obj = re.search(r'^([0-9]*\.?[0-9]+)%$', bandwidth, flags=0)
         if search_obj:
-            if parent_bw_obj is None:
-                LOG.error(f"Bandwidth with {bandwidth} and no parent-bw-obj")
-                return
-
-            self._bps = int(parent_bw_obj.bps * int(search_obj.group(1)) / 100)
             self._percent = search_obj.group(1)
+            if parent_bw_obj is not None:
+                self._bps = int(parent_bw_obj.bps * int(search_obj.group(1)) / 100)
         else:
             self._bps = parse_bandwidth(bandwidth)
 
@@ -59,7 +56,10 @@ class Bandwidth:
 
     @property
     def bps(self):
-        """  Return the actual bandwidth in bytes-per-second """
+        """
+        Return the actual bandwidth in bytes-per-second or Zero if percentage
+        bandwidth is being used.
+        """
         return self._bps
 
     def commands(self, cmd_prefix, period):
