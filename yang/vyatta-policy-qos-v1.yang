@@ -8,9 +8,6 @@ module vyatta-policy-qos-v1 {
 	import vyatta-interfaces-dataplane-v1 {
 		prefix interfaces-dataplane;
 	}
-	import vyatta-interfaces-bonding-v1 {
-		prefix interfaces-bonding;
-	}
 	import vyatta-policy-v1 {
 		prefix policy;
 	}
@@ -86,8 +83,9 @@ module vyatta-policy-qos-v1 {
 
 	revision 2020-01-28 {
 		description "Add support for buffer congestion.
-			     Add bonded interface support to op-mode state
-			     retrieval.";
+			     Relax interface naming restrictions for op-mode
+			     state retrieval to support bonded and vhost
+			     interfaces.";
 	}
 
 	revision 2019-11-18 {
@@ -312,10 +310,7 @@ module vyatta-policy-qos-v1 {
 				key "ifname";
 				leaf ifname {
 					description "Name of interface";
-					type union {
-						type interfaces-dataplane:dataplane-ifname;
-						type interfaces-bonding:bonding-ifname;
-					}
+					type string;
 				}
 				container shaper {
 					description "QoS policy";

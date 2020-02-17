@@ -91,6 +91,7 @@ def send_qos_config_to_dataplane(new_config):
     remove_deferred_interfaces(actioned_config, prov.deferred_interfaces)
     remove_deferred_ingress_maps(actioned_config, prov.deferred_ingress_maps)
     save_actioned_config(actioned_config)
+    deferred_interfaces = prov.deferred_interfaces
 
     return actioned_config
 
@@ -139,6 +140,12 @@ class Config(vci.Config):
     def get(self):
         """ What do we need to put in here? """
         LOG.debug("Config:get")
+        # If the QoS VCI process has been restarted we may an empty self.config
+        # in which case we need to read the current config from the
+        # saved-actioned config file.
+        if self.config:
+            self.config = get_actioned_config()
+
         return self.config
 
     def check(self, _):
