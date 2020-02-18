@@ -144,9 +144,11 @@ class Shaper:
             if name != self._default:
                 cmd_list += profile.commands(profile_prefix, interface, vlan_id)
 
-        # add global profiles
-        for profile in self._global_profiles.values():
-            cmd_list += profile.commands(profile_prefix, interface, "global")
+        # Add global profiles, but only on the first subport
+        # to avoid sending duplicate commands
+        if subport_id == 0:
+            for profile in self._global_profiles.values():
+                cmd_list += profile.commands(profile_prefix, interface, "global")
 
         # mapping default profile
         default_profile_key = f"{vlan_id} {self._default}"
