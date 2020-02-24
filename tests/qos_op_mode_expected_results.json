@@ -628,7 +628,6 @@
 					    ]
 					}
 				    ],
-				    "pcp-to-queue-map" : [],
 				    "qos-profile" : "profile-2",
 				    "vyatta-policy-qos-groupings-v1:traffic-class-period" : 10,
 				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 12500000,
@@ -894,7 +893,6 @@
 			    "subport" : 0,
 			    "pipe-list" : [
 				{
-				    "pcp-to-queue-map" : [],
 				    "qos-profile" : "profile-1",
 				    "vyatta-policy-qos-groupings-v1:traffic-class-period" : 10,
 				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 37500000,
@@ -1651,7 +1649,6 @@
 				    "qos-class" : 0
 				},
 				{
-				    "pcp-to-queue-map" : [],
 				    "qos-profile" : "profile-2",
 				    "vyatta-policy-qos-groupings-v1:traffic-class-period" : 10,
 				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 25000000,

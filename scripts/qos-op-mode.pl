@@ -161,34 +161,34 @@ sub convert_dscp_map {
     return ( \@dscp_map_out, \@tc_queue_to_dscp_map );
 }
 
-sub convert_pcp_map {
-    my ( $cmd, $pcp_map_in ) = @_;
-    my @pcp_map_out;
-    my @tc_queue_to_pcp_map = ();
-    my $pcp_id              = 0;
+sub convert_pcp_or_des_map {
+    my ( $cmd, $map_in, $map_type ) = @_;
+    my @map_out;
+    my @tc_queue_to_map             = ();
+    my $map_id                      = 0;
 
-    foreach my $pcp_value ( @{$pcp_map_in} ) {
-        my %pcp_out;
-        my @pcp_values;
-        my $tc = get_traffic_class($pcp_value);
-        my $q  = get_queue_number($pcp_value);
+    foreach my $qmap_value ( @{$map_in} ) {
+        my %map_out;
+        my @map_values;
+        my $tc = get_traffic_class($qmap_value);
+        my $q  = get_queue_number($qmap_value);
 
-        $pcp_out{'pcp'}           = $pcp_id;
-        $pcp_out{'traffic-class'} = $tc;
-        $pcp_out{'queue'}         = $q;
-        push @pcp_map_out, \%pcp_out;
+        $map_out{$map_type}       = $map_id;
+        $map_out{'traffic-class'} = $tc;
+        $map_out{'queue'}         = $q;
+        push @map_out, \%map_out;
 
-        if ( defined( $tc_queue_to_pcp_map[$tc][$q] ) ) {
-            @pcp_values = @{ $tc_queue_to_pcp_map[$tc][$q] };
+        if ( defined( $tc_queue_to_map[$tc][$q] ) ) {
+            @map_values = @{ $tc_queue_to_map[$tc][$q] };
         } else {
-            @pcp_values = ();
+            @map_values = ();
         }
-        push @pcp_values, $pcp_id;
-        $tc_queue_to_pcp_map[$tc][$q] = \@pcp_values;
+        push @map_values, $map_id;
+        $tc_queue_to_map[$tc][$q] = \@map_values;
 
-        $pcp_id += 1;
+        $map_id += 1;
     }
-    return ( \@pcp_map_out, \@tc_queue_to_pcp_map );
+    return ( \@map_out, \@tc_queue_to_map );
 }
 
 sub convert_map_list {
@@ -327,7 +327,7 @@ sub convert_pipe {
     ( $pipe_out{'dscp-to-queue-map'}, $reverse_dscp_map ) =
       convert_dscp_map( $cmd, $pipe_in->{dscp2q} );
     ( $pipe_out{'pcp-to-queue-map'}, $reverse_pcp_map ) =
-      convert_pcp_map( $cmd, $pipe_in->{pcp2q} );
+      convert_pcp_or_des_map( $cmd, $pipe_in->{pcp2q}, 'pcp' );
 
     if ( defined( $pipe_out{'dscp-to-queue-map'} ) ) {
         $queue_list =

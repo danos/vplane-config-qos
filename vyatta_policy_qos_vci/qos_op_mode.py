@@ -297,42 +297,42 @@ def convert_dscp_map(dscp_map_in):
     return dscp_map_out, tc_queue_to_dscp_map
 
 
-def convert_pcp_map(pcp_map_in):
+def convert_pcp_or_des_map(map_in, map_type):
     """
-    Convert a 'pcp2q' JSON array into Yang compatible 'tagged' JSON array,
-    tagged by pcp-value (0..7).
-    Also build a tc-id/wrr-id to pcp mapping.
+    Convert a 'pcp' or 'designation' JSON array into Yang compatible 'tagged'
+    JSON array, tagged by pcp-value or designation-value (0..7).
+    Also build a tc-id/wrr-id to pcp/designation mapping.
     """
-    pcp_map_out = []
-    tc_queue_to_pcp_map = []
-    pcp_id = 0
+    map_list_out = []
+    tc_queue_to_map = []
+    map_id = 0
 
-    if pcp_map_in is not None:
-        for pcp_value in pcp_map_in:
-            tc_id = get_traffic_class(pcp_value)
-            q_id = get_queue_number(pcp_value)
+    if map_in is not None:
+        for qmap_value in map_in:
+            tc_id = get_traffic_class(qmap_value)
+            q_id = get_queue_number(qmap_value)
 
-            pcp_out = {
-                'pcp': pcp_id,
+            map_out = {
+                map_type: map_id,
                 # The following two elements are defined in
                 # vyatta-policy-qos-groupings-v1.yang hence the need
                 # to include their namespace.
                 'vyatta-policy-qos-groupings-v1:traffic-class': tc_id,
                 'vyatta-policy-qos-groupings-v1:queue': q_id
             }
-            pcp_map_out.append(pcp_out)
+            map_list_out.append(map_out)
 
-            if tc_queue_to_pcp_map[tc_id][q_id] is not None:
-                pcp_values = tc_queue_to_pcp_map[tc_id][q_id]
+            if tc_queue_to_map[tc_id][q_id] is not None:
+                map_values = tc_queue_to_map[tc_id][q_id]
             else:
-                pcp_values = []
+                map_values = []
 
-                pcp_values.append(pcp_id)
-                tc_queue_to_pcp_map[tc_id][q_id] = pcp_values
+                map_values.append(map_id)
+                tc_queue_to_map[tc_id][q_id] = map_values
 
-                pcp_id += 1
+                map_id += 1
 
-    return pcp_map_out, tc_queue_to_pcp_map
+    return map_list_out, tc_queue_to_map
 
 
 def convert_map_list(map_list, map_type):
@@ -503,17 +503,16 @@ def convert_pipe(cmd, pipe_in, pipe_id, profile_name):
         pipe_out['vyatta-policy-qos-groupings-v1:weighted-round-robin-weights'] = (
             convert_wrr_weights(pipe_in['params']['wrr_weights']))
 
-
-    pipe_out['dscp-to-queue-map'], reverse_dscp_map = convert_dscp_map(
-        pipe_in.get('dscp2q'))
-
-    pipe_out['pcp-to-queue-map'], reverse_pcp_map = convert_pcp_map(
-        pipe_in.get('pcp2q'))
-
-    if pipe_out.get('dscp-to-queue-map') is not None:
+    # We should only get one of dscp or pcp map
+    if 'dscp2q' in pipe_in:
+        pipe_out['dscp-to-queue-map'], reverse_dscp_map = convert_dscp_map(
+            pipe_in['dscp2q'])
         queue_list = convert_tc_queue_list(pipe_in['tc'], reverse_dscp_map,
                                            "dscp-values")
-    else:
+
+    if 'pcp2q' in pipe_in:
+        pipe_out['pcp-to-queue-map'], reverse_pcp_map = convert_pcp_or_des_map(
+            pipe_in['pcp2q'], 'pcp')
         queue_list = convert_tc_queue_list(pipe_in['tc'], reverse_pcp_map,
                                            "pcp-values")
 
