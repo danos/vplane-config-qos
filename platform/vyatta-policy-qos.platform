@@ -8,4 +8,7 @@ vyatta-policy-qos-v1:ingress-map,		  \
 vyatta-policy-qos-groupings-v1:ingress-map
 
 [Platform ufi.s9500-30xs:opennsl]
-Yang=vyatta-policy-qos-deviation-siad-danos-v1.yang
+Yang=vyatta-policy-qos-deviation-unsup-sw-platform-v1.yang
+
+[Platform accton.as5916-54xks:opennsl]
+Yang=vyatta-policy-qos-deviation-unsup-sw-platform-v1.yang
