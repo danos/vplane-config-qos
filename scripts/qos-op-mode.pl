@@ -275,7 +275,7 @@ sub convert_tc_queues {
             $queue_out{'qlen-bytes'} = $queue->{'qlen-bytes'};
         }
         $queue_out{'priority-local'} = $queue->{prio_local};
-        $map_type_values =~ /(dscp|pcp)-values/;
+        $map_type_values =~ /(dscp|pcp|designation)-values/;
         $map_type = $1;
         $queue_out{"$map_type_values"} =
           convert_map_list( $cmd, $reverse_map->[$tc_id][$queue_id],
@@ -328,16 +328,27 @@ sub convert_pipe {
       convert_dscp_map( $cmd, $pipe_in->{dscp2q} );
     ( $pipe_out{'pcp-to-queue-map'}, $reverse_pcp_map ) =
       convert_pcp_or_des_map( $cmd, $pipe_in->{pcp2q}, 'pcp' );
+    ( $pipe_out{'designation-to-queue-map'}, $reverse_des_map ) =
+      convert_pcp_or_des_map( $cmd, $pipe_in->{designation}, 'designation' );
 
     if ( defined( $pipe_out{'dscp-to-queue-map'} ) ) {
         $queue_list =
           convert_tc_queues_list( $cmd, $pipe_in->{tc}, $reverse_dscp_map,
             "dscp-values" );
-    } else {
+    }
+
+    if ( defined( $pipe_out{'pcp-to-queue-map'} ) ) {
         $queue_list =
           convert_tc_queues_list( $cmd, $pipe_in->{tc}, $reverse_pcp_map,
             "pcp-values" );
     }
+
+    if ( defined( $pipe_out{'designation-to-queue-map'} ) ) {
+        $queue_list =
+          convert_tc_queues_list( $cmd, $pipe_in->{tc}, $reverse_des_map,
+            "designation-values" );
+    }
+
     $pipe_out{'traffic-class-queues-list'} = $queue_list;
 
     if ( $cmd eq 'stats' ) {
@@ -345,6 +356,7 @@ sub convert_pipe {
         # Throw away the map data if we are processing a 'stats' request
         delete $pipe_out{'dscp-to-queue-map'};
         delete $pipe_out{'pcp-to-queue-map'};
+        delete $pipe_out{'designation-to-queue-map'};
     }
     return \%pipe_out;
 }

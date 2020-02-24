@@ -81,11 +81,12 @@ module vyatta-policy-qos-v1 {
 
 		 This module implements vyatta-policy-qos-v1.";
 
-	revision 2020-01-28 {
+	revision 2020-02-25 {
 		description "Add support for buffer congestion.
 			     Relax interface naming restrictions for op-mode
 			     state retrieval to support bonded and vhost
 			     interfaces.";
+			     Add op-mode support for designation-to-queue maps.";
 	}
 
 	revision 2019-11-18 {
@@ -383,6 +384,15 @@ module vyatta-policy-qos-v1 {
 								leaf pcp {
 									description "PCP value";
 									type pcp-value-type;
+								}
+								uses traffic-class-queue-number;
+							}
+							list designation-to-queue-map {
+								description "The mapping from designation value to QoS scheduling queue";
+								key "designation";
+								leaf designation {
+									description "Designation associated with packet";
+									type qos-groupings:designation-type;
 								}
 								uses traffic-class-queue-number;
 							}

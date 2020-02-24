@@ -438,10 +438,8 @@ def convert_tc_queues(tc_queues_in, tc_id, reverse_map, map_type_values):
             queue_out['vyatta-policy-qos-groupings-v1:qlen-bytes'] = (
                 queue['qlen-bytes'])
 
-        if map_type_values == "dscp-values":
-            map_type = "dscp"
-        else:
-            map_type = "pcp"
+        # drop the '-values' to get the map_type
+        map_type = map_type_values.split('-')[0]
 
         # Not all reverse-map lists may be populated
         try:
@@ -503,7 +501,7 @@ def convert_pipe(cmd, pipe_in, pipe_id, profile_name):
         pipe_out['vyatta-policy-qos-groupings-v1:weighted-round-robin-weights'] = (
             convert_wrr_weights(pipe_in['params']['wrr_weights']))
 
-    # We should only get one of dscp or pcp map
+    # We should only get one of dscp, pcp or designation map
     if 'dscp2q' in pipe_in:
         pipe_out['dscp-to-queue-map'], reverse_dscp_map = convert_dscp_map(
             pipe_in['dscp2q'])
@@ -515,6 +513,11 @@ def convert_pipe(cmd, pipe_in, pipe_id, profile_name):
             pipe_in['pcp2q'], 'pcp')
         queue_list = convert_tc_queue_list(pipe_in['tc'], reverse_pcp_map,
                                            "pcp-values")
+    if 'designation' in pipe_in:
+        pipe_out['designation-to-queue-map'], reverse_des_map = convert_pcp_or_des_map(
+            pipe_in['designation'], 'designation')
+        queue_list = convert_tc_queue_list(pipe_in['tc'], reverse_des_map,
+                                           "designation-values")
 
     pipe_out['traffic-class-queues-list'] = queue_list
 
@@ -522,6 +525,7 @@ def convert_pipe(cmd, pipe_in, pipe_id, profile_name):
         # Throw away the map data if we are processing a 'stats' request
         del pipe_out['dscp-to-queue-map']
         del pipe_out['pcp-to-queue-map']
+        del pipe_out['designation-to-queue-map']
 
     return pipe_out
 
