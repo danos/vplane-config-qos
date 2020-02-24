@@ -31,7 +31,7 @@ class MarkMap:
         designation_list = map_dict.get('designation')
         if designation_list is not None:
             for designation in designation_list:
-                des = designation['pcp-value-type']
+                des = designation['designation-type']
                 pcp_mark = designation['pcp-mark']
                 self._designations[des] = pcp_mark
 

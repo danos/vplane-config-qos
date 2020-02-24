@@ -68,6 +68,30 @@ TEST_DATA = [
              "qos 0 mark-map test123 dscp-group synch-group pcp 7",
              "ALL")
         ]
+    ),
+    (
+        # test_input
+        {
+            "id": "test123",
+            "designation": [
+                {
+                    "designation-type": 0,
+                    "pcp-mark": 5
+                }, {
+                    "designation-type": 1,
+                    "pcp-mark": 6
+                }
+            ]
+        },
+        # expected_output
+        [
+            ("qos mark-map test123 designation 0",
+             "qos 0 mark-map test123 designation 0 pcp 5",
+             "ALL"),
+            ("qos mark-map test123 designation 1",
+             "qos 0 mark-map test123 designation 1 pcp 6",
+             "ALL")
+        ]
     )
 ]
 
