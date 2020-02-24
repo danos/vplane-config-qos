@@ -676,10 +676,11 @@ def convert_subports(cmd, subports_in, ifname, vlan_list):
     subport_id = 0
 
     for subport_in in subports_in:
-        subport_out = {
-            'subport': subport_id,
-            'traffic-class-list': convert_tcs(subport_in['tc']),
-        }
+        subport_out = {}
+        subport_out['subport'] = subport_id
+        if 'tc' in subport_in:
+            subport_out['traffic-class-list'] = convert_tcs(subport_in['tc'])
+
         subport_name = ifname
         subport_ifname = ifname
 
@@ -694,8 +695,9 @@ def convert_subports(cmd, subports_in, ifname, vlan_list):
         subport_out['subport-name'] = subport_name
         subport_out['rules'] = convert_rules(subport_ifname,
                                              subport_in['rules'])
-        subport_out['pipe-list'] = convert_pipes(cmd, subport_in['pipes'],
-                                                 subport_out['subport-name'])
+        if 'pipes' in subport_in:
+            subport_out['pipe-list'] = convert_pipes(cmd, subport_in['pipes'],
+                                                     subport_out['subport-name'])
         subport_list_out.append(subport_out)
         subport_id += 1
 

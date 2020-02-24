@@ -83,10 +83,11 @@ module vyatta-policy-qos-v1 {
 
 	revision 2020-02-25 {
 		description "Add support for buffer congestion.
-			     Relax interface naming restrictions for op-mode
+			     Relax interface naming restrictions for operational
 			     state retrieval to support bonded and vhost
-			     interfaces.";
-			     Add op-mode support for designation-to-queue maps.";
+			     interfaces.
+			     Add operational state support for
+			     designation-to-queue maps.";
 	}
 
 	revision 2019-11-18 {
