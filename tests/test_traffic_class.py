@@ -22,13 +22,13 @@ TEST_DATA = [
         {"id": 0, "bandwidth": "1Gbit", "queue-limit": 64},
         # expected_result
         # id qlim  bandwidth-command      queue-limit command
-        (0, 64, " rate 125000000 size 0", " limit packets 64"),
+        (0, 64, " rate 125000000 msec 4", " limit packets 64"),
     ),
     (
         # test_input
         {"id": 1, "bandwidth": "100%", "queue-limit": 128},
         # expected_result
-        (1, 128, " percent 100 size 0", " limit packets 128"),
+        (1, 128, " percent 100 msec 4", " limit packets 128"),
     ),
     (
         # test_input
@@ -38,13 +38,13 @@ TEST_DATA = [
             }
         },
         # expected_result
-        (2, 256, " percent 50 size 0", " limit packets 256"),
+        (2, 256, " percent 50 msec 4", " limit packets 256"),
     ),
     (
         # test_input
         {"id": 3, "bandwidth": "100Mbit", "queue-limit-bytes": 65536},
         # expected_result
-        (3, 65536, " rate 12500000 size 0", " limit bytes 65536")
+        (3, 65536, " rate 12500000 msec 4", " limit bytes 65536")
     )
 ]
 

@@ -16,6 +16,8 @@ from vyatta_policy_qos_vci.policer import parse_bandwidth
 
 LOG = logging.getLogger('Policy QoS VCI')
 
+DEFAULT_BURST_MS = 4
+
 class Bandwidth:
     """ A class for bandwidth objects """
     def __init__(self, config_dict, parent_bw_obj):
@@ -46,7 +48,7 @@ class Bandwidth:
             self._bps = parse_bandwidth(bandwidth)
 
         if self._burst is None:
-            self._burst = 0
+            self._burst_msec = DEFAULT_BURST_MS
         else:
             search_obj = re.search(r'^([0-9]*\.?[0-9]+)ms[ec]*$', self._burst,
                                    flags=0)

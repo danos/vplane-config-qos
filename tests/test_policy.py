@@ -32,21 +32,21 @@ TEST_DATA = [
         },
         # expected_results
         [
-            "qos 1 subport 0 rate 1250000000 size 0 period 40",
-            "qos 1 subport 0 queue 0 percent 100 size 0",
+            "qos 1 subport 0 rate 1250000000 msec 4 period 40",
+            "qos 1 subport 0 queue 0 percent 100 msec 4",
             "qos 1 param subport 0 0 limit packets 64",
-            "qos 1 subport 0 queue 1 percent 100 size 0",
+            "qos 1 subport 0 queue 1 percent 100 msec 4",
             "qos 1 param subport 0 1 limit packets 64",
-            "qos 1 subport 0 queue 2 percent 100 size 0",
+            "qos 1 subport 0 queue 2 percent 100 msec 4",
             "qos 1 param subport 0 2 limit packets 64",
-            "qos 1 subport 0 queue 3 percent 100 size 0",
+            "qos 1 subport 0 queue 3 percent 100 msec 4",
             "qos 1 param subport 0 3 limit packets 64",
             "qos 1 vlan 0 0",
-            "qos 1 profile 0 rate 125000000 size 0 period 10",
-            "qos 1 profile 0 queue 0 percent 100 size 0",
-            "qos 1 profile 0 queue 1 percent 100 size 0",
-            "qos 1 profile 0 queue 2 percent 100 size 0",
-            "qos 1 profile 0 queue 3 percent 100 size 0",
+            "qos 1 profile 0 rate 125000000 msec 4 period 10",
+            "qos 1 profile 0 queue 0 percent 100 msec 4",
+            "qos 1 profile 0 queue 1 percent 100 msec 4",
+            "qos 1 profile 0 queue 2 percent 100 msec 4",
+            "qos 1 profile 0 queue 3 percent 100 msec 4",
             "qos 1 pipe 0 0 0"
         ]
     )

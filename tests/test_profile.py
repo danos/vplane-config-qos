@@ -28,10 +28,10 @@ TEST_DATA = [
         # expected_result
         [
             "qos 1 profile 0 percent 100 size 16000 period 10",
-            "qos 1 profile 0 queue 0 percent 100 size 0",
-            "qos 1 profile 0 queue 1 percent 100 size 0",
-            "qos 1 profile 0 queue 2 percent 100 size 0",
-            "qos 1 profile 0 queue 3 percent 100 size 0"
+            "qos 1 profile 0 queue 0 percent 100 msec 4",
+            "qos 1 profile 0 queue 1 percent 100 msec 4",
+            "qos 1 profile 0 queue 2 percent 100 msec 4",
+            "qos 1 profile 0 queue 3 percent 100 msec 4"
         ]
     ),
     (
@@ -46,10 +46,10 @@ TEST_DATA = [
         # expected_result
         [
             "qos 1 profile 0 rate 125000000 size 10000 period 50",
-            "qos 1 profile 0 queue 0 percent 100 size 0",
-            "qos 1 profile 0 queue 1 percent 100 size 0",
-            "qos 1 profile 0 queue 2 percent 100 size 0",
-            "qos 1 profile 0 queue 3 percent 100 size 0"
+            "qos 1 profile 0 queue 0 percent 100 msec 4",
+            "qos 1 profile 0 queue 1 percent 100 msec 4",
+            "qos 1 profile 0 queue 2 percent 100 msec 4",
+            "qos 1 profile 0 queue 3 percent 100 msec 4"
         ]
     ),
     (
@@ -64,10 +64,10 @@ TEST_DATA = [
         # expected_result
         [
             "qos 1 profile 0 rate 125000000 msec 10 period 50",
-            "qos 1 profile 0 queue 0 percent 100 size 0",
-            "qos 1 profile 0 queue 1 percent 100 size 0",
-            "qos 1 profile 0 queue 2 percent 100 size 0",
-            "qos 1 profile 0 queue 3 percent 100 size 0"
+            "qos 1 profile 0 queue 0 percent 100 msec 4",
+            "qos 1 profile 0 queue 1 percent 100 msec 4",
+            "qos 1 profile 0 queue 2 percent 100 msec 4",
+            "qos 1 profile 0 queue 3 percent 100 msec 4"
         ]
     ),
     (
@@ -88,10 +88,10 @@ TEST_DATA = [
         # expected_result
         [
             "qos 1 profile 0 rate 125000000 size 10000 period 50",
-            "qos 1 profile 0 queue 0 percent 10 size 0",
-            "qos 1 profile 0 queue 1 percent 20 size 0",
-            "qos 1 profile 0 queue 2 percent 30 size 0",
-            "qos 1 profile 0 queue 3 percent 40 size 0"
+            "qos 1 profile 0 queue 0 percent 10 msec 4",
+            "qos 1 profile 0 queue 1 percent 20 msec 4",
+            "qos 1 profile 0 queue 2 percent 30 msec 4",
+            "qos 1 profile 0 queue 3 percent 40 msec 4"
         ]
     ),
     (
@@ -112,10 +112,10 @@ TEST_DATA = [
         # expected_result
         [
             "qos 1 profile 0 rate 125000000 size 10000 period 50",
-            "qos 1 profile 0 queue 0 rate 125000000 size 0",
-            "qos 1 profile 0 queue 1 rate 250000000 size 0",
-            "qos 1 profile 0 queue 2 rate 375000000 size 0",
-            "qos 1 profile 0 queue 3 rate 500000000 size 0"
+            "qos 1 profile 0 queue 0 rate 125000000 msec 4",
+            "qos 1 profile 0 queue 1 rate 250000000 msec 4",
+            "qos 1 profile 0 queue 2 rate 375000000 msec 4",
+            "qos 1 profile 0 queue 3 rate 500000000 msec 4"
         ]
     ),
     (
@@ -144,10 +144,10 @@ TEST_DATA = [
         # expected_result
         [
             "qos 1 profile 0 rate 125000000 size 10000 period 50",
-            "qos 1 profile 0 queue 0 rate 125000000 size 0",
-            "qos 1 profile 0 queue 1 rate 250000000 size 0",
-            "qos 1 profile 0 queue 2 rate 375000000 size 0",
-            "qos 1 profile 0 queue 3 rate 500000000 size 0",
+            "qos 1 profile 0 queue 0 rate 125000000 msec 4",
+            "qos 1 profile 0 queue 1 rate 250000000 msec 4",
+            "qos 1 profile 0 queue 2 rate 375000000 msec 4",
+            "qos 1 profile 0 queue 3 rate 500000000 msec 4",
             "qos 1 profile 0 dscp-group real-time-group 0x1",
             "qos 1 profile 0 queue 0x1 wrr-weight 1 0"
         ]
@@ -188,10 +188,10 @@ TEST_DATA = [
         # expected_result
         [
             "qos 1 profile 0 rate 125000000 size 10000 period 50",
-            "qos 1 profile 0 queue 0 rate 125000000 size 0",
-            "qos 1 profile 0 queue 1 rate 250000000 size 0",
-            "qos 1 profile 0 queue 2 rate 375000000 size 0",
-            "qos 1 profile 0 queue 3 rate 500000000 size 0",
+            "qos 1 profile 0 queue 0 rate 125000000 msec 4",
+            "qos 1 profile 0 queue 1 rate 250000000 msec 4",
+            "qos 1 profile 0 queue 2 rate 375000000 msec 4",
+            "qos 1 profile 0 queue 3 rate 500000000 msec 4",
             "qos 1 profile 0 dscp-group default-group-high-drop 0x7",
             "qos 1 profile 0 dscp-group default-group-low-drop 0x3",
             "qos 1 profile 0 dscp-group priority-group-high-drop 0x6",
@@ -235,11 +235,11 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 profile 0 rate 125000000 size 0 period 10",
-            "qos 1 profile 0 queue 0 percent 100 size 0",
-            "qos 1 profile 0 queue 1 percent 100 size 0",
-            "qos 1 profile 0 queue 2 percent 100 size 0",
-            "qos 1 profile 0 queue 3 percent 100 size 0",
+            "qos 1 profile 0 rate 125000000 msec 4 period 10",
+            "qos 1 profile 0 queue 0 percent 100 msec 4",
+            "qos 1 profile 0 queue 1 percent 100 msec 4",
+            "qos 1 profile 0 queue 2 percent 100 msec 4",
+            "qos 1 profile 0 queue 3 percent 100 msec 4",
             "qos 1 profile 0 dscp 0 0x3",
             "qos 1 profile 0 dscp 1 0x3",
             "qos 1 profile 0 dscp 2 0x3",
@@ -349,11 +349,11 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 profile 0 rate 125000000 size 0 period 10",
-            "qos 1 profile 0 queue 0 rate 125000000 size 0",
-            "qos 1 profile 0 queue 1 rate 250000000 size 0",
-            "qos 1 profile 0 queue 2 rate 375000000 size 0",
-            "qos 1 profile 0 queue 3 rate 500000000 size 0",
+            "qos 1 profile 0 rate 125000000 msec 4 period 10",
+            "qos 1 profile 0 queue 0 rate 125000000 msec 4",
+            "qos 1 profile 0 queue 1 rate 250000000 msec 4",
+            "qos 1 profile 0 queue 2 rate 375000000 msec 4",
+            "qos 1 profile 0 queue 3 rate 500000000 msec 4",
             "qos 1 profile 0 pcp 0 0x7",
             "qos 1 profile 0 pcp 1 0x3",
             "qos 1 profile 0 pcp 2 0x6",
@@ -420,10 +420,10 @@ TEST_DATA = [
         [
             # packets limits generated during unit-test
             "qos 1 profile 0 rate 125000000 size 16000 period 10",
-            "qos 1 profile 0 queue 0 percent 100 size 0",
-            "qos 1 profile 0 queue 1 percent 100 size 0",
-            "qos 1 profile 0 queue 2 percent 100 size 0",
-            "qos 1 profile 0 queue 3 percent 100 size 0",
+            "qos 1 profile 0 queue 0 percent 100 msec 4",
+            "qos 1 profile 0 queue 1 percent 100 msec 4",
+            "qos 1 profile 0 queue 2 percent 100 msec 4",
+            "qos 1 profile 0 queue 3 percent 100 msec 4",
             "qos 1 profile 0 dscp-group default-group-high 0x6",
             "qos 1 profile 0 dscp-group default-group-low 0x26",
             "qos 1 profile 0 dscp-group priority-group-high 0x2",
@@ -476,11 +476,11 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 profile 0 rate 125000000 size 0 period 10",
-            "qos 1 profile 0 queue 0 rate 125000000 size 0",
-            "qos 1 profile 0 queue 1 rate 250000000 size 0",
-            "qos 1 profile 0 queue 2 rate 375000000 size 0",
-            "qos 1 profile 0 queue 3 rate 500000000 size 0",
+            "qos 1 profile 0 rate 125000000 msec 4 period 10",
+            "qos 1 profile 0 queue 0 rate 125000000 msec 4",
+            "qos 1 profile 0 queue 1 rate 250000000 msec 4",
+            "qos 1 profile 0 queue 2 rate 375000000 msec 4",
+            "qos 1 profile 0 queue 3 rate 500000000 msec 4",
             "qos 1 profile 0 designation 0 queue 0x7",
             "qos 1 profile 0 designation 1 queue 0x3",
             "qos 1 profile 0 designation 2 queue 0x6",

@@ -27,13 +27,13 @@ TEST_DATA = [
         ],
         # expected_result
         [
-            "qos 1 subport 2 queue 0 percent 40 size 0",
+            "qos 1 subport 2 queue 0 percent 40 msec 4",
             "qos 1 param subport 2 0 limit packets 64",
-            "qos 1 subport 2 queue 1 percent 30 size 0",
+            "qos 1 subport 2 queue 1 percent 30 msec 4",
             "qos 1 param subport 2 1 limit packets 128",
-            "qos 1 subport 2 queue 2 percent 20 size 0",
+            "qos 1 subport 2 queue 2 percent 20 msec 4",
             "qos 1 param subport 2 2 limit packets 256",
-            "qos 1 subport 2 queue 3 percent 10 size 0",
+            "qos 1 subport 2 queue 3 percent 10 msec 4",
             "qos 1 param subport 2 3 limit packets 512",
         ]
     ),
@@ -46,13 +46,13 @@ TEST_DATA = [
         ],
         # expected_result
         [
-            "qos 1 subport 2 queue 0 percent 15 size 0",
+            "qos 1 subport 2 queue 0 percent 15 msec 4",
             "qos 1 param subport 2 0 limit packets 1024",
-            "qos 1 subport 2 queue 1 percent 100 size 0",
+            "qos 1 subport 2 queue 1 percent 100 msec 4",
             "qos 1 param subport 2 1 limit packets 64",
-            "qos 1 subport 2 queue 2 percent 25 size 0",
+            "qos 1 subport 2 queue 2 percent 25 msec 4",
             "qos 1 param subport 2 2 limit packets 2048",
-            "qos 1 subport 2 queue 3 percent 100 size 0",
+            "qos 1 subport 2 queue 3 percent 100 msec 4",
             "qos 1 param subport 2 3 limit packets 64",
         ]
     ),
@@ -65,13 +65,13 @@ TEST_DATA = [
             {"id": 3, "bandwidth": "40%", "queue-limit-bytes": 40000}
         ],
         [
-            "qos 1 subport 2 queue 0 percent 10 size 0",
+            "qos 1 subport 2 queue 0 percent 10 msec 4",
             "qos 1 param subport 2 0 limit bytes 10000",
-            "qos 1 subport 2 queue 1 percent 20 size 0",
+            "qos 1 subport 2 queue 1 percent 20 msec 4",
             "qos 1 param subport 2 1 limit bytes 20000",
-            "qos 1 subport 2 queue 2 percent 30 size 0",
+            "qos 1 subport 2 queue 2 percent 30 msec 4",
             "qos 1 param subport 2 2 limit bytes 30000",
-            "qos 1 subport 2 queue 3 percent 40 size 0",
+            "qos 1 subport 2 queue 3 percent 40 msec 4",
             "qos 1 param subport 2 3 limit bytes 40000",
         ]
     ),
@@ -85,13 +85,13 @@ TEST_DATA = [
             # NOTE: since the byte-limit if-feature file doesn't exist
             # during unit-testing the auto-generated entries TC-0 and TC-2
             # get the software packet-based default queue-limits
-            "qos 1 subport 2 queue 0 percent 100 size 0",
+            "qos 1 subport 2 queue 0 percent 100 msec 4",
             "qos 1 param subport 2 0 limit packets 64",
-            "qos 1 subport 2 queue 1 percent 95 size 0",
+            "qos 1 subport 2 queue 1 percent 95 msec 4",
             "qos 1 param subport 2 1 limit bytes 5000",
-            "qos 1 subport 2 queue 2 percent 100 size 0",
+            "qos 1 subport 2 queue 2 percent 100 msec 4",
             "qos 1 param subport 2 2 limit packets 64",
-            "qos 1 subport 2 queue 3 percent 5 size 0",
+            "qos 1 subport 2 queue 3 percent 5 msec 4",
             "qos 1 param subport 2 3 limit bytes 95000",
         ]
     )

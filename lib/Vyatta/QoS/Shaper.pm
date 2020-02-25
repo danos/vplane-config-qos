@@ -142,12 +142,6 @@ sub _getSubport {
 
     my $default = $config->returnValue("default");
 
-    my $bandwidth = $config->returnValue('bandwidth');
-    if ( $tag == 0 and $bandwidth =~ /%/msx ) {
-        invalid
-"A percentage bandwidth cannot be configured on dataplane interfaces\n";
-    }
-
     my $subport =
       new Vyatta::QoS::Subport( $level, $vif, $tag, $parent_bw, $default,
         $trunk_tc_ref );

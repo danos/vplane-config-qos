@@ -35,19 +35,14 @@ sub new {
     $bandwidth = '100%'
       unless defined($bandwidth);
 
-    my $bps;
+    my $bps = $MAX_BANDWIDTH;
     if ( $bandwidth =~ /^([0-9]*\.?[0-9]+)%$/ ) {
-        invalid "Bandwidth percent but parent not defined"
-          unless defined($parent);
-
         $percent = $1;
-        $bps = int( ( $parent->{bps} * $percent ) / 100. );
+        $bps = int( ( $parent->{bps} * $percent ) / 100. )
+          unless !defined($parent);
     } else {
         $bps = int( parse_rate($bandwidth) / 8 );
     }
-
-    invalid "Invalid bandwidth $bandwidth"
-      unless defined($bps);
 
     if ( $bps > $MAX_BANDWIDTH ) {
         invalid 'Bandwidth cannot be higher than 10Gbit';

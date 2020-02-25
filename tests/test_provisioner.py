@@ -257,8 +257,8 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos 1 qos 1 subport 0 queue 0 percent 100 size 0',
-                'qos 1 subport 0 queue 0 percent 100 size 0',
+                'qos 1 qos 1 subport 0 queue 0 percent 100 msec 4',
+                'qos 1 subport 0 queue 0 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
@@ -269,8 +269,8 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos 1 qos 1 subport 0 queue 1 percent 100 size 0',
-                'qos 1 subport 0 queue 1 percent 100 size 0',
+                'qos 1 qos 1 subport 0 queue 1 percent 100 msec 4',
+                'qos 1 subport 0 queue 1 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
@@ -281,8 +281,8 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos 1 qos 1 subport 0 queue 2 percent 100 size 0',
-                'qos 1 subport 0 queue 2 percent 100 size 0',
+                'qos 1 qos 1 subport 0 queue 2 percent 100 msec 4',
+                'qos 1 subport 0 queue 2 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
@@ -293,8 +293,8 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos 1 qos 1 subport 0 queue 3 percent 100 size 0',
-                'qos 1 subport 0 queue 3 percent 100 size 0',
+                'qos 1 qos 1 subport 0 queue 3 percent 100 msec 4',
+                'qos 1 subport 0 queue 3 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
@@ -323,26 +323,26 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 4 queue 0 percent 100 size 0',
-                'qos 1 profile 4 queue 0 percent 100 size 0',
+                'qos 1 qos 1 profile 4 queue 0 percent 100 msec 4',
+                'qos 1 profile 4 queue 0 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 4 queue 1 percent 100 size 0',
-                'qos 1 profile 4 queue 1 percent 100 size 0',
+                'qos 1 qos 1 profile 4 queue 1 percent 100 msec 4',
+                'qos 1 profile 4 queue 1 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 4 queue 2 percent 100 size 0',
-                'qos 1 profile 4 queue 2 percent 100 size 0',
+                'qos 1 qos 1 profile 4 queue 2 percent 100 msec 4',
+                'qos 1 profile 4 queue 2 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 4 queue 3 percent 100 size 0',
-                'qos 1 profile 4 queue 3 percent 100 size 0',
+                'qos 1 qos 1 profile 4 queue 3 percent 100 msec 4',
+                'qos 1 profile 4 queue 3 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
@@ -353,26 +353,26 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 0 queue 0 percent 100 size 0',
-                'qos 1 profile 0 queue 0 percent 100 size 0',
+                'qos 1 qos 1 profile 0 queue 0 percent 100 msec 4',
+                'qos 1 profile 0 queue 0 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 0 queue 1 percent 100 size 0',
-                'qos 1 profile 0 queue 1 percent 100 size 0',
+                'qos 1 qos 1 profile 0 queue 1 percent 100 msec 4',
+                'qos 1 profile 0 queue 1 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 0 queue 2 percent 100 size 0',
-                'qos 1 profile 0 queue 2 percent 100 size 0',
+                'qos 1 qos 1 profile 0 queue 2 percent 100 msec 4',
+                'qos 1 profile 0 queue 2 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 0 queue 3 percent 100 size 0',
-                'qos 1 profile 0 queue 3 percent 100 size 0',
+                'qos 1 qos 1 profile 0 queue 3 percent 100 msec 4',
+                'qos 1 profile 0 queue 3 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
@@ -383,26 +383,26 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 1 queue 0 percent 100 size 0',
-                'qos 1 profile 1 queue 0 percent 100 size 0',
+                'qos 1 qos 1 profile 1 queue 0 percent 100 msec 4',
+                'qos 1 profile 1 queue 0 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 1 queue 1 percent 100 size 0',
-                'qos 1 profile 1 queue 1 percent 100 size 0',
+                'qos 1 qos 1 profile 1 queue 1 percent 100 msec 4',
+                'qos 1 profile 1 queue 1 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 1 queue 2 percent 100 size 0',
-                'qos 1 profile 1 queue 2 percent 100 size 0',
+                'qos 1 qos 1 profile 1 queue 2 percent 100 msec 4',
+                'qos 1 profile 1 queue 2 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 1 queue 3 percent 100 size 0',
-                'qos 1 profile 1 queue 3 percent 100 size 0',
+                'qos 1 qos 1 profile 1 queue 3 percent 100 msec 4',
+                'qos 1 profile 1 queue 3 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
@@ -413,25 +413,25 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 2 queue 0 percent 100 size 0',
-                'qos 1 profile 2 queue 0 percent 100 size 0',
+                'qos 1 qos 1 profile 2 queue 0 percent 100 msec 4',
+                'qos 1 profile 2 queue 0 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 2 queue 1 percent 100 size 0',
-                'qos 1 profile 2 queue 1 percent 100 size 0',
+                'qos 1 qos 1 profile 2 queue 1 percent 100 msec 4',
+                'qos 1 profile 2 queue 1 percent 100 msec 4',
                 'lo',
                 'SET'),
             (
-                'qos 1 qos 1 profile 2 queue 2 percent 100 size 0',
-                'qos 1 profile 2 queue 2 percent 100 size 0',
+                'qos 1 qos 1 profile 2 queue 2 percent 100 msec 4',
+                'qos 1 profile 2 queue 2 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 2 queue 3 percent 100 size 0',
-                'qos 1 profile 2 queue 3 percent 100 size 0',
+                'qos 1 qos 1 profile 2 queue 3 percent 100 msec 4',
+                'qos 1 profile 2 queue 3 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
@@ -442,26 +442,26 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 3 queue 0 percent 100 size 0',
-                'qos 1 profile 3 queue 0 percent 100 size 0',
+                'qos 1 qos 1 profile 3 queue 0 percent 100 msec 4',
+                'qos 1 profile 3 queue 0 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 3 queue 1 percent 100 size 0',
-                'qos 1 profile 3 queue 1 percent 100 size 0',
+                'qos 1 qos 1 profile 3 queue 1 percent 100 msec 4',
+                'qos 1 profile 3 queue 1 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 3 queue 2 percent 100 size 0',
-                'qos 1 profile 3 queue 2 percent 100 size 0',
+                'qos 1 qos 1 profile 3 queue 2 percent 100 msec 4',
+                'qos 1 profile 3 queue 2 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 3 queue 3 percent 100 size 0',
-                'qos 1 profile 3 queue 3 percent 100 size 0',
+                'qos 1 qos 1 profile 3 queue 3 percent 100 msec 4',
+                'qos 1 profile 3 queue 3 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
