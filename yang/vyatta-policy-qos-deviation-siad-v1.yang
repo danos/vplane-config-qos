@@ -84,11 +84,12 @@ module vyatta-policy-qos-deviation-siad-v1 {
 
 		 Deviations for QoS policies on the SIAD platform";
 
-	revision 2020-01-28 {
+	revision 2020-02-28 {
 		description "Add configuration option to give burst size in
                              milliseconds.
                              Relax restriction on pipe queue to traffic class
-                             mappings if ingress maps are used.";
+                             mappings if ingress maps are used.
+                             Disable time based burst configuration on Q-AX.";
 	}
 
 	revision 2019-06-20 {
@@ -232,10 +233,7 @@ module vyatta-policy-qos-deviation-siad-v1 {
 
 	deviation /policy:policy/qos:qos/qos:name/qos:shaper/qos:burst {
 		deviate replace {
-			type union {
-				type siad-burst-size;
-				type qos-groupings:burst-time;
-			}
+			type siad-burst-size;
 		}
 		deviate add {
 			default "16000";
@@ -244,10 +242,7 @@ module vyatta-policy-qos-deviation-siad-v1 {
 
 	deviation /policy:policy/qos:qos/qos:name/qos:shaper/qos:profile/qos:burst {
 		deviate replace {
-			type union {
-				type siad-burst-size;
-				type qos-groupings:burst-time;
-			}
+			type siad-burst-size;
 		}
 		deviate add {
 			default "16000";
@@ -256,10 +251,7 @@ module vyatta-policy-qos-deviation-siad-v1 {
 
 	deviation /policy:policy/qos:qos/qos:profile/qos:burst {
 		deviate replace {
-			type union {
-				type siad-burst-size;
-				type qos-groupings:burst-time;
-			}
+			type siad-burst-size;
 		}
 		deviate add {
 			default "16000";
