@@ -12,6 +12,7 @@ the Perl FWHelper.pm module that is normally found in
 """
 import ipaddress
 import logging
+import string
 
 from vyatta_policy_qos_vci.dscp import str2dscp
 from vyatta_policy_qos_vci.policer import Policer
@@ -96,6 +97,11 @@ def read_services():
                   f"{port_name}/{port_number}")
 
 
+def is_hex(in_str):
+    """ Return true is the string only contain hexadecimal characters """
+    return all(char in string.hexdigits for char in in_str)
+
+
 def read_ethertypes():
     """
     Read in /etc/ethertypes and create a dictionary of ethertype names to
@@ -110,7 +116,7 @@ def read_ethertypes():
                 if not ethtype_line.startswith('#'):
                     ethtype_name = ethtype_line.split()[0].lower()
                     ethtype_number = ethtype_line.split()[1]
-                    if not good_name(ethtype_name) or not ethtype_number.isdecimal():
+                    if not good_name(ethtype_name) or not is_hex(ethtype_number):
                         raise ValueError
 
                     ETHTYPE_DICT[ethtype_name] = int(ethtype_number, 16)
