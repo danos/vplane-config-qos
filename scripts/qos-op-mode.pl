@@ -225,8 +225,8 @@ sub convert_wred_map_list_64 {
     foreach my $map ( @{$map_ar} ) {
         my %map_ent;
 
-        $map_ent{'res-grp-64'}          = $map->{res_grp};
-        $map_ent{'random-dscp-drop-64'} = $map->{random_dscp_drop};
+        $map_ent{'res-grp-64'}          = "$map->{res_grp}";
+        $map_ent{'random-dscp-drop-64'} = "$map->{random_dscp_drop}";
         push @map_list, \%map_ent;
     }
     return \@map_list;
@@ -257,13 +257,14 @@ sub convert_tc_queues {
         }
 
         # Don't truncate the new 64-bit counters
-        $queue_out{'packets-64'} = $queue->{packets};
-        $queue_out{'bytes-64'}   = $queue->{bytes};
+        $queue_out{'packets-64'} = "$queue->{packets}";
+        $queue_out{'bytes-64'}   = "$queue->{bytes}";
 
         # the dropped counter is total drops, we just want tail-drops
-        $queue_out{'dropped-64'} =
-          ( $queue->{dropped} - $queue->{random_drop} );
-        $queue_out{'random-drop-64'} = $queue->{random_drop};
+        my $dropped_64 = $queue->{dropped} - $queue->{random_drop};
+
+        $queue_out{'dropped-64'} = "$dropped_64";
+        $queue_out{'random-drop-64'} = "$queue->{random_drop}";
         if ( defined( $queue->{wred_map} ) ) {
             $queue_out{'wred-map-64'} =
               convert_wred_map_list_64( $queue->{wred_map} );
@@ -415,12 +416,14 @@ sub convert_tcs {
         $tc_out{'random-drop'} = $tc_in->{random_drop} & 0xffffffff;
 
         # 64-bit counters don't get truncated
-        $tc_out{'packets-64'} = $tc_in->{packets};
-        $tc_out{'bytes-64'}   = $tc_in->{bytes};
+        $tc_out{'packets-64'} = "$tc_in->{packets}";
+        $tc_out{'bytes-64'}   = "$tc_in->{bytes}";
 
         # the dropped counter is total drops, we just want tail-drops
-        $tc_out{'dropped-64'}     = $tc_in->{dropped} - $tc_in->{random_drop};
-        $tc_out{'random-drop-64'} = $tc_in->{random_drop};
+        my $dropped_64 = $tc_in->{dropped} - $tc_in->{random_drop};
+
+        $tc_out{'dropped-64'}     = "$dropped_64";
+        $tc_out{'random-drop-64'} = "$tc_in->{random_drop}";
 
         push @tc_list_out, \%tc_out;
         $tc_id += 1;
