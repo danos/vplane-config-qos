@@ -263,7 +263,7 @@ sub convert_tc_queues {
         # the dropped counter is total drops, we just want tail-drops
         my $dropped_64 = $queue->{dropped} - $queue->{random_drop};
 
-        $queue_out{'dropped-64'} = "$dropped_64";
+        $queue_out{'dropped-64'}     = "$dropped_64";
         $queue_out{'random-drop-64'} = "$queue->{random_drop}";
         if ( defined( $queue->{wred_map} ) ) {
             $queue_out{'wred-map-64'} =
@@ -455,8 +455,8 @@ sub convert_npf_rule {
         }
         if ( index( $rule_operation, "policer" ) != -1 ) {
             my $policer = $rule_in->{'rprocs'}->{'policer'};
-            $rule_out{'exceeded-packets'}  = $policer->{'exceed-packets'};
-            $rule_out{'exceeded-bytes'}    = $policer->{'exceed-bytes'};
+            $rule_out{'exceeded-packets'} = $policer->{'exceed-packets'};
+            $rule_out{'exceeded-bytes'}   = $policer->{'exceed-bytes'};
         }
 
         $rule_out{packets} = $rule_in->{packets};
