@@ -404,13 +404,13 @@
 							    "dscp" : 63
 							}
 						    ],
-						    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
-						    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
 						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
-						    "vyatta-policy-qos-groupings-v1:dropped-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
-						    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
 						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
 						    "priority-local" : false,
@@ -426,9 +426,9 @@
 						{
 						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
 						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
-						    "vyatta-policy-qos-groupings-v1:dropped-64" : 0,
-						    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
-						    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
 						    "dscp-values" : [
 							{
 							    "dscp" : 32
@@ -483,7 +483,7 @@
 						    "queue" : 0,
 						    "vyatta-policy-qos-groupings-v1:packets" : 0,
 						    "priority-local" : false,
-						    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
 						    "vyatta-policy-qos-groupings-v1:random-drop" : 0
 						}
@@ -498,10 +498,10 @@
 						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
 						    "priority-local" : false,
 						    "queue" : 0,
-						    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
-						    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
-						    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
 						    "dscp-values" : [
 							{
 							    "dscp" : 16
@@ -554,7 +554,7 @@
 						    ],
 						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
 						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
-						    "vyatta-policy-qos-groupings-v1:dropped-64" : 0
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0"
 						}
 					    ]
 					},
@@ -562,7 +562,7 @@
 					    "traffic-class" : 3,
 					    "queue-statistics" : [
 						{
-						    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
 						    "vyatta-policy-qos-groupings-v1:packets" : 0,
 						    "queue" : 0,
@@ -571,7 +571,7 @@
 						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
 						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
 						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
-						    "vyatta-policy-qos-groupings-v1:dropped-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
 						    "dscp-values" : [
 							{
 							    "dscp" : 0
@@ -622,8 +622,8 @@
 							    "dscp" : 15
 							}
 						    ],
-						    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
-						    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0"
 						}
 					    ]
 					}
@@ -767,13 +767,13 @@
 			    "subport" : 0,
 			    "traffic-class-list" : [
 				{
-				    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
 				    "traffic-class" : 0,
-				    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
-				    "vyatta-policy-qos-groupings-v1:dropped-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
 				    "vyatta-policy-qos-groupings-v1:bytes" : 0,
 				    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
-				    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 				    "vyatta-policy-qos-groupings-v1:dropped" : 0,
 				    "vyatta-policy-qos-groupings-v1:packets" : 0
 				},
@@ -781,34 +781,34 @@
 				    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
 				    "vyatta-policy-qos-groupings-v1:dropped" : 0,
 				    "vyatta-policy-qos-groupings-v1:packets" : 0,
-				    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
-				    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
 				    "traffic-class" : 1,
-				    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
-				    "vyatta-policy-qos-groupings-v1:dropped-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
 				    "vyatta-policy-qos-groupings-v1:bytes" : 0
 				},
 				{
-				    "vyatta-policy-qos-groupings-v1:dropped-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
 				    "vyatta-policy-qos-groupings-v1:bytes" : 0,
-				    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
 				    "traffic-class" : 2,
-				    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
-				    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 				    "vyatta-policy-qos-groupings-v1:packets" : 0,
 				    "vyatta-policy-qos-groupings-v1:dropped" : 0,
 				    "vyatta-policy-qos-groupings-v1:random-drop" : 0
 				},
 				{
-				    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
-				    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
 				    "traffic-class" : 3,
 				    "vyatta-policy-qos-groupings-v1:bytes" : 0,
-				    "vyatta-policy-qos-groupings-v1:dropped-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
 				    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
 				    "vyatta-policy-qos-groupings-v1:packets" : 0,
 				    "vyatta-policy-qos-groupings-v1:dropped" : 0,
-				    "vyatta-policy-qos-groupings-v1:packets-64" : 0
+				    "vyatta-policy-qos-groupings-v1:packets-64" : "0"
 				}
 			    ],
 			    "rules" : {
@@ -846,48 +846,48 @@
 			    },
 			    "traffic-class-list" : [
 				{
-				    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 				    "vyatta-policy-qos-groupings-v1:packets" : 0,
 				    "vyatta-policy-qos-groupings-v1:dropped" : 0,
 				    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
-				    "vyatta-policy-qos-groupings-v1:dropped-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
 				    "vyatta-policy-qos-groupings-v1:bytes" : 0,
 				    "traffic-class" : 0,
-				    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
-				    "vyatta-policy-qos-groupings-v1:bytes-64" : 0
+				    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:bytes-64" : "0"
 				},
 				{
-				    "vyatta-policy-qos-groupings-v1:dropped-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
 				    "vyatta-policy-qos-groupings-v1:bytes" : 0,
-				    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
-				    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
 				    "traffic-class" : 1,
 				    "vyatta-policy-qos-groupings-v1:dropped" : 0,
 				    "vyatta-policy-qos-groupings-v1:packets" : 0,
-				    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 				    "vyatta-policy-qos-groupings-v1:random-drop" : 0
 				},
 				{
 				    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
 				    "vyatta-policy-qos-groupings-v1:packets" : 0,
 				    "vyatta-policy-qos-groupings-v1:dropped" : 0,
-				    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
-				    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
 				    "traffic-class" : 2,
-				    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
-				    "vyatta-policy-qos-groupings-v1:dropped-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
 				    "vyatta-policy-qos-groupings-v1:bytes" : 0
 				},
 				{
-				    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 				    "vyatta-policy-qos-groupings-v1:packets" : 0,
 				    "vyatta-policy-qos-groupings-v1:dropped" : 0,
 				    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
 				    "vyatta-policy-qos-groupings-v1:bytes" : 0,
-				    "vyatta-policy-qos-groupings-v1:dropped-64" : 0,
-				    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
+				    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
 				    "traffic-class" : 3,
-				    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0
+				    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0"
 				}
 			    ],
 			    "subport" : 0,
@@ -1377,14 +1377,14 @@
 						    "vyatta-policy-qos-groupings-v1:packets" : 0,
 						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
 						    "queue" : 0,
-						    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
 						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
 						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
 						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
-						    "vyatta-policy-qos-groupings-v1:dropped-64" : 0,
-						    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
-						    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
 						    "dscp-values" : [
 							{
 							    "dscp" : 48
@@ -1447,10 +1447,10 @@
 						    "queue" : 0,
 						    "priority-local" : false,
 						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
-						    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
-						    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
-						    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
 						    "dscp-values" : [
 							{
 							    "dscp" : 32
@@ -1503,7 +1503,7 @@
 						    ],
 						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
 						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
-						    "vyatta-policy-qos-groupings-v1:dropped-64" : 0
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0"
 						}
 					    ]
 					},
@@ -1512,7 +1512,7 @@
 						{
 						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
 						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
-						    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 						    "priority-local" : false,
 						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
 						    "queue" : 0,
@@ -1567,9 +1567,9 @@
 							    "dscp" : 31
 							}
 						    ],
-						    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
-						    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
-						    "vyatta-policy-qos-groupings-v1:dropped-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
 						    "vyatta-policy-qos-groupings-v1:bytes" : 0
 						}
@@ -1629,13 +1629,13 @@
 							    "dscp" : 15
 							}
 						    ],
-						    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
-						    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
 						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
-						    "vyatta-policy-qos-groupings-v1:dropped-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
-						    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
 						    "vyatta-policy-qos-groupings-v1:packets" : 0,
 						    "queue" : 0,
@@ -2130,7 +2130,7 @@
 					    "queue-statistics" : [
 						{
 						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
-						    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
 						    "priority-local" : false,
 						    "vyatta-policy-qos-groupings-v1:packets" : 0,
@@ -2186,11 +2186,11 @@
 							    "dscp" : 63
 							}
 						    ],
-						    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
-						    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
 						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
-						    "vyatta-policy-qos-groupings-v1:dropped-64" : 0
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0"
 						}
 					    ]
 					},
@@ -2202,10 +2202,10 @@
 						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
 						    "vyatta-policy-qos-groupings-v1:packets" : 0,
 						    "priority-local" : false,
-						    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
-						    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
-						    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
 						    "dscp-values" : [
 							{
 							    "dscp" : 32
@@ -2258,7 +2258,7 @@
 						    ],
 						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
 						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
-						    "vyatta-policy-qos-groupings-v1:dropped-64" : 0
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0"
 						}
 					    ],
 					    "traffic-class" : 1
@@ -2267,7 +2267,7 @@
 					    "traffic-class" : 2,
 					    "queue-statistics" : [
 						{
-						    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
 						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
 						    "queue" : 0,
@@ -2276,7 +2276,7 @@
 						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
 						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
 						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
-						    "vyatta-policy-qos-groupings-v1:dropped-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
 						    "dscp-values" : [
 							{
 							    "dscp" : 16
@@ -2327,19 +2327,19 @@
 							    "dscp" : 31
 							}
 						    ],
-						    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
-						    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0"
 						}
 					    ]
 					},
 					{
 					    "queue-statistics" : [
 						{
-						    "vyatta-policy-qos-groupings-v1:dropped-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
 						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
-						    "vyatta-policy-qos-groupings-v1:bytes-64" : 0,
-						    "vyatta-policy-qos-groupings-v1:random-drop-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
 						    "dscp-values" : [
 							{
 							    "dscp" : 0
@@ -2395,7 +2395,7 @@
 						    "queue" : 0,
 						    "priority-local" : false,
 						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
-						    "vyatta-policy-qos-groupings-v1:packets-64" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
 						    "vyatta-policy-qos-groupings-v1:random-drop" : 0
 						}
 					    ],

@@ -372,8 +372,8 @@ def convert_wred_map_list_64(map_list_in):
 
     for map_in in map_list_in:
         map_out = {
-            'res-grp-64': map_in['res_grp'],
-            'random-dscp-drop-64': map_in['random_dscp_drop']
+            'res-grp-64': f"{map_in['res_grp']}",
+            'random-dscp-drop-64': f"{map_in['random_dscp_drop']}"
         }
         map_list_out.append(map_out)
 
@@ -389,6 +389,7 @@ def convert_tc_queues(tc_queues_in, tc_id, reverse_map, map_type_values):
     queue_id = 0
 
     for queue in tc_queues_in:
+        tail_drops = queue['dropped'] - queue['random_drop']
         queue_out = {
             'queue': queue_id,
 
@@ -408,14 +409,12 @@ def convert_tc_queues(tc_queues_in, tc_id, reverse_map, map_type_values):
                 queue['random_drop'] & 0xffffffff),
 
             # Don't truncate the new 64-bit counters
-            'vyatta-policy-qos-groupings-v1:packets-64': queue['packets'],
-            'vyatta-policy-qos-groupings-v1:bytes-64': queue['bytes'],
+            'vyatta-policy-qos-groupings-v1:packets-64': f"{queue['packets']}",
+            'vyatta-policy-qos-groupings-v1:bytes-64': f"{queue['bytes']}",
 
             # The dropped counter is total drops, we just want tail-drops
-            'vyatta-policy-qos-groupings-v1:dropped-64': (
-                queue['dropped'] - queue['random_drop']),
-            'vyatta-policy-qos-groupings-v1:random-drop-64': (
-                queue['random_drop']),
+            'vyatta-policy-qos-groupings-v1:dropped-64': f"{tail_drops}",
+            'vyatta-policy-qos-groupings-v1:random-drop-64': f"{queue['random_drop']}",
 
             'priority-local': queue['prio_local']
 
@@ -563,6 +562,7 @@ def convert_tcs(tcs_in):
     tc_id = 0
 
     for tc_in in tcs_in:
+        tail_drops = tc_in['dropped'] - tc_in['random_drop']
         tc_out = {
             'traffic-class': tc_id,
             # Truncate these values for the old 32-bit counters
@@ -579,13 +579,12 @@ def convert_tcs(tcs_in):
                 tc_in['random_drop'] & 0xffffffff),
 
             # 64-bit counters don't get truncated
-            'vyatta-policy-qos-groupings-v1:packets-64': tc_in['packets'],
-            'vyatta-policy-qos-groupings-v1:bytes-64': tc_in['bytes'],
+            'vyatta-policy-qos-groupings-v1:packets-64': f"{tc_in['packets']}",
+            'vyatta-policy-qos-groupings-v1:bytes-64': f"{tc_in['bytes']}",
 
             # The dropped counter is total drops, we just want tail-drops
-            'vyatta-policy-qos-groupings-v1:dropped-64': (
-                tc_in['dropped'] - tc_in['random_drop']),
-            'vyatta-policy-qos-groupings-v1:random-drop-64': tc_in['random_drop']
+            'vyatta-policy-qos-groupings-v1:dropped-64': f"{tail_drops}",
+            'vyatta-policy-qos-groupings-v1:random-drop-64': f"{tc_in['random_drop']}"
         }
         tc_list_out.append(tc_out)
         tc_id += 1
