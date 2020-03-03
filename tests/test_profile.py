@@ -27,11 +27,11 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 profile 0 percent 100 size 16000 period 10",
-            "qos 1 profile 0 queue 0 percent 100 msec 4",
-            "qos 1 profile 0 queue 1 percent 100 msec 4",
-            "qos 1 profile 0 queue 2 percent 100 msec 4",
-            "qos 1 profile 0 queue 3 percent 100 msec 4"
+            "qos lo profile 0 percent 100 size 16000 period 10",
+            "qos lo profile 0 queue 0 percent 100 msec 4",
+            "qos lo profile 0 queue 1 percent 100 msec 4",
+            "qos lo profile 0 queue 2 percent 100 msec 4",
+            "qos lo profile 0 queue 3 percent 100 msec 4"
         ]
     ),
     (
@@ -45,11 +45,11 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 profile 0 rate 125000000 size 10000 period 50",
-            "qos 1 profile 0 queue 0 percent 100 msec 4",
-            "qos 1 profile 0 queue 1 percent 100 msec 4",
-            "qos 1 profile 0 queue 2 percent 100 msec 4",
-            "qos 1 profile 0 queue 3 percent 100 msec 4"
+            "qos lo profile 0 rate 125000000 size 10000 period 50",
+            "qos lo profile 0 queue 0 percent 100 msec 4",
+            "qos lo profile 0 queue 1 percent 100 msec 4",
+            "qos lo profile 0 queue 2 percent 100 msec 4",
+            "qos lo profile 0 queue 3 percent 100 msec 4"
         ]
     ),
     (
@@ -63,11 +63,11 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 profile 0 rate 125000000 msec 10 period 50",
-            "qos 1 profile 0 queue 0 percent 100 msec 4",
-            "qos 1 profile 0 queue 1 percent 100 msec 4",
-            "qos 1 profile 0 queue 2 percent 100 msec 4",
-            "qos 1 profile 0 queue 3 percent 100 msec 4"
+            "qos lo profile 0 rate 125000000 msec 10 period 50",
+            "qos lo profile 0 queue 0 percent 100 msec 4",
+            "qos lo profile 0 queue 1 percent 100 msec 4",
+            "qos lo profile 0 queue 2 percent 100 msec 4",
+            "qos lo profile 0 queue 3 percent 100 msec 4"
         ]
     ),
     (
@@ -87,11 +87,11 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 profile 0 rate 125000000 size 10000 period 50",
-            "qos 1 profile 0 queue 0 percent 10 msec 4",
-            "qos 1 profile 0 queue 1 percent 20 msec 4",
-            "qos 1 profile 0 queue 2 percent 30 msec 4",
-            "qos 1 profile 0 queue 3 percent 40 msec 4"
+            "qos lo profile 0 rate 125000000 size 10000 period 50",
+            "qos lo profile 0 queue 0 percent 10 msec 4",
+            "qos lo profile 0 queue 1 percent 20 msec 4",
+            "qos lo profile 0 queue 2 percent 30 msec 4",
+            "qos lo profile 0 queue 3 percent 40 msec 4"
         ]
     ),
     (
@@ -111,11 +111,11 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 profile 0 rate 125000000 size 10000 period 50",
-            "qos 1 profile 0 queue 0 rate 125000000 msec 4",
-            "qos 1 profile 0 queue 1 rate 250000000 msec 4",
-            "qos 1 profile 0 queue 2 rate 375000000 msec 4",
-            "qos 1 profile 0 queue 3 rate 500000000 msec 4"
+            "qos lo profile 0 rate 125000000 size 10000 period 50",
+            "qos lo profile 0 queue 0 rate 125000000 msec 4",
+            "qos lo profile 0 queue 1 rate 250000000 msec 4",
+            "qos lo profile 0 queue 2 rate 375000000 msec 4",
+            "qos lo profile 0 queue 3 rate 500000000 msec 4"
         ]
     ),
     (
@@ -143,13 +143,13 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 profile 0 rate 125000000 size 10000 period 50",
-            "qos 1 profile 0 queue 0 rate 125000000 msec 4",
-            "qos 1 profile 0 queue 1 rate 250000000 msec 4",
-            "qos 1 profile 0 queue 2 rate 375000000 msec 4",
-            "qos 1 profile 0 queue 3 rate 500000000 msec 4",
-            "qos 1 profile 0 dscp-group real-time-group 0x1",
-            "qos 1 profile 0 queue 0x1 wrr-weight 1 0"
+            "qos lo profile 0 rate 125000000 size 10000 period 50",
+            "qos lo profile 0 queue 0 rate 125000000 msec 4",
+            "qos lo profile 0 queue 1 rate 250000000 msec 4",
+            "qos lo profile 0 queue 2 rate 375000000 msec 4",
+            "qos lo profile 0 queue 3 rate 500000000 msec 4",
+            "qos lo profile 0 dscp-group real-time-group 0x1",
+            "qos lo profile 0 queue 0x1 wrr-weight 1 0"
         ]
     ),
     (
@@ -187,23 +187,23 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 profile 0 rate 125000000 size 10000 period 50",
-            "qos 1 profile 0 queue 0 rate 125000000 msec 4",
-            "qos 1 profile 0 queue 1 rate 250000000 msec 4",
-            "qos 1 profile 0 queue 2 rate 375000000 msec 4",
-            "qos 1 profile 0 queue 3 rate 500000000 msec 4",
-            "qos 1 profile 0 dscp-group default-group-high-drop 0x7",
-            "qos 1 profile 0 dscp-group default-group-low-drop 0x3",
-            "qos 1 profile 0 dscp-group priority-group-high-drop 0x6",
-            "qos 1 profile 0 dscp-group priority-group-low-drop 0x2",
-            "qos 1 profile 0 dscp-group real-time-group 0x1",
-            "qos 1 profile 0 dscp-group synch-group 0x0",
-            "qos 1 profile 0 queue 0x1 wrr-weight 1 0",
-            "qos 1 profile 0 queue 0 wrr-weight 1 1",
-            "qos 1 profile 0 queue 0x2 wrr-weight 80 2",
-            "qos 1 profile 0 queue 0x6 wrr-weight 20 3",
-            "qos 1 profile 0 queue 0x3 wrr-weight 70 4",
-            "qos 1 profile 0 queue 0x7 wrr-weight 30 5"
+            "qos lo profile 0 rate 125000000 size 10000 period 50",
+            "qos lo profile 0 queue 0 rate 125000000 msec 4",
+            "qos lo profile 0 queue 1 rate 250000000 msec 4",
+            "qos lo profile 0 queue 2 rate 375000000 msec 4",
+            "qos lo profile 0 queue 3 rate 500000000 msec 4",
+            "qos lo profile 0 dscp-group default-group-high-drop 0x7",
+            "qos lo profile 0 dscp-group default-group-low-drop 0x3",
+            "qos lo profile 0 dscp-group priority-group-high-drop 0x6",
+            "qos lo profile 0 dscp-group priority-group-low-drop 0x2",
+            "qos lo profile 0 dscp-group real-time-group 0x1",
+            "qos lo profile 0 dscp-group synch-group 0x0",
+            "qos lo profile 0 queue 0x1 wrr-weight 1 0",
+            "qos lo profile 0 queue 0 wrr-weight 1 1",
+            "qos lo profile 0 queue 0x2 wrr-weight 80 2",
+            "qos lo profile 0 queue 0x6 wrr-weight 20 3",
+            "qos lo profile 0 queue 0x3 wrr-weight 70 4",
+            "qos lo profile 0 queue 0x7 wrr-weight 30 5"
         ]
     ),
     (
@@ -235,81 +235,81 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 profile 0 rate 125000000 msec 4 period 10",
-            "qos 1 profile 0 queue 0 percent 100 msec 4",
-            "qos 1 profile 0 queue 1 percent 100 msec 4",
-            "qos 1 profile 0 queue 2 percent 100 msec 4",
-            "qos 1 profile 0 queue 3 percent 100 msec 4",
-            "qos 1 profile 0 dscp 0 0x3",
-            "qos 1 profile 0 dscp 1 0x3",
-            "qos 1 profile 0 dscp 2 0x3",
-            "qos 1 profile 0 dscp 3 0x3",
-            "qos 1 profile 0 dscp 4 0x3",
-            "qos 1 profile 0 dscp 5 0x3",
-            "qos 1 profile 0 dscp 6 0x3",
-            "qos 1 profile 0 dscp 7 0x3",
-            "qos 1 profile 0 dscp 8 0x7",
-            "qos 1 profile 0 dscp 9 0x3",
-            "qos 1 profile 0 dscp 10 0x7",
-            "qos 1 profile 0 dscp 11 0x3",
-            "qos 1 profile 0 dscp 12 0x3",
-            "qos 1 profile 0 dscp 13 0x3",
-            "qos 1 profile 0 dscp 14 0x3",
-            "qos 1 profile 0 dscp 15 0x3",
-            "qos 1 profile 0 dscp 16 0x7",
-            "qos 1 profile 0 dscp 17 0x3",
-            "qos 1 profile 0 dscp 18 0x7",
-            "qos 1 profile 0 dscp 19 0x3",
-            "qos 1 profile 0 dscp 20 0x3",
-            "qos 1 profile 0 dscp 21 0x3",
-            "qos 1 profile 0 dscp 22 0x3",
-            "qos 1 profile 0 dscp 23 0x3",
-            "qos 1 profile 0 dscp 24 0x6",
-            "qos 1 profile 0 dscp 25 0x2",
-            "qos 1 profile 0 dscp 26 0x6",
-            "qos 1 profile 0 dscp 27 0x2",
-            "qos 1 profile 0 dscp 28 0x2",
-            "qos 1 profile 0 dscp 29 0x2",
-            "qos 1 profile 0 dscp 30 0x2",
-            "qos 1 profile 0 dscp 31 0x2",
-            "qos 1 profile 0 dscp 32 0x6",
-            "qos 1 profile 0 dscp 33 0x2",
-            "qos 1 profile 0 dscp 34 0x6",
-            "qos 1 profile 0 dscp 35 0x2",
-            "qos 1 profile 0 dscp 36 0x2",
-            "qos 1 profile 0 dscp 37 0x2",
-            "qos 1 profile 0 dscp 38 0x2",
-            "qos 1 profile 0 dscp 39 0x2",
-            "qos 1 profile 0 dscp 40 0x1",
-            "qos 1 profile 0 dscp 41 0x3",
-            "qos 1 profile 0 dscp 42 0x3",
-            "qos 1 profile 0 dscp 43 0x3",
-            "qos 1 profile 0 dscp 44 0x3",
-            "qos 1 profile 0 dscp 45 0x3",
-            "qos 1 profile 0 dscp 46 0x1",
-            "qos 1 profile 0 dscp 47 0x1",
-            "qos 1 profile 0 dscp 48 0x1",
-            "qos 1 profile 0 dscp 49 0x3",
-            "qos 1 profile 0 dscp 50 0x3",
-            "qos 1 profile 0 dscp 51 0x3",
-            "qos 1 profile 0 dscp 52 0x3",
-            "qos 1 profile 0 dscp 53 0x3",
-            "qos 1 profile 0 dscp 54 0x3",
-            "qos 1 profile 0 dscp 55 0x3",
-            "qos 1 profile 0 dscp 56 0x0",
-            "qos 1 profile 0 dscp 57 0x3",
-            "qos 1 profile 0 dscp 58 0x3",
-            "qos 1 profile 0 dscp 59 0x3",
-            "qos 1 profile 0 dscp 60 0x3",
-            "qos 1 profile 0 dscp 61 0x3",
-            "qos 1 profile 0 dscp 62 0x3",
-            "qos 1 profile 0 dscp 63 0x3",
-            "qos 1 profile 0 queue 0 wrr-weight 1 0",
-            "qos 1 profile 0 queue 0x1 wrr-weight 1 1",
-            "qos 1 profile 0 queue 0x2 wrr-weight 80 2",
-            "qos 1 profile 0 queue 0x6 wrr-weight 20 3",
-            "qos 1 profile 0 queue 0x3 wrr-weight 70 4",
-            "qos 1 profile 0 queue 0x7 wrr-weight 30 5"
+            "qos lo profile 0 rate 125000000 msec 4 period 10",
+            "qos lo profile 0 queue 0 percent 100 msec 4",
+            "qos lo profile 0 queue 1 percent 100 msec 4",
+            "qos lo profile 0 queue 2 percent 100 msec 4",
+            "qos lo profile 0 queue 3 percent 100 msec 4",
+            "qos lo profile 0 dscp 0 0x3",
+            "qos lo profile 0 dscp 1 0x3",
+            "qos lo profile 0 dscp 2 0x3",
+            "qos lo profile 0 dscp 3 0x3",
+            "qos lo profile 0 dscp 4 0x3",
+            "qos lo profile 0 dscp 5 0x3",
+            "qos lo profile 0 dscp 6 0x3",
+            "qos lo profile 0 dscp 7 0x3",
+            "qos lo profile 0 dscp 8 0x7",
+            "qos lo profile 0 dscp 9 0x3",
+            "qos lo profile 0 dscp 10 0x7",
+            "qos lo profile 0 dscp 11 0x3",
+            "qos lo profile 0 dscp 12 0x3",
+            "qos lo profile 0 dscp 13 0x3",
+            "qos lo profile 0 dscp 14 0x3",
+            "qos lo profile 0 dscp 15 0x3",
+            "qos lo profile 0 dscp 16 0x7",
+            "qos lo profile 0 dscp 17 0x3",
+            "qos lo profile 0 dscp 18 0x7",
+            "qos lo profile 0 dscp 19 0x3",
+            "qos lo profile 0 dscp 20 0x3",
+            "qos lo profile 0 dscp 21 0x3",
+            "qos lo profile 0 dscp 22 0x3",
+            "qos lo profile 0 dscp 23 0x3",
+            "qos lo profile 0 dscp 24 0x6",
+            "qos lo profile 0 dscp 25 0x2",
+            "qos lo profile 0 dscp 26 0x6",
+            "qos lo profile 0 dscp 27 0x2",
+            "qos lo profile 0 dscp 28 0x2",
+            "qos lo profile 0 dscp 29 0x2",
+            "qos lo profile 0 dscp 30 0x2",
+            "qos lo profile 0 dscp 31 0x2",
+            "qos lo profile 0 dscp 32 0x6",
+            "qos lo profile 0 dscp 33 0x2",
+            "qos lo profile 0 dscp 34 0x6",
+            "qos lo profile 0 dscp 35 0x2",
+            "qos lo profile 0 dscp 36 0x2",
+            "qos lo profile 0 dscp 37 0x2",
+            "qos lo profile 0 dscp 38 0x2",
+            "qos lo profile 0 dscp 39 0x2",
+            "qos lo profile 0 dscp 40 0x1",
+            "qos lo profile 0 dscp 41 0x3",
+            "qos lo profile 0 dscp 42 0x3",
+            "qos lo profile 0 dscp 43 0x3",
+            "qos lo profile 0 dscp 44 0x3",
+            "qos lo profile 0 dscp 45 0x3",
+            "qos lo profile 0 dscp 46 0x1",
+            "qos lo profile 0 dscp 47 0x1",
+            "qos lo profile 0 dscp 48 0x1",
+            "qos lo profile 0 dscp 49 0x3",
+            "qos lo profile 0 dscp 50 0x3",
+            "qos lo profile 0 dscp 51 0x3",
+            "qos lo profile 0 dscp 52 0x3",
+            "qos lo profile 0 dscp 53 0x3",
+            "qos lo profile 0 dscp 54 0x3",
+            "qos lo profile 0 dscp 55 0x3",
+            "qos lo profile 0 dscp 56 0x0",
+            "qos lo profile 0 dscp 57 0x3",
+            "qos lo profile 0 dscp 58 0x3",
+            "qos lo profile 0 dscp 59 0x3",
+            "qos lo profile 0 dscp 60 0x3",
+            "qos lo profile 0 dscp 61 0x3",
+            "qos lo profile 0 dscp 62 0x3",
+            "qos lo profile 0 dscp 63 0x3",
+            "qos lo profile 0 queue 0 wrr-weight 1 0",
+            "qos lo profile 0 queue 0x1 wrr-weight 1 1",
+            "qos lo profile 0 queue 0x2 wrr-weight 80 2",
+            "qos lo profile 0 queue 0x6 wrr-weight 20 3",
+            "qos lo profile 0 queue 0x3 wrr-weight 70 4",
+            "qos lo profile 0 queue 0x7 wrr-weight 30 5"
         ]
     ),
     (
@@ -349,27 +349,27 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 profile 0 rate 125000000 msec 4 period 10",
-            "qos 1 profile 0 queue 0 rate 125000000 msec 4",
-            "qos 1 profile 0 queue 1 rate 250000000 msec 4",
-            "qos 1 profile 0 queue 2 rate 375000000 msec 4",
-            "qos 1 profile 0 queue 3 rate 500000000 msec 4",
-            "qos 1 profile 0 pcp 0 0x7",
-            "qos 1 profile 0 pcp 1 0x3",
-            "qos 1 profile 0 pcp 2 0x6",
-            "qos 1 profile 0 pcp 3 0x2",
-            "qos 1 profile 0 pcp 4 0x5",
-            "qos 1 profile 0 pcp 5 0x1",
-            "qos 1 profile 0 pcp 6 0x4",
-            "qos 1 profile 0 pcp 7 0x0",
-            "qos 1 profile 0 queue 0 wrr-weight 1 0",
-            "qos 1 profile 0 queue 0x4 wrr-weight 1 1",
-            "qos 1 profile 0 queue 0x1 wrr-weight 1 2",
-            "qos 1 profile 0 queue 0x5 wrr-weight 1 3",
-            "qos 1 profile 0 queue 0x2 wrr-weight 1 4",
-            "qos 1 profile 0 queue 0x6 wrr-weight 1 5",
-            "qos 1 profile 0 queue 0x3 wrr-weight 1 6",
-            "qos 1 profile 0 queue 0x7 wrr-weight 1 7"
+            "qos lo profile 0 rate 125000000 msec 4 period 10",
+            "qos lo profile 0 queue 0 rate 125000000 msec 4",
+            "qos lo profile 0 queue 1 rate 250000000 msec 4",
+            "qos lo profile 0 queue 2 rate 375000000 msec 4",
+            "qos lo profile 0 queue 3 rate 500000000 msec 4",
+            "qos lo profile 0 pcp 0 0x7",
+            "qos lo profile 0 pcp 1 0x3",
+            "qos lo profile 0 pcp 2 0x6",
+            "qos lo profile 0 pcp 3 0x2",
+            "qos lo profile 0 pcp 4 0x5",
+            "qos lo profile 0 pcp 5 0x1",
+            "qos lo profile 0 pcp 6 0x4",
+            "qos lo profile 0 pcp 7 0x0",
+            "qos lo profile 0 queue 0 wrr-weight 1 0",
+            "qos lo profile 0 queue 0x4 wrr-weight 1 1",
+            "qos lo profile 0 queue 0x1 wrr-weight 1 2",
+            "qos lo profile 0 queue 0x5 wrr-weight 1 3",
+            "qos lo profile 0 queue 0x2 wrr-weight 1 4",
+            "qos lo profile 0 queue 0x6 wrr-weight 1 5",
+            "qos lo profile 0 queue 0x3 wrr-weight 1 6",
+            "qos lo profile 0 queue 0x7 wrr-weight 1 7"
         ]
     ),
     (
@@ -419,24 +419,24 @@ TEST_DATA = [
         # expected_result
         [
             # packets limits generated during unit-test
-            "qos 1 profile 0 rate 125000000 size 16000 period 10",
-            "qos 1 profile 0 queue 0 percent 100 msec 4",
-            "qos 1 profile 0 queue 1 percent 100 msec 4",
-            "qos 1 profile 0 queue 2 percent 100 msec 4",
-            "qos 1 profile 0 queue 3 percent 100 msec 4",
-            "qos 1 profile 0 dscp-group default-group-high 0x6",
-            "qos 1 profile 0 dscp-group default-group-low 0x26",
-            "qos 1 profile 0 dscp-group priority-group-high 0x2",
-            "qos 1 profile 0 dscp-group priority-group-low 0x22",
-            "qos 1 profile 0 dscp-group real-time-group 0x1",
-            "qos 1 profile 0 dscp-group synch-group 0x0",
-            "qos 1 profile 0 queue 0 wrr-weight 1 0",
-            "qos 1 profile 0 queue 0x1 wrr-weight 1 1",
-            "qos 1 profile 0 queue 0x2 wrr-weight 1 2",
-            "qos 1 profile 0 queue 0x2 dscp-group priority-group-high packets 30000 20000 5",
-            "qos 1 profile 0 queue 0x2 dscp-group priority-group-low packets 50000 40000 10",
-            "qos 1 profile 0 queue 0x2 wred-weight 10",
-            "qos 1 profile 0 queue 0x6 wrr-weight 1 3"
+            "qos lo profile 0 rate 125000000 size 16000 period 10",
+            "qos lo profile 0 queue 0 percent 100 msec 4",
+            "qos lo profile 0 queue 1 percent 100 msec 4",
+            "qos lo profile 0 queue 2 percent 100 msec 4",
+            "qos lo profile 0 queue 3 percent 100 msec 4",
+            "qos lo profile 0 dscp-group default-group-high 0x6",
+            "qos lo profile 0 dscp-group default-group-low 0x26",
+            "qos lo profile 0 dscp-group priority-group-high 0x2",
+            "qos lo profile 0 dscp-group priority-group-low 0x22",
+            "qos lo profile 0 dscp-group real-time-group 0x1",
+            "qos lo profile 0 dscp-group synch-group 0x0",
+            "qos lo profile 0 queue 0 wrr-weight 1 0",
+            "qos lo profile 0 queue 0x1 wrr-weight 1 1",
+            "qos lo profile 0 queue 0x2 wrr-weight 1 2",
+            "qos lo profile 0 queue 0x2 dscp-group priority-group-high packets 30000 20000 5",
+            "qos lo profile 0 queue 0x2 dscp-group priority-group-low packets 50000 40000 10",
+            "qos lo profile 0 queue 0x2 wred-weight 10",
+            "qos lo profile 0 queue 0x6 wrr-weight 1 3"
         ]
     ),
     (
@@ -476,27 +476,27 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 profile 0 rate 125000000 msec 4 period 10",
-            "qos 1 profile 0 queue 0 rate 125000000 msec 4",
-            "qos 1 profile 0 queue 1 rate 250000000 msec 4",
-            "qos 1 profile 0 queue 2 rate 375000000 msec 4",
-            "qos 1 profile 0 queue 3 rate 500000000 msec 4",
-            "qos 1 profile 0 designation 0 queue 0x7",
-            "qos 1 profile 0 designation 1 queue 0x3",
-            "qos 1 profile 0 designation 2 queue 0x6",
-            "qos 1 profile 0 designation 3 queue 0x2",
-            "qos 1 profile 0 designation 4 queue 0x5",
-            "qos 1 profile 0 designation 5 queue 0x1",
-            "qos 1 profile 0 designation 6 queue 0x4",
-            "qos 1 profile 0 designation 7 queue 0x0",
-            "qos 1 profile 0 queue 0 wrr-weight 1 0",
-            "qos 1 profile 0 queue 0x4 wrr-weight 1 1",
-            "qos 1 profile 0 queue 0x1 wrr-weight 1 2",
-            "qos 1 profile 0 queue 0x5 wrr-weight 1 3",
-            "qos 1 profile 0 queue 0x2 wrr-weight 1 4",
-            "qos 1 profile 0 queue 0x6 wrr-weight 1 5",
-            "qos 1 profile 0 queue 0x3 wrr-weight 1 6",
-            "qos 1 profile 0 queue 0x7 wrr-weight 1 7"
+            "qos lo profile 0 rate 125000000 msec 4 period 10",
+            "qos lo profile 0 queue 0 rate 125000000 msec 4",
+            "qos lo profile 0 queue 1 rate 250000000 msec 4",
+            "qos lo profile 0 queue 2 rate 375000000 msec 4",
+            "qos lo profile 0 queue 3 rate 500000000 msec 4",
+            "qos lo profile 0 designation 0 queue 0x7",
+            "qos lo profile 0 designation 1 queue 0x3",
+            "qos lo profile 0 designation 2 queue 0x6",
+            "qos lo profile 0 designation 3 queue 0x2",
+            "qos lo profile 0 designation 4 queue 0x5",
+            "qos lo profile 0 designation 5 queue 0x1",
+            "qos lo profile 0 designation 6 queue 0x4",
+            "qos lo profile 0 designation 7 queue 0x0",
+            "qos lo profile 0 queue 0 wrr-weight 1 0",
+            "qos lo profile 0 queue 0x4 wrr-weight 1 1",
+            "qos lo profile 0 queue 0x1 wrr-weight 1 2",
+            "qos lo profile 0 queue 0x5 wrr-weight 1 3",
+            "qos lo profile 0 queue 0x2 wrr-weight 1 4",
+            "qos lo profile 0 queue 0x6 wrr-weight 1 5",
+            "qos lo profile 0 queue 0x3 wrr-weight 1 6",
+            "qos lo profile 0 queue 0x7 wrr-weight 1 7"
         ]
     )
 ]
@@ -507,9 +507,9 @@ PARENT_BW_DICT = {"bandwidth": "10Gbit", "burst": "9000"}
 def test_profile(test_input, expected_result):
     """ Unit-test the profile class """
     attrs = {'profile_index_get.return_value':0}
-    interface = Mock(ifindex=1, **attrs)
+    interface = Mock(ifname="lo", **attrs)
     parent_bw = Bandwidth(PARENT_BW_DICT, None)
     assert parent_bw is not None
     profile = Profile(0, test_input, parent_bw)
     assert profile is not None
-    assert profile.commands("qos 1 profile", interface, 0) == expected_result
+    assert profile.commands("qos lo profile", interface, 0) == expected_result

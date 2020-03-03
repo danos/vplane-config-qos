@@ -124,7 +124,7 @@ class IngressMap:
         """ Generate the necessary commands for this ingress map """
         cmd_list = []
         ifname = "ALL"
-        cmd_prefix = f"qos 0 ingress-map {self._name}"
+        cmd_prefix = f"qos global-object-cmd ingress-map {self._name}"
         if self._map_type == 'dscp-group':
             dscp_group_names = sorted(self._dscp_group2des.keys())
             for dscp_group_name in dscp_group_names:
@@ -169,20 +169,20 @@ class IngressMap:
         for binding in self._bindings:
             cmd_list.append(binding.delete_binding())
 
-        path = f"qos 0 ingress-map {self._name}"
-        cmd = f"qos 0 ingress-map {self._name} delete"
+        path = f"qos global-object-cmd ingress-map {self._name}"
+        cmd = f"qos global-object-cmd ingress-map {self._name} delete"
         ifname = "ALL"
         cmd_list.append((path, cmd, ifname))
         return cmd_list
 
-    def create_binding(self, ifname, ifindex, vlan_id):
+    def create_binding(self, ifname, vlan_id):
         """ Generate the command to attach this ingress-map to a port/vlan """
-        path = f"qos-in-map {ifindex} ingress-map {self._name} vlan {vlan_id}"
-        cmd = f"qos {ifindex} ingress-map {self._name} vlan {vlan_id}"
+        path = f"qos-in-map {ifname} ingress-map {self._name} vlan {vlan_id}"
+        cmd = f"qos {ifname} ingress-map {self._name} vlan {vlan_id}"
         return (path, cmd, ifname)
 
-    def delete_binding(self, ifname, ifindex, vlan_id):
+    def delete_binding(self, ifname, vlan_id):
         """ Generate the command to detach an ingress-map from a port/vlan """
-        path = f"qos-in-map {ifindex} ingress-map {self._name} vlan {vlan_id}"
-        cmd = f"qos {ifindex} ingress-map {self._name} vlan {vlan_id} delete"
+        path = f"qos-in-map {ifname} ingress-map {self._name} vlan {vlan_id}"
+        cmd = f"qos {ifname} ingress-map {self._name} vlan {vlan_id} delete"
         return (path, cmd, ifname)

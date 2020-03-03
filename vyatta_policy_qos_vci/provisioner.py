@@ -30,12 +30,7 @@ LOG = logging.getLogger('Policy QoS VCI')
 # We have two config files, the requested version that contains all the
 # config information, and the actioned version that contains all the
 # config information that QoS VCI was able to apply at the last commit
-# point.  The main difference between these two files will be that the
-# actioned version will be missing any deferred interface config.
-# When a deferred interface is plugged in, QoS VCI receives a notification
-# and then compares the requested config against the actioned config to see
-# if the newly plugged in interface has some QoS config waiting for it.
-#
+# point. 
 POLICY_QOS_REQUESTED_CONFIG_FILE = '/etc/vyatta/policy-qos-requested.json'
 POLICY_QOS_ACTIONED_CONFIG_FILE = '/etc/vyatta/policy-qos-actioned.json'
 
@@ -96,7 +91,6 @@ class Provisioner:
         self._if_deletes = []
         self._if_updates = []
         self._if_creates = []
-        self._if_deferred = []
         self._in_map_deferred = []
 
         self._obj_delete = []
@@ -112,7 +106,6 @@ class Provisioner:
         self._check_global_profiles(old_config, new_config)
         self._check_mark_maps(old_config, new_config)
         self._check_action_groups(old_config, new_config)
-        self._check_for_deferred_interfaces(new_config)
         self._check_ingress_maps(old_config, new_config)
 
     def _check_interfaces(self, old_config, new_config):
@@ -200,10 +193,6 @@ class Provisioner:
                 # Delete the old action-group
                 self._obj_delete.append(action_group)
 
-    def _check_for_deferred_interfaces(self, new_config):
-        """ Build a list of deferred interface names """
-        self._if_deferred = new_config.deferred_interfaces
-
     def _check_ingress_maps(self, old_config, new_config):
         """ Check for any changes to ingress_maps """
         for ingress_map in new_config.ingress_maps.values():
@@ -231,11 +220,6 @@ class Provisioner:
                 self._obj_delete.append(ingress_map)
 
     @property
-    def deferred_interfaces(self):
-        """ Return the list of interface names that have been deferred """
-        return self._if_deferred
-
-    @property
     def deferred_ingress_maps(self):
         """ Return the list of ingress-map names that have been deferred """
         return self._in_map_deferred
@@ -244,17 +228,15 @@ class Provisioner:
         """
         Detach the QoS policy from the specified interface.
         """
-        # Deferred interfaces won't have an ifindex yet
         cmd_count = 0
-        if interface.ifindex is not None:
-            if interface.policies:
-                key = f"qos {interface.ifindex}"
-                cmd = f"{key} disable"
-                for dataplane in ctrl.get_dataplanes():
-                    with dataplane:
-                        ctrl.store(key, cmd, interface.name, "DELETE")
-                        LOG.debug(f"delete: {cmd}")
-                        cmd_count += 1
+        if interface.policies:
+            key = f"qos {interface.ifname}"
+            cmd = f"{key} disable"
+            for dataplane in ctrl.get_dataplanes():
+                with dataplane:
+                    ctrl.store(key, cmd, interface.ifname, "DELETE")
+                    LOG.debug(f"delete: {cmd}")
+                    cmd_count += 1
 
         return cmd_count
 
@@ -272,18 +254,16 @@ class Provisioner:
         """
         Attach a QoS policy to the specified interface
         """
-        # Deferred interfaces won't have an ifindex yet
         cmd_count = 0
-        if interface.ifindex is not None:
-            key = f"qos {interface.ifindex}"
-            for dataplane in ctrl.get_dataplanes():
-                with dataplane:
-                    # Attach any QoS policies to this interface and its vlans
-                    for cmd in interface.commands():
-                        path = f"{key} {cmd}"
-                        ctrl.store(path, cmd, interface.name, "SET")
-                        LOG.debug(f"set: {cmd}")
-                        cmd_count += 1
+        key = f"qos {interface.ifname}"
+        for dataplane in ctrl.get_dataplanes():
+            with dataplane:
+                # Attach any QoS policies to this interface and its vlans
+                for cmd in interface.commands():
+                    path = f"{key} {cmd}"
+                    ctrl.store(path, cmd, interface.ifname, "SET")
+                    LOG.debug(f"set: {cmd}")
+                    cmd_count += 1
 
         return cmd_count
 

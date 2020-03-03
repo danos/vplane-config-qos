@@ -41,7 +41,6 @@ class Interface:
             self._name = if_dict.get('tagnode')
             policy_namespace = 'vyatta-interfaces-policy-v1'
             vif_namespace = ''
-        self._ifindex = None
         self._subports = []
         self._ingress_map_bindings = []
         self._policies = []
@@ -173,7 +172,7 @@ class Interface:
         return self._if_dict
 
     @property
-    def name(self):
+    def ifname(self):
         """ Return the name of this interface """
         return self._name
 
@@ -210,27 +209,6 @@ class Interface:
         return len(self._profile_index)
 
     @property
-    def ifindex(self):
-        """
-        Return the ifindex for this interface.
-        If we don't have it, get it from the appropriate system file.
-        """
-        if self._ifindex is not None:
-            return self._ifindex
-
-        filename = f"/sys/class/net/{self._name}/ifindex"
-        try:
-            with open(filename) as if_file:
-                self._ifindex = if_file.read().replace('\n', '')
-
-        except OSError:
-            # If we can't open the file, then the interface in question
-            # is probably a deferred interface, e.g. a vhost interface.
-            LOG.debug(f"Failed to open {filename} for {self._name}")
-
-        return self._ifindex
-
-    @property
     def policies(self):
         """
         Return the list of policies (trunk and vlan) attached to this
@@ -252,7 +230,7 @@ class Interface:
         attached to this interface.
         """
         cmd_list = []
-        cmd_prefix = f"qos {self.ifindex}"
+        cmd_prefix = f"qos {self._name}"
         max_subports = len(self._subports)
         max_pipes = 0
         queue_limit_type = "ql_bytes" if byte_limits() else "ql_packets"

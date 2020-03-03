@@ -21,8 +21,7 @@ class IngressMapBinding:
         Return the path, command, ifname tuple necessary to bind this ingress-map
         to the interface/vlan.
         """
-        return self._ingress_map.create_binding(self._interface.name,
-                                                self._interface.ifindex,
+        return self._ingress_map.create_binding(self._interface.ifname,
                                                 self._vlan_id)
 
     def delete_binding(self):
@@ -30,6 +29,5 @@ class IngressMapBinding:
         Return the path, command, ifname tuple necessary to unbind this ingress-map
         from the interface/vlan.
         """
-        return self._ingress_map.delete_binding(self._interface.name,
-                                                self._interface.ifindex,
+        return self._ingress_map.delete_binding(self._interface.ifname,
                                                 self._vlan_id)

@@ -160,80 +160,80 @@ TEST_DATA = [
             #              for unit-testing it is either "lo" or "ALL"
             # 4th element: the store command, can be "SET" or "DELETE"
             (
-                'qos 0 ingress-map bill pcp 0',
-                'qos 0 ingress-map bill pcp 0 designation 0 drop-prec green',
+                'qos global-object-cmd ingress-map bill pcp 0',
+                'qos global-object-cmd ingress-map bill pcp 0 designation 0 drop-prec green',
                 'ALL',
                 'SET'
             ),
             (
-                'qos 0 ingress-map bill pcp 1',
-                'qos 0 ingress-map bill pcp 1 designation 1 drop-prec green',
+                'qos global-object-cmd ingress-map bill pcp 1',
+                'qos global-object-cmd ingress-map bill pcp 1 designation 1 drop-prec green',
                 'ALL',
                 'SET'
             ),
             (
-                'qos 0 ingress-map bill pcp 2',
-                'qos 0 ingress-map bill pcp 2 designation 2 drop-prec green',
+                'qos global-object-cmd ingress-map bill pcp 2',
+                'qos global-object-cmd ingress-map bill pcp 2 designation 2 drop-prec green',
                 'ALL',
                 'SET'
             ),
             (
-                'qos 0 ingress-map bill pcp 3',
-                'qos 0 ingress-map bill pcp 3 designation 3 drop-prec green',
+                'qos global-object-cmd ingress-map bill pcp 3',
+                'qos global-object-cmd ingress-map bill pcp 3 designation 3 drop-prec green',
                 'ALL',
                 'SET'
             ),
             (
-                'qos 0 ingress-map bill pcp 4',
-                'qos 0 ingress-map bill pcp 4 designation 4 drop-prec green',
+                'qos global-object-cmd ingress-map bill pcp 4',
+                'qos global-object-cmd ingress-map bill pcp 4 designation 4 drop-prec green',
                 'ALL',
                 'SET'
             ),
             (
-                'qos 0 ingress-map bill pcp 5',
-                'qos 0 ingress-map bill pcp 5 designation 5 drop-prec green',
+                'qos global-object-cmd ingress-map bill pcp 5',
+                'qos global-object-cmd ingress-map bill pcp 5 designation 5 drop-prec green',
                 'ALL',
                 'SET'
             ),
             (
-                'qos 0 ingress-map bill pcp 6',
-                'qos 0 ingress-map bill pcp 6 designation 6 drop-prec green',
+                'qos global-object-cmd ingress-map bill pcp 6',
+                'qos global-object-cmd ingress-map bill pcp 6 designation 6 drop-prec green',
                 'ALL',
                 'SET'
             ),
             (
-                'qos 0 ingress-map bill pcp 7',
-                'qos 0 ingress-map bill pcp 7 designation 7 drop-prec green',
+                'qos global-object-cmd ingress-map bill pcp 7',
+                'qos global-object-cmd ingress-map bill pcp 7 designation 7 drop-prec green',
                 'ALL',
                 'SET'
             ),
             (
-                'qos 0 ingress-map bill complete',
-                'qos 0 ingress-map bill complete',
+                'qos global-object-cmd ingress-map bill complete',
+                'qos global-object-cmd ingress-map bill complete',
                 'ALL',
                 'SET'
             ),
             (
-                'qos-in-map 1 ingress-map bill vlan 0',
-                'qos 1 ingress-map bill vlan 0',
+                'qos-in-map lo ingress-map bill vlan 0',
+                'qos lo ingress-map bill vlan 0',
                 'lo',
                 'SET'
             ),
             (
                 'qos mark-map test123 dscp-group bert',
-                'qos 0 mark-map test123 dscp-group bert pcp 3',
+                'qos global-object-cmd mark-map test123 dscp-group bert pcp 3',
                 'ALL',
                 'SET'
             ),
             (
                 'qos mark-map test123 dscp-group fred',
-                'qos 0 mark-map test123 dscp-group fred pcp 4',
+                'qos global-object-cmd mark-map test123 dscp-group fred pcp 4',
                 'ALL',
                 'SET'
             ),
             (
                 'qos mark-map test123 dscp-group joe',
-                'qos 0 mark-map test123 dscp-group joe pcp 2',
+                'qos global-object-cmd mark-map test123 dscp-group joe pcp 2',
                 'ALL',
                 'SET'
             ),
@@ -245,235 +245,235 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos 1 qos 1 port subports 1 pipes 1 profiles 5 overhead 24 ql_packets',
-                'qos 1 port subports 1 pipes 1 profiles 5 overhead 24 ql_packets',
+                'qos lo qos lo port subports 1 pipes 1 profiles 5 overhead 24 ql_packets',
+                'qos lo port subports 1 pipes 1 profiles 5 overhead 24 ql_packets',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 subport 0 rate 1250000000 size 16000 period 40',
-                'qos 1 subport 0 rate 1250000000 size 16000 period 40',
+                'qos lo qos lo subport 0 rate 1250000000 size 16000 period 40',
+                'qos lo subport 0 rate 1250000000 size 16000 period 40',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 subport 0 queue 0 percent 100 msec 4',
-                'qos 1 subport 0 queue 0 percent 100 msec 4',
+                'qos lo qos lo subport 0 queue 0 percent 100 msec 4',
+                'qos lo subport 0 queue 0 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 param subport 0 0 limit packets 64',
-                'qos 1 param subport 0 0 limit packets 64',
+                'qos lo qos lo param subport 0 0 limit packets 64',
+                'qos lo param subport 0 0 limit packets 64',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 subport 0 queue 1 percent 100 msec 4',
-                'qos 1 subport 0 queue 1 percent 100 msec 4',
+                'qos lo qos lo subport 0 queue 1 percent 100 msec 4',
+                'qos lo subport 0 queue 1 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 param subport 0 1 limit packets 64',
-                'qos 1 param subport 0 1 limit packets 64',
+                'qos lo qos lo param subport 0 1 limit packets 64',
+                'qos lo param subport 0 1 limit packets 64',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 subport 0 queue 2 percent 100 msec 4',
-                'qos 1 subport 0 queue 2 percent 100 msec 4',
+                'qos lo qos lo subport 0 queue 2 percent 100 msec 4',
+                'qos lo subport 0 queue 2 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 param subport 0 2 limit packets 64',
-                'qos 1 param subport 0 2 limit packets 64',
+                'qos lo qos lo param subport 0 2 limit packets 64',
+                'qos lo param subport 0 2 limit packets 64',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 subport 0 queue 3 percent 100 msec 4',
-                'qos 1 subport 0 queue 3 percent 100 msec 4',
+                'qos lo qos lo subport 0 queue 3 percent 100 msec 4',
+                'qos lo subport 0 queue 3 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 param subport 0 3 limit packets 64',
-                'qos 1 param subport 0 3 limit packets 64',
+                'qos lo qos lo param subport 0 3 limit packets 64',
+                'qos lo param subport 0 3 limit packets 64',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 subport 0 mark-map test123',
-                'qos 1 subport 0 mark-map test123',
+                'qos lo qos lo subport 0 mark-map test123',
+                'qos lo subport 0 mark-map test123',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 vlan 0 0',
-                'qos 1 vlan 0 0',
+                'qos lo qos lo vlan 0 0',
+                'qos lo vlan 0 0',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 4 percent 100 size 16000 period 10',
-                'qos 1 profile 4 percent 100 size 16000 period 10',
+                'qos lo qos lo profile 4 percent 100 size 16000 period 10',
+                'qos lo profile 4 percent 100 size 16000 period 10',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 4 queue 0 percent 100 msec 4',
-                'qos 1 profile 4 queue 0 percent 100 msec 4',
+                'qos lo qos lo profile 4 queue 0 percent 100 msec 4',
+                'qos lo profile 4 queue 0 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 4 queue 1 percent 100 msec 4',
-                'qos 1 profile 4 queue 1 percent 100 msec 4',
+                'qos lo qos lo profile 4 queue 1 percent 100 msec 4',
+                'qos lo profile 4 queue 1 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 4 queue 2 percent 100 msec 4',
-                'qos 1 profile 4 queue 2 percent 100 msec 4',
+                'qos lo qos lo profile 4 queue 2 percent 100 msec 4',
+                'qos lo profile 4 queue 2 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 4 queue 3 percent 100 msec 4',
-                'qos 1 profile 4 queue 3 percent 100 msec 4',
+                'qos lo qos lo profile 4 queue 3 percent 100 msec 4',
+                'qos lo profile 4 queue 3 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 0 rate 12500000 size 16000 period 10',
-                'qos 1 profile 0 rate 12500000 size 16000 period 10',
+                'qos lo qos lo profile 0 rate 12500000 size 16000 period 10',
+                'qos lo profile 0 rate 12500000 size 16000 period 10',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 0 queue 0 percent 100 msec 4',
-                'qos 1 profile 0 queue 0 percent 100 msec 4',
+                'qos lo qos lo profile 0 queue 0 percent 100 msec 4',
+                'qos lo profile 0 queue 0 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 0 queue 1 percent 100 msec 4',
-                'qos 1 profile 0 queue 1 percent 100 msec 4',
+                'qos lo qos lo profile 0 queue 1 percent 100 msec 4',
+                'qos lo profile 0 queue 1 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 0 queue 2 percent 100 msec 4',
-                'qos 1 profile 0 queue 2 percent 100 msec 4',
+                'qos lo qos lo profile 0 queue 2 percent 100 msec 4',
+                'qos lo profile 0 queue 2 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 0 queue 3 percent 100 msec 4',
-                'qos 1 profile 0 queue 3 percent 100 msec 4',
+                'qos lo qos lo profile 0 queue 3 percent 100 msec 4',
+                'qos lo profile 0 queue 3 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 1 rate 25000000 msec 20 period 10',
-                'qos 1 profile 1 rate 25000000 msec 20 period 10',
+                'qos lo qos lo profile 1 rate 25000000 msec 20 period 10',
+                'qos lo profile 1 rate 25000000 msec 20 period 10',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 1 queue 0 percent 100 msec 4',
-                'qos 1 profile 1 queue 0 percent 100 msec 4',
+                'qos lo qos lo profile 1 queue 0 percent 100 msec 4',
+                'qos lo profile 1 queue 0 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 1 queue 1 percent 100 msec 4',
-                'qos 1 profile 1 queue 1 percent 100 msec 4',
+                'qos lo qos lo profile 1 queue 1 percent 100 msec 4',
+                'qos lo profile 1 queue 1 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 1 queue 2 percent 100 msec 4',
-                'qos 1 profile 1 queue 2 percent 100 msec 4',
+                'qos lo qos lo profile 1 queue 2 percent 100 msec 4',
+                'qos lo profile 1 queue 2 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 1 queue 3 percent 100 msec 4',
-                'qos 1 profile 1 queue 3 percent 100 msec 4',
+                'qos lo qos lo profile 1 queue 3 percent 100 msec 4',
+                'qos lo profile 1 queue 3 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 2 rate 37500000 msec 30 period 10',
-                'qos 1 profile 2 rate 37500000 msec 30 period 10',
+                'qos lo qos lo profile 2 rate 37500000 msec 30 period 10',
+                'qos lo profile 2 rate 37500000 msec 30 period 10',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 2 queue 0 percent 100 msec 4',
-                'qos 1 profile 2 queue 0 percent 100 msec 4',
+                'qos lo qos lo profile 2 queue 0 percent 100 msec 4',
+                'qos lo profile 2 queue 0 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 2 queue 1 percent 100 msec 4',
-                'qos 1 profile 2 queue 1 percent 100 msec 4',
+                'qos lo qos lo profile 2 queue 1 percent 100 msec 4',
+                'qos lo profile 2 queue 1 percent 100 msec 4',
                 'lo',
                 'SET'),
             (
-                'qos 1 qos 1 profile 2 queue 2 percent 100 msec 4',
-                'qos 1 profile 2 queue 2 percent 100 msec 4',
+                'qos lo qos lo profile 2 queue 2 percent 100 msec 4',
+                'qos lo profile 2 queue 2 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 2 queue 3 percent 100 msec 4',
-                'qos 1 profile 2 queue 3 percent 100 msec 4',
+                'qos lo qos lo profile 2 queue 3 percent 100 msec 4',
+                'qos lo profile 2 queue 3 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 3 rate 50000000 size 16000 period 10',
-                'qos 1 profile 3 rate 50000000 size 16000 period 10',
+                'qos lo qos lo profile 3 rate 50000000 size 16000 period 10',
+                'qos lo profile 3 rate 50000000 size 16000 period 10',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 3 queue 0 percent 100 msec 4',
-                'qos 1 profile 3 queue 0 percent 100 msec 4',
+                'qos lo qos lo profile 3 queue 0 percent 100 msec 4',
+                'qos lo profile 3 queue 0 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 3 queue 1 percent 100 msec 4',
-                'qos 1 profile 3 queue 1 percent 100 msec 4',
+                'qos lo qos lo profile 3 queue 1 percent 100 msec 4',
+                'qos lo profile 3 queue 1 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 3 queue 2 percent 100 msec 4',
-                'qos 1 profile 3 queue 2 percent 100 msec 4',
+                'qos lo qos lo profile 3 queue 2 percent 100 msec 4',
+                'qos lo profile 3 queue 2 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 profile 3 queue 3 percent 100 msec 4',
-                'qos 1 profile 3 queue 3 percent 100 msec 4',
+                'qos lo qos lo profile 3 queue 3 percent 100 msec 4',
+                'qos lo profile 3 queue 3 percent 100 msec 4',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 pipe 0 0 0',
-                'qos 1 pipe 0 0 0',
+                'qos lo qos lo pipe 0 0 0',
+                'qos lo pipe 0 0 0',
                 'lo',
                 'SET'
             ),
             (
-                'qos 1 qos 1 enable',
-                'qos 1 enable',
+                'qos lo qos lo enable',
+                'qos lo enable',
                 'lo',
                 'SET'
             ),

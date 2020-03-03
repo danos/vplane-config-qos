@@ -50,22 +50,22 @@ TEST_DATA = [
         # expected_result
         [
             ("qos mark-map test123 dscp-group default-group-high-drop",
-             "qos 0 mark-map test123 dscp-group default-group-high-drop pcp 2",
+             "qos global-object-cmd mark-map test123 dscp-group default-group-high-drop pcp 2",
              "ALL"),
             ("qos mark-map test123 dscp-group default-group-low-drop",
-             "qos 0 mark-map test123 dscp-group default-group-low-drop pcp 3",
+             "qos global-object-cmd mark-map test123 dscp-group default-group-low-drop pcp 3",
              "ALL"),
             ("qos mark-map test123 dscp-group priority-group-high-drop",
-             "qos 0 mark-map test123 dscp-group priority-group-high-drop pcp 4",
+             "qos global-object-cmd mark-map test123 dscp-group priority-group-high-drop pcp 4",
              "ALL"),
             ("qos mark-map test123 dscp-group priority-group-low-drop",
-             "qos 0 mark-map test123 dscp-group priority-group-low-drop pcp 5",
+             "qos global-object-cmd mark-map test123 dscp-group priority-group-low-drop pcp 5",
              "ALL"),
             ("qos mark-map test123 dscp-group real-time-group",
-             "qos 0 mark-map test123 dscp-group real-time-group pcp 6",
+             "qos global-object-cmd mark-map test123 dscp-group real-time-group pcp 6",
              "ALL"),
             ("qos mark-map test123 dscp-group synch-group",
-             "qos 0 mark-map test123 dscp-group synch-group pcp 7",
+             "qos global-object-cmd mark-map test123 dscp-group synch-group pcp 7",
              "ALL")
         ]
     ),
@@ -86,10 +86,10 @@ TEST_DATA = [
         # expected_output
         [
             ("qos mark-map test123 designation 0",
-             "qos 0 mark-map test123 designation 0 pcp 5",
+             "qos global-object-cmd mark-map test123 designation 0 pcp 5",
              "ALL"),
             ("qos mark-map test123 designation 1",
-             "qos 0 mark-map test123 designation 1 pcp 6",
+             "qos global-object-cmd mark-map test123 designation 1 pcp 6",
              "ALL")
         ]
     )
@@ -102,5 +102,5 @@ def test_mark_map(test_input, expected_result):
     assert mark_map is not None
     assert mark_map.commands() == expected_result
     assert mark_map.delete_cmd() == [("qos mark-map test123",
-                                      "qos 0 mark-map test123 delete",
+                                      "qos global-object-cmd mark-map test123 delete",
                                       "ALL")]

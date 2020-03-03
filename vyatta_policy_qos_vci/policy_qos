@@ -28,24 +28,6 @@ from vyatta_policy_qos_vci.provisioner import save_actioned_config
 from vyatta_policy_qos_vci.qos_op_mode import convert_if_list
 
 
-def remove_deferred_interfaces(config, deferred_if_list):
-    """
-    Remove all references to interface names listed in the deferred_if_list
-    from the JSON config dictionary.
-    """
-    if_dict = config.get('vyatta-interfaces-v1:interfaces')
-    if if_dict is None:
-        return
-
-    for ifname in deferred_if_list:
-        for if_type_list in if_dict.values():
-            for index, if_type_dict in enumerate(if_type_list):
-                for value in if_type_dict.values():
-                    if value == ifname:
-                        del if_type_list[index]
-                        break
-
-
 def remove_deferred_ingress_maps(config, deferred_in_map_list):
     """
     Delete any deferred ingress-maps from the JSON config dictionary.
@@ -69,8 +51,6 @@ def send_qos_config_to_dataplane(new_config):
     """
     We are now ready to send the QoS configuration down to the vyatta-dataplane.
     """
-    global deferred_interfaces
-
     actioned_config = get_actioned_config()
     LOG.debug(f'actioned-config: {actioned_config}')
     LOG.debug(f'new-config:      {new_config}')
@@ -83,42 +63,14 @@ def send_qos_config_to_dataplane(new_config):
     except ControllerException:
         LOG.error("Failed to connect to vplane-controller")
 
-    LOG.debug(f"deferred interfaces: {prov.deferred_interfaces}")
     LOG.debug(f"deferred ingress-maps: {prov.deferred_ingress_maps}")
-    # Copy the requested config, then remove any deferred interface, then
+    # Copy the requested config, then remove any deferred ingress maps, then
     # save it as the actioned config.
     actioned_config = deepcopy(new_config)
-    remove_deferred_interfaces(actioned_config, prov.deferred_interfaces)
     remove_deferred_ingress_maps(actioned_config, prov.deferred_ingress_maps)
     save_actioned_config(actioned_config)
-    deferred_interfaces = prov.deferred_interfaces
 
     return actioned_config
-
-
-def if_plug_unplug(notification):
-    """
-    Called whenever a deferred interface gets plugged in or out.
-    On software VMs, tunnels are deferred interfaces, but dataplane
-    interfaces are not.  On VNF systems, vhost interfaces are also deferred.
-    On hardware platforms, both tunnels and dataplane interfaces are deferred.
-    """
-    global deferred_interfaces
-
-    LOG.debug(f"if-plug-unplug: {notification}")
-    if_name = notification['vyatta-ifmgr-v1:interface']['name']
-    if_state = notification['vyatta-ifmgr-v1:interface']['state']
-
-    if if_name in deferred_interfaces:
-        if if_state == 'plugged':
-            # We have a new interface to configure
-            deferred_interfaces.remove(if_name)
-
-            # At this point we need to compare the saved-requested verses the
-            # saved-actioned configs.  The saved-requested should have the
-            # recently plugged-in interface, the saved-actioned config won't.
-            requested_config = get_requested_config()
-            send_qos_config_to_dataplane(requested_config)
 
 
 class Config(vci.Config):
@@ -198,7 +150,6 @@ if __name__ == "__main__":
             LOG.debug("Debug enabled")
 
         qos_config = None
-        deferred_interfaces = []
 
         LOG.debug("About to register with VCI")
 
@@ -207,7 +158,6 @@ if __name__ == "__main__":
                 .config(Config())
                 .state(State())
                )
-         .subscribe("vyatta-ifmgr-v1", "interface-state", if_plug_unplug)
          .run()
          .wait())
 

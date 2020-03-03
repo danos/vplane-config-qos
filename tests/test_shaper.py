@@ -30,22 +30,22 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 subport 0 rate 1250000000 msec 4 period 40",
-            "qos 1 subport 0 queue 0 percent 100 msec 4",
-            "qos 1 param subport 0 0 limit packets 64",
-            "qos 1 subport 0 queue 1 percent 100 msec 4",
-            "qos 1 param subport 0 1 limit packets 64",
-            "qos 1 subport 0 queue 2 percent 100 msec 4",
-            "qos 1 param subport 0 2 limit packets 64",
-            "qos 1 subport 0 queue 3 percent 100 msec 4",
-            "qos 1 param subport 0 3 limit packets 64",
-            "qos 1 vlan 0 0",
-            "qos 1 profile 0 rate 125000000 msec 4 period 10",
-            "qos 1 profile 0 queue 0 percent 100 msec 4",
-            "qos 1 profile 0 queue 1 percent 100 msec 4",
-            "qos 1 profile 0 queue 2 percent 100 msec 4",
-            "qos 1 profile 0 queue 3 percent 100 msec 4",
-            "qos 1 pipe 0 0 0"
+            "qos lo subport 0 rate 1250000000 msec 4 period 40",
+            "qos lo subport 0 queue 0 percent 100 msec 4",
+            "qos lo param subport 0 0 limit packets 64",
+            "qos lo subport 0 queue 1 percent 100 msec 4",
+            "qos lo param subport 0 1 limit packets 64",
+            "qos lo subport 0 queue 2 percent 100 msec 4",
+            "qos lo param subport 0 2 limit packets 64",
+            "qos lo subport 0 queue 3 percent 100 msec 4",
+            "qos lo param subport 0 3 limit packets 64",
+            "qos lo vlan 0 0",
+            "qos lo profile 0 rate 125000000 msec 4 period 10",
+            "qos lo profile 0 queue 0 percent 100 msec 4",
+            "qos lo profile 0 queue 1 percent 100 msec 4",
+            "qos lo profile 0 queue 2 percent 100 msec 4",
+            "qos lo profile 0 queue 3 percent 100 msec 4",
+            "qos lo pipe 0 0 0"
         ]
     ),
     (
@@ -63,23 +63,23 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 subport 0 rate 250000000 msec 321 period 33",
-            "qos 1 subport 0 queue 0 percent 100 msec 4",
-            "qos 1 param subport 0 0 limit packets 64",
-            "qos 1 subport 0 queue 1 percent 100 msec 4",
-            "qos 1 param subport 0 1 limit packets 64",
-            "qos 1 subport 0 queue 2 percent 100 msec 4",
-            "qos 1 param subport 0 2 limit packets 64",
-            "qos 1 subport 0 queue 3 percent 100 msec 4",
-            "qos 1 param subport 0 3 limit packets 64",
-            "qos 1 subport 0 mark-map test123",
-            "qos 1 vlan 0 0",
-            "qos 1 profile 0 rate 125000000 msec 4 period 10",
-            "qos 1 profile 0 queue 0 percent 100 msec 4",
-            "qos 1 profile 0 queue 1 percent 100 msec 4",
-            "qos 1 profile 0 queue 2 percent 100 msec 4",
-            "qos 1 profile 0 queue 3 percent 100 msec 4",
-            "qos 1 pipe 0 0 0"
+            "qos lo subport 0 rate 250000000 msec 321 period 33",
+            "qos lo subport 0 queue 0 percent 100 msec 4",
+            "qos lo param subport 0 0 limit packets 64",
+            "qos lo subport 0 queue 1 percent 100 msec 4",
+            "qos lo param subport 0 1 limit packets 64",
+            "qos lo subport 0 queue 2 percent 100 msec 4",
+            "qos lo param subport 0 2 limit packets 64",
+            "qos lo subport 0 queue 3 percent 100 msec 4",
+            "qos lo param subport 0 3 limit packets 64",
+            "qos lo subport 0 mark-map test123",
+            "qos lo vlan 0 0",
+            "qos lo profile 0 rate 125000000 msec 4 period 10",
+            "qos lo profile 0 queue 0 percent 100 msec 4",
+            "qos lo profile 0 queue 1 percent 100 msec 4",
+            "qos lo profile 0 queue 2 percent 100 msec 4",
+            "qos lo profile 0 queue 3 percent 100 msec 4",
+            "qos lo pipe 0 0 0"
         ]
     ),
     (
@@ -101,22 +101,22 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 subport 0 rate 250000000 size 12345 period 33",
-            "qos 1 subport 0 queue 0 percent 100 msec 4",
-            "qos 1 param subport 0 0 limit packets 128",
-            "qos 1 subport 0 queue 1 rate 12500000 msec 4",
-            "qos 1 param subport 0 1 limit packets 256",
-            "qos 1 subport 0 queue 2 percent 100 msec 4",
-            "qos 1 param subport 0 2 limit packets 64",
-            "qos 1 subport 0 queue 3 percent 100 msec 4",
-            "qos 1 param subport 0 3 limit packets 64",
-            "qos 1 vlan 0 0",
-            "qos 1 profile 0 rate 125000000 msec 4 period 10",
-            "qos 1 profile 0 queue 0 percent 100 msec 4",
-            "qos 1 profile 0 queue 1 percent 100 msec 4",
-            "qos 1 profile 0 queue 2 percent 100 msec 4",
-            "qos 1 profile 0 queue 3 percent 100 msec 4",
-            "qos 1 pipe 0 0 0"
+            "qos lo subport 0 rate 250000000 size 12345 period 33",
+            "qos lo subport 0 queue 0 percent 100 msec 4",
+            "qos lo param subport 0 0 limit packets 128",
+            "qos lo subport 0 queue 1 rate 12500000 msec 4",
+            "qos lo param subport 0 1 limit packets 256",
+            "qos lo subport 0 queue 2 percent 100 msec 4",
+            "qos lo param subport 0 2 limit packets 64",
+            "qos lo subport 0 queue 3 percent 100 msec 4",
+            "qos lo param subport 0 3 limit packets 64",
+            "qos lo vlan 0 0",
+            "qos lo profile 0 rate 125000000 msec 4 period 10",
+            "qos lo profile 0 queue 0 percent 100 msec 4",
+            "qos lo profile 0 queue 1 percent 100 msec 4",
+            "qos lo profile 0 queue 2 percent 100 msec 4",
+            "qos lo profile 0 queue 3 percent 100 msec 4",
+            "qos lo pipe 0 0 0"
         ]
     ),
     (
@@ -147,23 +147,23 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos 1 subport 0 rate 250000000 size 12345 period 33",
-            "qos 1 subport 0 queue 0 percent 100 msec 4",
-            "qos 1 param subport 0 0 limit packets 128",
-            "qos 1 subport 0 queue 1 rate 12500000 msec 4",
-            "qos 1 param subport 0 1 limit packets 256",
-            "qos 1 subport 0 queue 2 percent 100 msec 4",
-            "qos 1 param subport 0 2 limit packets 64 red 0 3 63 22 10",
-            "qos 1 subport 0 queue 3 percent 100 msec 4",
-            "qos 1 param subport 0 3 limit packets 64",
-            "qos 1 subport 0 mark-map pcp-egress-map",
-            "qos 1 vlan 0 0",
-            "qos 1 profile 0 rate 125000000 msec 4 period 10",
-            "qos 1 profile 0 queue 0 percent 100 msec 4",
-            "qos 1 profile 0 queue 1 percent 100 msec 4",
-            "qos 1 profile 0 queue 2 percent 100 msec 4",
-            "qos 1 profile 0 queue 3 percent 100 msec 4",
-            "qos 1 pipe 0 0 0"
+            "qos lo subport 0 rate 250000000 size 12345 period 33",
+            "qos lo subport 0 queue 0 percent 100 msec 4",
+            "qos lo param subport 0 0 limit packets 128",
+            "qos lo subport 0 queue 1 rate 12500000 msec 4",
+            "qos lo param subport 0 1 limit packets 256",
+            "qos lo subport 0 queue 2 percent 100 msec 4",
+            "qos lo param subport 0 2 limit packets 64 red 0 3 63 22 10",
+            "qos lo subport 0 queue 3 percent 100 msec 4",
+            "qos lo param subport 0 3 limit packets 64",
+            "qos lo subport 0 mark-map pcp-egress-map",
+            "qos lo vlan 0 0",
+            "qos lo profile 0 rate 125000000 msec 4 period 10",
+            "qos lo profile 0 queue 0 percent 100 msec 4",
+            "qos lo profile 0 queue 1 percent 100 msec 4",
+            "qos lo profile 0 queue 2 percent 100 msec 4",
+            "qos lo profile 0 queue 3 percent 100 msec 4",
+            "qos lo pipe 0 0 0"
         ]
     )
 ]
@@ -172,7 +172,7 @@ TEST_DATA = [
 def test_shaper(test_input, expected_result):
     """ Unit-test the shaper class """
     attrs = {'profile_index_get.return_value':0}
-    interface = Mock(ifindex=1, **attrs)
+    interface = Mock(ifname="lo", **attrs)
     shaper = Shaper(test_input, {}, {})
     assert shaper is not None
     assert shaper.commands(interface, 0, 0) == expected_result

@@ -58,12 +58,12 @@ class TrafficClassBlock:
     def commands(self, cmd_prefix):
         """ Generate commands for this traffic-class-block object """
         cmd_list = []
-        _, ifindex, _, subport = cmd_prefix.split()
+        _, ifname, _, subport = cmd_prefix.split()
         for tc_id in range(0, MAX_TRAFFIC_CLASS):
             queue_prefix = f"{cmd_prefix} queue {tc_id}"
             cmd_list.append(self._tcs[tc_id].bandwidth_commands(queue_prefix))
             if "subport" in cmd_prefix:
-                cmd = f"qos {ifindex} param subport {subport} {tc_id}"
+                cmd = f"qos {ifname} param subport {subport} {tc_id}"
                 cmd += self._tcs[tc_id].queuelimit_commands()
 
                 wred = self._tcs[tc_id].wred

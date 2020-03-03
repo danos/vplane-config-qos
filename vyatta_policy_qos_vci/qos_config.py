@@ -96,7 +96,7 @@ class QosConfig:
                 for interface in interfaces:
                     int_obj = Interface(if_type, interface, self._policies,
                                         self._ingress_maps)
-                    self._interfaces[int_obj.name] = int_obj
+                    self._interfaces[int_obj.ifname] = int_obj
 
     def _process_ingress_map(self, ingress_map_list):
         """ Process the ingress-map list """
@@ -113,19 +113,6 @@ class QosConfig:
     def find_interface(self, name):
         """ Return the named interface object """
         return self._interfaces.get(name)
-
-    @property
-    def deferred_interfaces(self):
-        """
-        Return a list of deferred interface names. Deferred interfaces have an
-        ifindex of None.
-        """
-        deferred_list = []
-        for interface in self._interfaces.values():
-            if interface.ifindex is None:
-                deferred_list.append(interface.name)
-
-        return deferred_list
 
     @property
     def global_profiles(self):

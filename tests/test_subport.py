@@ -53,22 +53,22 @@ TEST_DATA = [
         (0, 0, POLICY_1),
         # expected_result
         [
-            "qos 1 subport 0 rate 1250000000 msec 4 period 40",
-            "qos 1 subport 0 queue 0 percent 100 msec 4",
-            "qos 1 param subport 0 0 limit packets 64",
-            "qos 1 subport 0 queue 1 percent 100 msec 4",
-            "qos 1 param subport 0 1 limit packets 64",
-            "qos 1 subport 0 queue 2 percent 100 msec 4",
-            "qos 1 param subport 0 2 limit packets 64",
-            "qos 1 subport 0 queue 3 percent 100 msec 4",
-            "qos 1 param subport 0 3 limit packets 64",
-            "qos 1 vlan 0 0",
-            "qos 1 profile 0 rate 125000000 msec 4 period 10",
-            "qos 1 profile 0 queue 0 percent 100 msec 4",
-            "qos 1 profile 0 queue 1 percent 100 msec 4",
-            "qos 1 profile 0 queue 2 percent 100 msec 4",
-            "qos 1 profile 0 queue 3 percent 100 msec 4",
-            "qos 1 pipe 0 0 0"
+            "qos lo subport 0 rate 1250000000 msec 4 period 40",
+            "qos lo subport 0 queue 0 percent 100 msec 4",
+            "qos lo param subport 0 0 limit packets 64",
+            "qos lo subport 0 queue 1 percent 100 msec 4",
+            "qos lo param subport 0 1 limit packets 64",
+            "qos lo subport 0 queue 2 percent 100 msec 4",
+            "qos lo param subport 0 2 limit packets 64",
+            "qos lo subport 0 queue 3 percent 100 msec 4",
+            "qos lo param subport 0 3 limit packets 64",
+            "qos lo vlan 0 0",
+            "qos lo profile 0 rate 125000000 msec 4 period 10",
+            "qos lo profile 0 queue 0 percent 100 msec 4",
+            "qos lo profile 0 queue 1 percent 100 msec 4",
+            "qos lo profile 0 queue 2 percent 100 msec 4",
+            "qos lo profile 0 queue 3 percent 100 msec 4",
+            "qos lo pipe 0 0 0"
         ]
     ),
     (
@@ -76,22 +76,22 @@ TEST_DATA = [
         (1, 10, POLICY_2),
         # expected_result
         [
-            "qos 1 subport 1 rate 625000000 msec 4 period 40",
-            "qos 1 subport 1 queue 0 percent 100 msec 4",
-            "qos 1 param subport 1 0 limit packets 64",
-            "qos 1 subport 1 queue 1 percent 100 msec 4",
-            "qos 1 param subport 1 1 limit packets 64",
-            "qos 1 subport 1 queue 2 percent 100 msec 4",
-            "qos 1 param subport 1 2 limit packets 64",
-            "qos 1 subport 1 queue 3 percent 100 msec 4",
-            "qos 1 param subport 1 3 limit packets 64",
-            "qos 1 vlan 10 1",
-            "qos 1 profile 0 rate 62500000 msec 4 period 10",
-            "qos 1 profile 0 queue 0 percent 100 msec 4",
-            "qos 1 profile 0 queue 1 percent 100 msec 4",
-            "qos 1 profile 0 queue 2 percent 100 msec 4",
-            "qos 1 profile 0 queue 3 percent 100 msec 4",
-            "qos 1 pipe 1 0 0"
+            "qos lo subport 1 rate 625000000 msec 4 period 40",
+            "qos lo subport 1 queue 0 percent 100 msec 4",
+            "qos lo param subport 1 0 limit packets 64",
+            "qos lo subport 1 queue 1 percent 100 msec 4",
+            "qos lo param subport 1 1 limit packets 64",
+            "qos lo subport 1 queue 2 percent 100 msec 4",
+            "qos lo param subport 1 2 limit packets 64",
+            "qos lo subport 1 queue 3 percent 100 msec 4",
+            "qos lo param subport 1 3 limit packets 64",
+            "qos lo vlan 10 1",
+            "qos lo profile 0 rate 62500000 msec 4 period 10",
+            "qos lo profile 0 queue 0 percent 100 msec 4",
+            "qos lo profile 0 queue 1 percent 100 msec 4",
+            "qos lo profile 0 queue 2 percent 100 msec 4",
+            "qos lo profile 0 queue 3 percent 100 msec 4",
+            "qos lo pipe 1 0 0"
         ]
     )
 ]
@@ -100,7 +100,7 @@ TEST_DATA = [
 def test_subport(test_input, expected_result):
     """ Unit-test a subport object """
     attrs = {'profile_index_get.return_value':0}
-    interface = Mock(ifindex=1, **attrs)
+    interface = Mock(ifname="lo", **attrs)
     subport = Subport(interface, *test_input)
     assert subport is not None
     subport.build_profile_index(interface)

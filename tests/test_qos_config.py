@@ -149,4 +149,3 @@ def test_qosconfig():
     assert config.get_action_group("action-group-2") is not None
     assert config.get_ingress_map("in-map-1") is not None
     assert config.get_ingress_map("in-map-2") is not None
-    assert "dp0vhost0" in config.deferred_interfaces

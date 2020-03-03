@@ -123,7 +123,7 @@ class Shaper:
 
     def commands(self, interface, subport_id, vlan_id):
         """ Generate the shaper's commands """
-        cmd_prefix = f"qos {interface.ifindex}"
+        cmd_prefix = f"qos {interface.ifname}"
         subport_prefix = f"{cmd_prefix} subport {subport_id}"
 
         cmd_list = []
