@@ -54,10 +54,7 @@ sub validate_binding {
     my $name = $config->returnValue('policy qos');
 
     # This error now caught and reported by yang
-    if ( not defined($name) ) {
-        print "Validations skipped for config";
-        exit 0;
-    }
+    exit 0 unless defined($name);
 
     $byte_limits = get_byte_limits();
 

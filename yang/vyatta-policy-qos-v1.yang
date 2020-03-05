@@ -81,6 +81,12 @@ module vyatta-policy-qos-v1 {
 
 		 This module implements vyatta-policy-qos-v1.";
 
+	revision 2020-03-10 {
+		description "Removed script validation calls which are
+			     redundant with Yang validations and which are already
+			     ignored in the scripts.";
+	}
+
 	revision 2020-02-25 {
 		description "Add support for buffer congestion.
 			     Relax interface naming restrictions for operational
@@ -623,7 +629,6 @@ module vyatta-policy-qos-v1 {
 				path "/policy:policy/qos/name/id";
 			}
 			configd:help "QoS policy name for interface";
-			configd:validate "qos-validate.pl --validate-binding $VAR(../../../../@) 0";
 		}
 	}
 
@@ -636,7 +641,6 @@ module vyatta-policy-qos-v1 {
 				path "/policy:policy/qos/name/id";
 			}
 			configd:help "QoS policy name for interface";
-			configd:validate "qos-validate.pl --validate-binding $VAR(../../../../../../../@) $VAR(../../@)";
 		}
 	}
 
@@ -646,7 +650,6 @@ module vyatta-policy-qos-v1 {
 				path "/policy:policy/qos/name/id";
 			}
 			configd:help "QoS policy name for interface";
-			configd:validate "qos-validate.pl --validate-binding $VAR(../../../../../../@) $VAR(../../@)";
 		}
 	}
 
