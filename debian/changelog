@@ -1,3 +1,118 @@
+vplane-config-qos (3.0.0) unstable; urgency=medium
+
+  [ Alan Dewar ]
+  * Reinstate op-mode state retrieval to QoS VCI (Fixes: VRVDR-49189)
+  * QoS: reinstate lost PR comments for op-mode VCI (Fixes: VRVDR-49191)
+
+  [ Alan Robertson ]
+  * Rename the keyword from to-classifier to designation
+  * Fix a build breakage and change mark-map CLI
+
+  [ Daniel Gollub ]
+  * Remove historic/stale .frlog file
+
+  [ Narayana Indukuri ]
+  * Fix op script to parse the new rprocs JSON element
+
+  [ Alan Dewar ]
+  * VCI: don't send "qos commit" when nothing changed
+  * VCI: add support for bonded interfaces
+  * VCI: add support for deferred/vhost interfaces (Fixes: VRVDR-49148)
+  * VCI: allow the Provisioner class to parse NPF config
+  * VCI: hook NPF dscp-group config into QoS VCI (Fixes: VRVDR-48985)
+  * VCI: use the FWHelper.pm script to build NPF rules (Fixes: VRVDR-48986)
+  * QoS: add missing NPF dependency (Fixes: VRVDR-49369)
+
+  [ Sanjay Iyer ]
+  * QoS: Added op-mode command to dump DRAM buffer errors (Fixes: VRVDR-47301)
+
+  [ Ethan Li ]
+  * No buffer drops: add script for 'show' command
+  * No buffer drops: update yang with parameters for "buffer congestion"
+
+  [ Brian Russell ]
+  * Update platform show to reflect new config
+
+  [ Alan Dewar ]
+  * QoS VCI no longer configures dscp-groups (Fixes: VRVDR-49474)
+
+  [ Brian Russell ]
+  * Add designation support to mark-map show output
+
+  [ Alan Dewar ]
+  * QoS VCI no longer configures dscp-groups (Fixes: VRVDR-49474)
+  * VCI: rename ingress-map as profile-map
+  * VCI: Add new IngressMap module and unit-test
+  * VCI: add the ingress_map_binding class
+  * VCI: link IngressMaps into IngressMapBinding
+  * VCI: add support for designation keyword
+  * VCI: add the ingress-map complete command
+  * VCI: SIAD getting queue limit in packets not bytes (Fixes: VRVDR-49657)
+  * VCI: don't modify ingress-maps in-place
+
+  [ aroberts ]
+  * Add an op mode command to display the ingress-maps in the dataplane
+  * Perltidy changes
+
+  [ Alan Dewar ]
+  * Fix the "show .... <if-name> class" output (Fixes: VRVDR-49194)
+
+  [ Brian Russell ]
+  * Explicitly specify drop-precedence in yang
+  * Explicitly specify drop-precedence in ingress maps
+  * Explicitly specify drop-precedence with WRED params
+  * Fix yang must checks for ingress maps
+  * Fix designation help text
+  * Make designation mandatory in ingress-map
+  * Stop multiple designations being mapped to the same pipe-queue
+
+  [ Alan Dewar ]
+  * Fix getting op-mode state for bonded interfaces (Fixes: VRVDR-49743)
+
+  [ Brian Russell ]
+  * Fix ingress map show output for PCP
+  * Fix hardware or sofware support based on config
+
+  [ Alan Dewar ]
+  * VCI: send the dataplane a percent command (Fixes: VRVDR-49986)
+
+  [ Brian Russell ]
+  * Only send global profiles once
+
+  [ Alan Dewar ]
+  * VCI: emulate FWHelper.pm's build_rule function (Fixes: VRVDR-49700)
+  * VCI: fix "mark-map designation" command (Fixes: VRVDR-50151)
+  * VCI: don't log "invalid ethtype name/number" error (Fixes: VRVDR-50192)
+
+  [ Robert Shearman ]
+  * platform: block QoS config on DANOS AS5916-54XKS platform
+
+  [ Ramkumar Ganapathysubramanian ]
+  * Added warning for QoS CLI where validations were skipped. Root Cause:Some of the QoS policy validations were skipped in the scripts due to incorrect parsing of the command tree node. Fix: Added a warning to alert the user of the skipped validations since we do not want to break the backward compatibility of image upgrades by fixing the CLI issue. VRVDR-48555
+
+  [ Alan Dewar ]
+  * Fix getting op-mode state for vhost interfaces (Fixes: VRVDR-49453)
+  * VCI: refactor convert_pcp_map functions
+  * Add op-mode support for designation maps
+  * VCI: make QoS VCI more robust (Fixes: VRVDR-50071)
+
+  [ bs775m ]
+  * Disable time based configuration on Q-AX and Q-MX.
+
+  [ Sanjay Iyer ]
+  * QoS: Allow bandwidth percentage configuration at subport
+    (Fixes: VRVDR-49955)
+
+  [ Alan Dewar ]
+  * Make qos-op-mode.pl generate 64-bit JSON strings
+  * perltidy -ce qos-op-mode.pl
+  * Make qos_op_mode.py generate 64-bit JSON values (Fixes: VRVDR-49997)
+
+  [ Brian Russell ]
+  * use interface name rather than ifindex in cfg cmds
+
+ -- aroberts <aroberts@mail.eng.vyatta.net>  Fri, 06 Mar 2020 15:27:11 +0000
+
 vplane-config-qos (2.5.0) unstable; urgency=medium
 
   * DANOS import master
