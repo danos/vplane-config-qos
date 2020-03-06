@@ -50,7 +50,8 @@ class Bandwidth:
         if self._burst is None:
             self._burst_msec = DEFAULT_BURST_MS
         else:
-            search_obj = re.search(r'^([0-9]*\.?[0-9]+)ms[ec]*$', self._burst,
+            burst_str = str(self._burst)
+            search_obj = re.search(r'^([0-9]*\.?[0-9]+)ms[ec]*$', burst_str,
                                    flags=0)
             if search_obj:
                 self._burst_msec = search_obj.group(1)
