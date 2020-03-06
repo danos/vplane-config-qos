@@ -14,6 +14,7 @@ import logging.handlers
 import sys
 
 from copy import deepcopy
+from traceback import format_tb
 from systemd.journal import JournalHandler
 
 import vci
@@ -51,24 +52,35 @@ def send_qos_config_to_dataplane(new_config):
     """
     We are now ready to send the QoS configuration down to the vyatta-dataplane.
     """
-    actioned_config = get_actioned_config()
-    LOG.debug(f'actioned-config: {actioned_config}')
-    LOG.debug(f'new-config:      {new_config}')
-    prov = Provisioner(actioned_config, new_config)
     try:
+        actioned_config = get_actioned_config()
+        LOG.debug(f'actioned-config: {actioned_config}')
+        LOG.debug(f'new-config:      {new_config}')
+        prov = Provisioner(actioned_config, new_config)
         with Controller() as ctrl:
             prov.commands(ctrl)
             save_requested_config(new_config)
 
+        LOG.debug(f"deferred ingress-maps: {prov.deferred_ingress_maps}")
+        # Copy the requested config, then remove any deferred ingress maps, then
+        # save it as the actioned config.
+        actioned_config = deepcopy(new_config)
+        remove_deferred_ingress_maps(actioned_config,
+                                     prov.deferred_ingress_maps)
+        save_actioned_config(actioned_config)
+
     except ControllerException:
         LOG.error("Failed to connect to vplane-controller")
 
-    LOG.debug(f"deferred ingress-maps: {prov.deferred_ingress_maps}")
-    # Copy the requested config, then remove any deferred ingress maps, then
-    # save it as the actioned config.
-    actioned_config = deepcopy(new_config)
-    remove_deferred_ingress_maps(actioned_config, prov.deferred_ingress_maps)
-    save_actioned_config(actioned_config)
+    except Exception:
+        tb_type = sys.exc_info()[0]
+        tb_value = sys.exc_info()[1]
+        tb_info = format_tb(sys.exc_info()[2])
+        tb_output = ""
+        for line in tb_info:
+            tb_output += line
+
+        LOG.error(f"Unhandled exception: {tb_type}\n{tb_value}\n{tb_output}")
 
     return actioned_config
 
@@ -115,22 +127,36 @@ class State(vci.State):
         Ask the vyatta-dataplane to generate the JSON for the
         current QoS state and return it
         """
-        op_mode_state = None
-        with Controller() as ctrl:
-            for dataplane in ctrl.get_dataplanes():
-                with dataplane:
-                    op_mode_state = dataplane.json_command("qos optimised-show")
+        try:
+            op_mode_state = None
+            with Controller() as ctrl:
+                for dataplane in ctrl.get_dataplanes():
+                    with dataplane:
+                        op_mode_state = dataplane.json_command("qos optimised-show")
 
-        yang_state = {}
-        if op_mode_state is not None:
-            if_list = convert_if_list("all", op_mode_state)
-            if if_list:
-                yang_state["if-list"] = if_list
+            yang_state = {}
+            if op_mode_state is not None:
+                if_list = convert_if_list("all", op_mode_state)
+                if if_list:
+                    yang_state["if-list"] = if_list
 
-        # We must include the namespace at the top level, and everywhere that
-        # the namespace changes
-        if not yang_state:
-            return {}
+            # We must include the namespace at the top level, and everywhere
+            # that the namespace changes
+            if not yang_state:
+                return {}
+
+        except ControllerException:
+            LOG.error("Failed to connect to vplane-controller")
+
+        except Exception:
+            tb_type = sys.exc_info()[0]
+            tb_value = sys.exc_info()[1]
+            tb_info = format_tb(sys.exc_info()[2])
+            tb_output = ""
+            for line in tb_info:
+                tb_output += line
+
+            LOG.error(f"Unhandled exception: {tb_type}\n{tb_value}\n{tb_output}")
 
         return {'vyatta-policy-v1:policy': {'vyatta-policy-qos-v1:qos':
                                             {'state': yang_state}}}
