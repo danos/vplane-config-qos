@@ -66,7 +66,7 @@ module vyatta-policy-qos-groupings-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
-	revision 2020-02-28 {
+	revision 2020-03-10 {
 		description "Add the designation keyword to policy qos
 			     map command and mark-map commands.
 			     Add the feature ingress-map.
@@ -76,7 +76,8 @@ module vyatta-policy-qos-groupings-v1 {
 			     Explicitly specify drop precedence in ingress
 			     classification maps and WRED parameters.
 			     Change the burst time range from 1-600ms to
-			     1-100ms.";
+			     1-100ms.
+			     Support up to 16 mark-maps.";
 	}
 
 	revision 2019-07-17 {
@@ -1023,7 +1024,7 @@ module vyatta-policy-qos-groupings-v1 {
 			configd:priority "410";
 			configd:help "Mark-map for PCP marking packets";
 
-			max-elements "1";
+			max-elements "16";
 			key "id";
 			leaf id {
 				type name;

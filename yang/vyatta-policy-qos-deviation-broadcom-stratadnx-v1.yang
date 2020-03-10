@@ -133,9 +133,11 @@ module vyatta-policy-qos-deviation-broadcom-stratadnx-v1 {
 		deviate not-supported;
 	}
 
-	deviation /policy:policy/qos:qos/qos:mark-map {
-		deviate replace {
-			max-elements 1;
+	deviation /policy:policy/qos:qos/qos:mark-map/qos:dscp-group {
+		deviate add {
+			must "count(../qos:dscp-group) = count(../../qos:mark-map/qos:dscp-group)" {
+				error-message "Only one mark-map may use DSCP-groups as classifier";
+			}
 		}
 	}
 
