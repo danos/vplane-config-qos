@@ -27,23 +27,22 @@ LOG = logging.getLogger('Policy QoS VCI')
 
 
 #
-# We have two config files, the requested version that contains all the
-# config information, and the actioned version that contains all the
-# config information that QoS VCI was able to apply at the last commit
-# point. 
-POLICY_QOS_REQUESTED_CONFIG_FILE = '/etc/vyatta/policy-qos-requested.json'
-POLICY_QOS_ACTIONED_CONFIG_FILE = '/etc/vyatta/policy-qos-actioned.json'
+# We have single config file that contains all the config information that
+# QoS VCI was able to apply at the last commit point.
+#
+POLICY_QOS_CONFIG_FILE = '/etc/vyatta/policy-qos.json'
 
 
-def get_config(filename):
+def get_config():
     """ Try to return a JSON QoS configuration file """
+    filename = POLICY_QOS_CONFIG_FILE
     config = {}
     try:
         with open(filename) as json_data:
             config = json.load(json_data)
 
     except OSError:
-        LOG.error(f"Failed to open JSON config file {filename} {sys.exc_info()[0]}")
+        LOG.info(f"Failed to open JSON config file {filename} {sys.exc_info()[0]}")
 
     except json.JSONDecodeError:
         LOG.error(f"Failed to decode JSON config file {filename}")
@@ -51,30 +50,11 @@ def get_config(filename):
     return config
 
 
-def get_actioned_config():
-    """ Return the actioned QoS config file """
-    return get_config(POLICY_QOS_ACTIONED_CONFIG_FILE)
-
-
-def get_requested_config():
-    """ Return the requested QoS config file """
-    return get_config(POLICY_QOS_REQUESTED_CONFIG_FILE)
-
-
-def save_config(filename, config):
+def save_config(config):
     """ Save the JSON QoS configuration to the appropriate QoS config file """
+    filename = POLICY_QOS_CONFIG_FILE
     with open(filename, "w") as write_file:
         write_file.write(json.dumps(config, indent=4, sort_keys=True))
-
-
-def save_requested_config(config):
-    """ Save the config in the requested QoS config file """
-    save_config(POLICY_QOS_REQUESTED_CONFIG_FILE, config)
-
-
-def save_actioned_config(config):
-    """ Save the config in the actioned QoS config file """
-    save_config(POLICY_QOS_ACTIONED_CONFIG_FILE, config)
 
 
 class Provisioner:

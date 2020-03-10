@@ -39,7 +39,7 @@ This module was translated from VR/vplane-config-qos/scripts/qos-op-mode.pl
 import logging
 import re
 
-from vyatta_policy_qos_vci.provisioner import get_actioned_config
+from vyatta_policy_qos_vci.provisioner import get_config
 
 TC_SHIFT = 2
 TC_MASK = 0x3
@@ -149,7 +149,7 @@ def get_if_subport_policy_name(subport_name):
         vlan_tag = subport_name[index+5:]
 
     if config == {}:
-        config = get_actioned_config()
+        config = get_config()
 
     if_types_dict = config.get('vyatta-interfaces-v1:interfaces')
     if if_types_dict is not None:

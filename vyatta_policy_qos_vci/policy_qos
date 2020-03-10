@@ -22,10 +22,8 @@ import vci
 from vplaned import Controller, ControllerException
 
 from vyatta_policy_qos_vci.provisioner import Provisioner
-from vyatta_policy_qos_vci.provisioner import get_requested_config
-from vyatta_policy_qos_vci.provisioner import get_actioned_config
-from vyatta_policy_qos_vci.provisioner import save_requested_config
-from vyatta_policy_qos_vci.provisioner import save_actioned_config
+from vyatta_policy_qos_vci.provisioner import get_config
+from vyatta_policy_qos_vci.provisioner import save_config
 from vyatta_policy_qos_vci.qos_op_mode import convert_if_list
 
 
@@ -53,13 +51,12 @@ def send_qos_config_to_dataplane(new_config):
     We are now ready to send the QoS configuration down to the vyatta-dataplane.
     """
     try:
-        actioned_config = get_actioned_config()
-        LOG.debug(f'actioned-config: {actioned_config}')
-        LOG.debug(f'new-config:      {new_config}')
-        prov = Provisioner(actioned_config, new_config)
+        old_config = get_config()
+        LOG.debug(f'old-config: {old_config}')
+        LOG.debug(f'new-config: {new_config}')
+        prov = Provisioner(old_config, new_config)
         with Controller() as ctrl:
             prov.commands(ctrl)
-            save_requested_config(new_config)
 
         LOG.debug(f"deferred ingress-maps: {prov.deferred_ingress_maps}")
         # Copy the requested config, then remove any deferred ingress maps, then
@@ -67,7 +64,7 @@ def send_qos_config_to_dataplane(new_config):
         actioned_config = deepcopy(new_config)
         remove_deferred_ingress_maps(actioned_config,
                                      prov.deferred_ingress_maps)
-        save_actioned_config(actioned_config)
+        save_config(actioned_config)
 
     except ControllerException:
         LOG.error("Failed to connect to vplane-controller")
@@ -105,10 +102,10 @@ class Config(vci.Config):
         """ What do we need to put in here? """
         LOG.debug("Config:get")
         # If the QoS VCI process has been restarted we may an empty self.config
-        # in which case we need to read the current config from the
-        # saved-actioned config file.
+        # in which case we need to read the current config from the saved
+        # config file.
         if self.config:
-            self.config = get_actioned_config()
+            self.config = get_config()
 
         return self.config
 

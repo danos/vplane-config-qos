@@ -2,7 +2,7 @@
 Name=net.vyatta.vci.policy.qos
 Description=Policy QOS VCI Component
 ExecName=/opt/vyatta/sbin/policy_qos
-ConfigFile=/etc/vyatta/policy-qos-requested.json, /etc/vyatta/policy-qos-actioned.json
+ConfigFile=/etc/vyatta/policy-qos.json
 After=net.vyatta.vci.ephemeral.res-grp
 
 [Model net.vyatta.vci.policy.qos.v1]
