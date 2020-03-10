@@ -1,3 +1,2 @@
 platform/vyatta-policy-qos.platform lib/vyatta-platform/platforms
-yang/vyatta-policy-qos-deviation-siad-v1.yang lib/vyatta-platform/yang
-yang/vyatta-policy-qos-deviation-unsup-sw-platform-v1.yang lib/vyatta-platform/yang
+yang/vyatta-policy-qos-deviation*.yang lib/vyatta-platform/yang

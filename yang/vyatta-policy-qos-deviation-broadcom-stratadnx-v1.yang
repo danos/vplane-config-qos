@@ -1,45 +1,13 @@
-module vyatta-policy-qos-deviation-siad-v1 {
-	namespace "urn:vyatta.com:mgmt:vyatta-policy-qos-deviation-siad:1";
-	prefix vyatta-policy-qos-deviation-siad-v1;
-
-	import vyatta-interfaces-v1 {
-		prefix if;
-	}
-
-	import vyatta-interfaces-switch-v1 {
-		prefix sw;
-	}
-
-	import vyatta-interfaces-dataplane-v1 {
-		prefix interfaces-dataplane;
-	}
-
-	import vyatta-interfaces-dataplane-switch-v1 {
-		prefix dp-sw;
-	}
+module vyatta-policy-qos-deviation-broadcom-stratadnx-v1 {
+	namespace "urn:vyatta.com:mgmt:vyatta-policy-qos-deviation-broadcom-stratadnx:1";
+	prefix vyatta-policy-qos-deviation-broadcom-stratadnx-v1;
 
 	import vyatta-policy-v1 {
 		prefix policy;
 	}
 
-	import vyatta-interfaces-policy-v1 {
-		prefix interfaces-policy;
-	}
-
-	import vyatta-interfaces-switch-policy-v1 {
-		prefix sw-pol;
-	}
-
 	import vyatta-policy-qos-v1 {
 		prefix qos;
-	}
-
-	import vyatta-policy-action-v1 {
-		prefix action;
-	}
-
-	import vyatta-policy-qos-groupings-v1 {
-		prefix qos-groupings;
 	}
 
     organization "AT&T Inc.";
@@ -50,7 +18,7 @@ module vyatta-policy-qos-deviation-siad-v1 {
           Web: www.att.com";
 
 	description
-		"Copyright (c) 2019-2020, AT&T Intellectual Property.
+		"Copyright (c) 2020, AT&T Intellectual Property.
 		 All rights reserved.
 
 		 Redistribution and use in source and binary forms, with or without
@@ -82,35 +50,11 @@ module vyatta-policy-qos-deviation-siad-v1 {
 
 		 SPDX-License-Identifier: BSD-3-Clause
 
-		 Deviations for QoS policies on the SIAD platform";
+         Deviations common to QoS policies on Broadcom StrataDNX family based
+         platforms";
 
-	revision 2020-02-28 {
-		description "Add configuration option to give burst size in
-                             milliseconds.
-                             Relax restriction on pipe queue to traffic class
-                             mappings if ingress maps are used.
-                             Disable time based burst configuration on Q-AX.";
-	}
-
-	revision 2019-06-20 {
-		description "Add custom configd:must for slow must statements";
-	}
-
-	revision 2019-03-25 {
-		description "Remove restriction on multiple queues in traffic classes 0-2.
-                             Remove restriction on VLAN level policies per port.";
-	}
-
-	revision 2019-03-06 {
+	revision 2020-03-09 {
 		description "Initial revision of version 1.";
-	}
-
-	deviation /if:interfaces/interfaces-dataplane:dataplane/interfaces-policy:policy {
-		deviate not-supported;
-	}
-
-	deviation /if:interfaces/interfaces-dataplane:dataplane/interfaces-dataplane:vif/interfaces-policy:policy {
-		deviate not-supported;
 	}
 
 	deviation /policy:policy/qos:qos/qos:name/qos:shaper/qos:profile {
@@ -177,22 +121,6 @@ module vyatta-policy-qos-deviation-siad-v1 {
 		}
 	}
 
-	deviation /policy:policy/qos:qos/qos:name/qos:shaper/qos:profile/qos:map/qos:pcp {
-		deviate not-supported;
-	}
-
-	deviation /policy:policy/qos:qos/qos:profile/qos:map/qos:pcp {
-		deviate not-supported;
-	}
-
-	deviation /policy:policy/qos:qos/qos:name/qos:shaper/qos:profile/qos:map/qos:dscp {
-		deviate not-supported;
-	}
-
-	deviation /policy:policy/qos:qos/qos:profile/qos:map/qos:dscp {
-		deviate not-supported;
-	}
-
 	deviation /policy:policy/qos:qos/qos:name/qos:shaper/qos:traffic-class/qos:queue-limit {
 		deviate not-supported;
 	}
@@ -213,48 +141,5 @@ module vyatta-policy-qos-deviation-siad-v1 {
 
 	deviation /policy:policy/qos:qos/qos:name/qos:shaper/qos:traffic-class/qos:random-detect {
 		deviate not-supported;
-	}
-
-	deviation /policy:policy/qos:qos/qos:name/qos:shaper/qos:class {
-		deviate not-supported;
-	}
-
-	deviation /policy:policy/action:action {
-		deviate not-supported;
-	}
-
-	typedef siad-burst-size {
-		description "Burst size in bytes for the shaper";
-		type uint32 {
-			range 1024..130048;
-			configd:help "Burst size in bytes for the shaper";
-		}
-	}
-
-	deviation /policy:policy/qos:qos/qos:name/qos:shaper/qos:burst {
-		deviate replace {
-			type siad-burst-size;
-		}
-		deviate add {
-			default "16000";
-		}
-	}
-
-	deviation /policy:policy/qos:qos/qos:name/qos:shaper/qos:profile/qos:burst {
-		deviate replace {
-			type siad-burst-size;
-		}
-		deviate add {
-			default "16000";
-		}
-	}
-
-	deviation /policy:policy/qos:qos/qos:profile/qos:burst {
-		deviate replace {
-			type siad-burst-size;
-		}
-		deviate add {
-			default "16000";
-		}
 	}
 }

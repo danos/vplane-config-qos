@@ -1,5 +1,7 @@
 [Platform ufi.s9500-30xs]
-Yang=vyatta-policy-qos-deviation-siad-v1.yang
+Yang=vyatta-policy-qos-deviation-ufi-s9500-30xs-v1.yang, \
+vyatta-policy-qos-deviation-broadcom-stratadnx-v1.yang,       \
+vyatta-policy-qos-deviation-broadcom-qax-v1.yang
 Features=vyatta-policy-qos-groupings-v1:mark-map, \
 vyatta-policy-qos-groupings-v1:byte-limits,       \
 vyatta-op-policy-qos-v1:show-platform,            \
