@@ -10,3 +10,4 @@ Modules=vyatta-policy-qos-v1, vyatta-policy-action-v1, \
 vyatta-interfaces-bonding-qos-v1, vyatta-interfaces-vhost-qos-v1
 
 ModelSets=vyatta-v1
+ImportsRequiredForCheck=vyatta-resources-dscp-group-v1

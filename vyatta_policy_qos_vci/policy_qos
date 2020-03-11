@@ -24,6 +24,7 @@ from vplaned import Controller, ControllerException
 from vyatta_policy_qos_vci.provisioner import Provisioner
 from vyatta_policy_qos_vci.provisioner import get_config
 from vyatta_policy_qos_vci.provisioner import save_config
+from vyatta_policy_qos_vci.qos_config import QosConfig
 from vyatta_policy_qos_vci.qos_op_mode import convert_if_list
 
 
@@ -109,9 +110,17 @@ class Config(vci.Config):
 
         return self.config
 
-    def check(self, _):
+    def check(self, proposed_config):
         """ Move the validation checks from perl to here? """
-        LOG.debug("Config:check")
+        LOG.debug(f"Config:check - {proposed_config}")
+        config = QosConfig(proposed_config)
+        for ingress_map in config.ingress_maps.values():
+            if not ingress_map.check(proposed_config):
+                LOG.info(f"Config:check failed for ingress-map: {ingress_map.name}")
+                raise vci.Exception("vyatta-policy-qos-vci",
+                                    f"Incomplete ingress-map {ingress_map.name}",
+                                    "policy/ingress-map")
+
         return
 
 
@@ -184,5 +193,5 @@ if __name__ == "__main__":
          .run()
          .wait())
 
-    except:
+    except Exception:
         LOG.error(f"Unexpected error: {sys.exc_info()[0]}")

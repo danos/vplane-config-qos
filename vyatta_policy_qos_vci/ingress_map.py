@@ -2,17 +2,25 @@
 #
 # Copyright (c) 2020, AT&T Intellectual Property.
 # All rights reserved.
+#
+# SPDX-License-Identifier: LGPL-2.1-only
+#
 """
 A module that defines the IngressMap class that defines different types
 of ingress maps.
 """
 
 import logging
+import sys
+
+from traceback import format_tb
 
 LOG = logging.getLogger('Policy QoS VCI')
 
 MIN_PCP = 0
 MAX_PCP = 7
+MIN_DSCP = 0
+MAX_DSCP = 63
 
 class IngressMap:
     """
@@ -73,9 +81,15 @@ class IngressMap:
             LOG.error("IngressMap missing pcp data")
 
     def __eq__(self, ingress_map):
-        """ Compare the original JSON dictionaries of two interfaces """
+        """ Compare the original JSON dictionaries of two ingress-maps """
         if self._in_map_dict == ingress_map.in_map_dict:
-            return True
+            if len(self._bindings) == len(ingress_map.bindings):
+                status = True
+                for index, binding in enumerate(self._bindings):
+                    if binding != ingress_map.bindings[index]:
+                        status = False
+
+                return status
 
         return False
 
@@ -119,6 +133,54 @@ class IngressMap:
         Return the list of bindings that this ingress map is attached to
         """
         return self._bindings
+
+    def check(self, config_dict):
+        """ Check to see if this ingress-map is complete """
+        status = True
+        LOG.debug(f"ingress-map:check - {self._name}")
+        if self._map_type == 'pcp':
+            for pcp in range(MIN_PCP, MAX_PCP+1):
+                if self._pcp2des.get(pcp) is None:
+                    LOG.debug(f"ingress-map:check pcp-value {pcp} not configured")
+                    status = False
+
+        if self._map_type == "dscp-group":
+            dscp_values_set = [0] * 64
+
+            try:
+                res_dict = config_dict['vyatta-resources-v1:resources']
+                misc_dict = res_dict['vyatta-resources-group-misc-v1:group']
+                dscp_group_list = misc_dict['vyatta-resources-dscp-group-v1:dscp-group']
+
+                for grp_name, _ in self._dscp_group2des.items():
+                    for dscp_group_json in dscp_group_list:
+                        if dscp_group_json['group-name'] == grp_name:
+                            for dscp_value in dscp_group_json['dscp']:
+                                dscp_values_set[int(dscp_value)] += 1
+
+                for dscp_value in range(MIN_DSCP, MAX_DSCP+1):
+                    if dscp_values_set[dscp_value] != 1:
+                        LOG.debug(f"ingress-map {self._name} has dscp-value "
+                                  f"{dscp_value} assigned "
+                                  f"{dscp_values_set[dscp_value]} times")
+                        status = False
+
+            except KeyError:
+                LOG.debug(f"failed to find {sys.exc_info()[1]} in config")
+                status = False
+
+            except Exception:
+                tb_type = sys.exc_info()[0]
+                tb_value = sys.exc_info()[1]
+                tb_info = format_tb(sys.exc_info()[2])
+                tb_output = ""
+                for line in tb_info:
+                    tb_output += line
+
+                LOG.error(f"Unhandled exception: {tb_type}\n{tb_value}\n{tb_output}")
+                status = False
+
+        return status
 
     def commands(self):
         """ Generate the necessary commands for this ingress map """
