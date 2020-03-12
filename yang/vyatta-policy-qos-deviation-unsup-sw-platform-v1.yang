@@ -42,7 +42,7 @@ module vyatta-policy-qos-deviation-unsup-sw-platform-v1 {
 	contact
 		"AT&T
           Postal: 208 S. Akard Street
-                  Dallas, TX 25202
+                  Dallas, TX 75202
           Web: www.att.com";
 
 	description
