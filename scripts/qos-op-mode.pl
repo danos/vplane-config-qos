@@ -311,6 +311,7 @@ sub convert_pipe {
     my $queue_list;
     my $reverse_dscp_map;
     my $reverse_pcp_map;
+    my $reverse_des_map;
 
     $pipe_out{pipe}          = $pipe_id;
     $pipe_out{'qos-class'}   = $pipe_id;
