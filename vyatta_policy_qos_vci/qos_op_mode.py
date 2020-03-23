@@ -179,7 +179,7 @@ def get_policy_class_profile_name(policy_name, pipe_id):
     global config
 
     if config == {}:
-        config = get_actioned_config()
+        config = get_config()
 
     policy_dict = config.get('vyatta-policy-v1:policy')
     if policy_dict is not None:
