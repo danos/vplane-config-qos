@@ -444,11 +444,11 @@ def convert_tc_queues(tc_queues_in, tc_id, reverse_map, map_type_values):
         try:
             cp_list = reverse_map[tc_id][queue_id]
             queue_out[map_type_values] = convert_map_list(cp_list, map_type)
-            tc_queues_out.append(queue_out)
 
         except KeyError:
             pass
 
+        tc_queues_out.append(queue_out)
         queue_id += 1
 
     return tc_queues_out
