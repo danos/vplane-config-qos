@@ -1,4 +1,5 @@
 opt/vyatta/bin/qos-op-mode.pl
+opt/vyatta/bin/show-ext-buf.pl
 opt/vyatta/bin/show-queueing.pl
 opt/vyatta/bin/qos-clear-counters.pl
 opt/vyatta/sbin/qos-validate.pl

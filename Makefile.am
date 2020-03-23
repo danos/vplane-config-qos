@@ -8,7 +8,8 @@ cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
 
 sbin_SCRIPTS = scripts/qos-validate.pl
 
-bin_SCRIPTS = scripts/show-queueing.pl
+bin_SCRIPTS = scripts/show-ext-buf.pl
+bin_SCRIPTS += scripts/show-queueing.pl
 bin_SCRIPTS += scripts/qos-op-mode.pl
 bin_SCRIPTS += scripts/qos-clear-counters.pl
 
