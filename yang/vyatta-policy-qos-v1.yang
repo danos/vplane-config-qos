@@ -81,8 +81,10 @@ module vyatta-policy-qos-v1 {
 
 		 This module implements vyatta-policy-qos-v1.";
 
-	revision 2020-03-10 {
-		description "Removed script validation calls which are
+	revision 2020-03-24 {
+		description "Add if-feature flags for interface level
+			     ingress-map commands.
+			     Removed script validation calls which are
 			     redundant with Yang validations and which are already
 			     ignored in the scripts.";
 	}
@@ -655,6 +657,7 @@ module vyatta-policy-qos-v1 {
 
 	augment /if:interfaces/interfaces-dataplane:dataplane/dp-sw:switch-group/dp-sw:port-parameters/sw-pol:policy {
 		leaf ingress-map {
+			if-feature ingress-map;
 			type leafref {
 				path "/policy:policy/ingress-map/id";
 			}
@@ -664,6 +667,7 @@ module vyatta-policy-qos-v1 {
 
 	augment /if:interfaces/interfaces-dataplane:dataplane/dp-sw:switch-group/dp-sw:port-parameters/dp-sw:vlan-parameters/dp-sw:qos-parameters/dp-sw:vlan/sw-pol:policy {
 		leaf ingress-map {
+			if-feature ingress-map;
 			type leafref {
 				path "/policy:policy/ingress-map/id";
 			}
