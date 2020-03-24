@@ -322,15 +322,26 @@ def convert_pcp_or_des_map(map_in, map_type):
             }
             map_list_out.append(map_out)
 
-            if tc_queue_to_map[tc_id][q_id] is not None:
+            try:
                 map_values = tc_queue_to_map[tc_id][q_id]
-            else:
+
+            except IndexError:
                 map_values = []
 
-                map_values.append(map_id)
+            map_values.append(map_id)
+
+            try:
                 tc_queue_to_map[tc_id][q_id] = map_values
 
-                map_id += 1
+            except IndexError:
+                try:
+                    tc_queue_to_map[tc_id] = {}
+                    tc_queue_to_map[tc_id][q_id] = map_values
+
+                except IndexError:
+                    pass
+
+            map_id += 1
 
     return map_list_out, tc_queue_to_map
 
@@ -444,6 +455,9 @@ def convert_tc_queues(tc_queues_in, tc_id, reverse_map, map_type_values):
         try:
             cp_list = reverse_map[tc_id][queue_id]
             queue_out[map_type_values] = convert_map_list(cp_list, map_type)
+
+        except IndexError:
+            pass
 
         except KeyError:
             pass
