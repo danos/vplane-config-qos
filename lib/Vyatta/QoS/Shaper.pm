@@ -549,14 +549,6 @@ sub valid_binding {
             $self->{global} );
     }
 
-    if ( $vif == 0 and defined $self->{mark_map} ) {
-
-        # We can't have a PCP mark map defined on a trunk interface as
-        # there is no VLAN to write the PCP value into
-        invalid
-          "Cannot have a mark-map on a policy assigned to a trunk interface";
-    }
-
     return 1;
 }
 
