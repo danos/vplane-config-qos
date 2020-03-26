@@ -67,29 +67,36 @@ class Interface:
         # vyatta-interfaces-bonding-qos-v1 - for bonded interfaces
         # vyatta-interfaces-vhost-qos-v1 - for vhost interfaces
         namespace = POLICY_KEY[if_type]
-        if_policy_name = if_policy_dict.get(f'{namespace}:qos')
-        policy = None
-        if if_policy_name is not None:
-            policy = qos_policy_dict[if_policy_name]
 
-        if policy is not None:
-            subport = Subport(self, 0, 0, policy)
-            self._subports.append(subport)
-            # cross-link the policy and the interface
-            self._policies.append(policy)
-            policy.add_interface(self)
+        # If there is just an ingress map attached at the vif/vlan
+        # level then there might be nothing on the interface itself.
+        if if_policy_dict is not None:
+            try:
+                if_policy_name = if_policy_dict.get(f'{namespace}:qos')
+                policy = None
+                if if_policy_name is not None:
+                    policy = qos_policy_dict[if_policy_name]
+                    if policy is not None:
+                        subport = Subport(self, 0, 0, policy)
+                        self._subports.append(subport)
+                        # cross-link the policy and the interface
+                        self._policies.append(policy)
+                        policy.add_interface(self)
+            except KeyError:
+                # Maybe there is no policy on this interface
+                pass
 
-        try:
-            ingress_map_name = if_policy_dict['vyatta-policy-qos-v1:ingress-map']
-            ingress_map = ingress_map_dict[ingress_map_name]
-            binding = IngressMapBinding(self, 0, ingress_map)
-            # cross-link the ingress-map and the binding
-            self._ingress_map_bindings.append(binding)
-            ingress_map.add_binding(binding)
+            try:
+                ingress_map_name = if_policy_dict['vyatta-policy-qos-v1:ingress-map']
+                ingress_map = ingress_map_dict[ingress_map_name]
+                binding = IngressMapBinding(self, 0, ingress_map)
+                # cross-link the ingress-map and the binding
+                self._ingress_map_bindings.append(binding)
+                ingress_map.add_binding(binding)
 
-        except KeyError:
-            # Maybe there is no ingress map for this interface
-            pass
+            except KeyError:
+                # Maybe there is no ingress map for this interface
+                pass
 
         # Look for subports
 
@@ -100,20 +107,35 @@ class Interface:
             for vif in vif_list:
                 vlan_id = vif['tagnode']
                 if_policy_dict = vif[f"{policy_namespace}:policy"]
-                if_policy_name = if_policy_dict.get(f'{namespace}:qos')
-                policy = None
-                if if_policy_name is not None:
-                    policy = qos_policy_dict[if_policy_name]
+                try:
+                    if_policy_name = if_policy_dict[f'{namespace}:qos']
+                    policy = None
+                    if if_policy_name is not None:
+                        policy = qos_policy_dict[if_policy_name]
+                        if policy is not None:
+                            subport = Subport(self, subport_id, vlan_id, policy)
+                            self._subports.append(subport)
+                            # cross-link the policy and interface
+                            self._policies.append(policy)
+                            policy.add_interface(self)
+                            subport_id += 1
 
-                subport = Subport(self, subport_id, vlan_id, policy)
-                self._subports.append(subport)
-                if policy is not None:
-                    # cross-link the policy and interface
-                    self._policies.append(policy)
-                    policy.add_interface(self)
+                except KeyError:
+                    # Maybe there's no policy on this vif
+                    pass
 
-                # no ingress-maps on normal vyatta VMs
-                subport_id += 1
+
+                try:
+                    ingress_map_name = if_policy_dict['vyatta-policy-qos-v1:ingress-map']
+                    ingress_map = ingress_map_dict[ingress_map_name]
+                    binding = IngressMapBinding(self, vlan_id, ingress_map)
+                    # cross-link the ingress-map and the binding
+                    self._ingress_map_bindings.append(binding)
+                    ingress_map.add_binding(binding)
+
+                except KeyError:
+                    # Maybe there's no ingress map for this vif
+                    pass
 
         # Try the SIAD hardware-switch platform style
         vlan_list = None

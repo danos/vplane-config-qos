@@ -81,6 +81,11 @@ module vyatta-policy-qos-v1 {
 
 		 This module implements vyatta-policy-qos-v1.";
 
+	revision 2020-03-26 {
+		description "Allow ingress-maps to be attached directly to
+			     dataplane interfaces and VIFs.";
+	}
+
 	revision 2020-03-24 {
 		description "Add if-feature flags for interface level
 			     ingress-map commands.
@@ -652,6 +657,26 @@ module vyatta-policy-qos-v1 {
 				path "/policy:policy/qos/name/id";
 			}
 			configd:help "QoS policy name for interface";
+		}
+	}
+
+	augment /if:interfaces/interfaces-dataplane:dataplane/interfaces-policy:policy {
+		leaf ingress-map {
+			if-feature ingress-map;
+			type leafref {
+				path "/policy:policy/ingress-map/id";
+			}
+			configd:help "QoS policy ingress-map for interface";
+		}
+	}
+
+	augment /if:interfaces/interfaces-dataplane:dataplane/interfaces-dataplane:vif/interfaces-policy:policy {
+		leaf ingress-map {
+			if-feature ingress-map;
+			type leafref {
+				path "/policy:policy/ingress-map/id";
+			}
+			configd:help "QoS policy ingress-map for virtual interface";
 		}
 	}
 
