@@ -68,16 +68,12 @@ module vyatta-policy-qos-deviation-ufi-s9500-30xs-v1 {
 
 		 Deviations for QoS policies on the UFI S9500-30XS platform";
 
+	revision 2020-03-26 {
+		description "Allow QoS on dataplane interfaces and VIFs.";
+	}
+
 	revision 2020-03-09 {
 		description "Initial revision of version 1.";
-	}
-
-	deviation /if:interfaces/interfaces-dataplane:dataplane/interfaces-policy:policy {
-		deviate not-supported;
-	}
-
-	deviation /if:interfaces/interfaces-dataplane:dataplane/interfaces-dataplane:vif/interfaces-policy:policy {
-		deviate not-supported;
 	}
 
 	deviation /policy:policy/qos:qos/qos:name/qos:shaper/qos:profile/qos:map/qos:pcp {
