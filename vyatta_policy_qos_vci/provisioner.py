@@ -94,8 +94,10 @@ class Provisioner:
             old_interface = old_config.find_interface(name)
             if old_interface is not None:
                 if interface != old_interface:
-                    # This interface has been modified
-                    self._if_updates.append(interface)
+                    # This interface has been modified, delete the old
+                    # version, add the new one
+                    self._if_deletes.append(old_interface)
+                    self._if_creates.append(interface)
             else:
                 # We have a new interface
                 self._if_creates.append(interface)
