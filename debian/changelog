@@ -1,3 +1,40 @@
+vplane-config-qos (3.0.1) unstable; urgency=medium
+
+  [ Alan Dewar ]
+  * VCI: log unhandled exceptions in system log
+  * VCI: burst can come down as an integer (Fixes: VRVDR-50316)
+
+  [ Ramkumar Ganapathysubramanian ]
+  * Removed unnecessary yang validations for policy qos commands.
+
+  [ Brian Russell ]
+  * Re-organise YANG deviations
+  * Allow multiple mark-maps
+  * Correct AT&T zip code
+
+  [ Alan Dewar ]
+  * VCI: remove redundant deferred config code
+  * UT: realign JSON data structures
+  * VCI: add dscp and pcp checks for ingress maps (Fixes: VRVDR-49636)
+
+  [ aroberts ]
+  * Add a license header
+
+  [ Alan Dewar ]
+  * VCI: op-mode state not fully populated (Fixes: VRVDR-50413)
+  * VCI: fix undefined variable error found by pylint3
+  * qos-op-mode.pl generates "global symbol" error (Fixes: VRVDR-50459)
+  * Add show-ext-buf.pl to vplane-config-qos package (Fixes: VRVDR-50440)
+  * VCI: catch IndexError exception in qos_op_mode.py (Fixes: VRVDR-50473)
+
+  [ Alan Robertson ]
+  * Make sure the ingress-map commands are protected by if-feature flag
+
+  [ Alan Dewar ]
+  * VCI: detaching a qos policy needs a delete/create (Fixes: VRVDR-50529)
+
+ -- aroberts <aroberts@mail.eng.vyatta.net>  Fri, 27 Mar 2020 14:00:34 +0000
+
 vplane-config-qos (3.0.0) unstable; urgency=medium
 
   [ Alan Dewar ]
