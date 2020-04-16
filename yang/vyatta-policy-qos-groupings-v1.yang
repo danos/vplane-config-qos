@@ -66,9 +66,10 @@ module vyatta-policy-qos-groupings-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
-	revision 2020-03-10 {
+	revision 2020-04-16 {
 		description "Add the designation keyword to policy qos
-			     map command and mark-map commands.
+			     map command and mark-map commands. Only allowed
+			     if ingress maps are used.
 			     Add the feature ingress-map.
 			     Add configuration option to give burst size in
 			     milliseconds.
@@ -1056,6 +1057,9 @@ module vyatta-policy-qos-groupings-v1 {
 				configd:help "Designated classifier for packet";
 				must "(not(../dscp-group))" {
 					error-message "Mark-map can only use DSCP or designation as classifier not both";
+				}
+				must "/policy:policy/ingress-map" {
+					error-message "Mark-map can only use designation if there is an ingress-map configured.";
 				}
 				key "designation-type";
 				leaf designation-type {
