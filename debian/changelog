@@ -1,3 +1,10 @@
+vplane-config-qos (3.0.2) unstable; urgency=medium
+
+  [ Brian Russell ]
+  * Restrict designation in mark maps
+
+ -- aroberts <aroberts@mail.eng.vyatta.net>  Fri, 17 Apr 2020 13:41:55 +0100
+
 vplane-config-qos (3.0.1) unstable; urgency=medium
 
   [ Alan Dewar ]
