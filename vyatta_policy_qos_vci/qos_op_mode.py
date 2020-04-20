@@ -626,17 +626,17 @@ def convert_npf_rule(rules_in):
         if search_obj:
             rule_out['qos-class'] = "{}".format(search_obj.group(1))
 
-        try:
-            rule_out['action-group'] = rule_in['action-group']
+        if "action-group" in rule_operation:
+            rule_out['action-group'] = rule_in['rprocs']['action-group']
+            policer = rule_in['rprocs']['action-group'].get('policer')
+            if policer is not None:
+                rule_out['exceeded-packets'] = f"{policer['exceed-packets']}"
+                rule_out['exceeded-bytes'] = f"{policer['exceed-bytes']}"
 
-        except KeyError:
-            rule_out['action-group'] = None
-
-        pstats = rule_in.get('policer-stats')
-        if pstats is not None:
-            police_stats = pstats.split(' ')
-            rule_out['exceeded-packets'] = int(police_stats[2])
-            rule_out['exceeded-bytes'] = int(police_stats[4])
+        if "policer" in rule_operation:
+            policer = rule_in['rprocs']['policer']
+            rule_out['exceeded-packets'] = f"{policer['exceed-packets']}"
+            rule_out['exceeded-bytes'] = f"{policer['exceed-bytes']}"
 
         rules_out.append(rule_out)
 
