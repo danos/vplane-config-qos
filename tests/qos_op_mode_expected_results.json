@@ -831,7 +831,6 @@
 					"vyatta-policy-qos-groupings-v1:rule" : [
 					    {
 						"qos-class" : "1",
-						"action-group" : null,
 						"rule-number" : "1",
 						"packets" : 0,
 						"bytes" : 0
