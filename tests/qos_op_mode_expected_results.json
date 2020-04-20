@@ -2409,6 +2409,2374 @@
 		    "vlan-list" : []
 		},
 		"ifname" : "dp0s5"
+	    },
+	    {
+	        "ifname" : "dp0s6",
+		"shaper" : {
+		    "subport-list" : [
+			{
+			    "subport-name" : "dp0s6",
+			    "rules" : {
+				"groups" : [
+				    {
+					"direction" : "out",
+					"class" : "qos",
+					"name" : "dp0s6/0",
+					"vyatta-policy-qos-groupings-v1:rule" : [
+					    {
+						"qos-class" : "2",
+						"packets" : 0,
+						"exceeded-packets" : "0",
+						"exceeded-bytes" : "0",
+						"rule-number" : "2",
+						"action-group" : {
+						    "policer" : {
+							"exceed-packets" : 0,
+							"exceed-bytes" : 0
+						    },
+						    "rules" : {
+							"0" : {
+							    "rule" : "rproc=policer(307200,0,0,drop,,0,1000)"
+							}
+						    },
+						    "name" : "act-grp-1"
+						},
+						"bytes" : 0
+					    },
+					    {
+						"exceeded-bytes" : "0",
+						"exceeded-packets" : "0",
+						"rule-number" : "1",
+						"bytes" : 0,
+						"qos-class" : "1",
+						"packets" : 0
+					    }
+					],
+					"ifindex" : "8"
+				    }
+				]
+			    },
+			    "pipe-list" : [
+				{
+				    "traffic-class-queues-list" : [
+					{
+					    "traffic-class" : 0,
+					    "queue-statistics" : [
+						{
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+						    "priority-local" : false,
+						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
+						    "queue" : 0,
+						    "dscp-values" : [
+							{
+							    "dscp" : 48
+							},
+							{
+							    "dscp" : 49
+							},
+							{
+							    "dscp" : 50
+							},
+							{
+							    "dscp" : 51
+							},
+							{
+							    "dscp" : 52
+							},
+							{
+							    "dscp" : 53
+							},
+							{
+							    "dscp" : 54
+							},
+							{
+							    "dscp" : 55
+							},
+							{
+							    "dscp" : 56
+							},
+							{
+							    "dscp" : 57
+							},
+							{
+							    "dscp" : 58
+							},
+							{
+							    "dscp" : 59
+							},
+							{
+							    "dscp" : 60
+							},
+							{
+							    "dscp" : 61
+							},
+							{
+							    "dscp" : 62
+							},
+							{
+							    "dscp" : 63
+							}
+						    ]
+						}
+					    ]
+					},
+					{
+					    "queue-statistics" : [
+						{
+						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
+						    "queue" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
+						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
+						    "priority-local" : false,
+						    "vyatta-policy-qos-groupings-v1:packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "dscp-values" : [
+							{
+							    "dscp" : 32
+							},
+							{
+							    "dscp" : 33
+							},
+							{
+							    "dscp" : 34
+							},
+							{
+							    "dscp" : 35
+							},
+							{
+							    "dscp" : 36
+							},
+							{
+							    "dscp" : 37
+							},
+							{
+							    "dscp" : 38
+							},
+							{
+							    "dscp" : 39
+							},
+							{
+							    "dscp" : 40
+							},
+							{
+							    "dscp" : 41
+							},
+							{
+							    "dscp" : 42
+							},
+							{
+							    "dscp" : 43
+							},
+							{
+							    "dscp" : 44
+							},
+							{
+							    "dscp" : 45
+							},
+							{
+							    "dscp" : 46
+							},
+							{
+							    "dscp" : 47
+							}
+						    ]
+						}
+					    ],
+					    "traffic-class" : 1
+					},
+					{
+					    "traffic-class" : 2,
+					    "queue-statistics" : [
+						{
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
+						    "queue" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+						    "priority-local" : false,
+						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
+						    "dscp-values" : [
+							{
+							    "dscp" : 16
+							},
+							{
+							    "dscp" : 17
+							},
+							{
+							    "dscp" : 18
+							},
+							{
+							    "dscp" : 19
+							},
+							{
+							    "dscp" : 20
+							},
+							{
+							    "dscp" : 21
+							},
+							{
+							    "dscp" : 22
+							},
+							{
+							    "dscp" : 23
+							},
+							{
+							    "dscp" : 24
+							},
+							{
+							    "dscp" : 25
+							},
+							{
+							    "dscp" : 26
+							},
+							{
+							    "dscp" : 27
+							},
+							{
+							    "dscp" : 28
+							},
+							{
+							    "dscp" : 29
+							},
+							{
+							    "dscp" : 30
+							},
+							{
+							    "dscp" : 31
+							}
+						    ]
+						}
+					    ]
+					},
+					{
+					    "queue-statistics" : [
+						{
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
+						    "priority-local" : false,
+						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
+						    "queue" : 0,
+						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+						    "dscp-values" : [
+							{
+							    "dscp" : 0
+							},
+							{
+							    "dscp" : 1
+							},
+							{
+							    "dscp" : 2
+							},
+							{
+							    "dscp" : 3
+							},
+							{
+							    "dscp" : 4
+							},
+							{
+							    "dscp" : 5
+							},
+							{
+							    "dscp" : 6
+							},
+							{
+							    "dscp" : 7
+							},
+							{
+							    "dscp" : 8
+							},
+							{
+							    "dscp" : 9
+							},
+							{
+							    "dscp" : 10
+							},
+							{
+							    "dscp" : 11
+							},
+							{
+							    "dscp" : 12
+							},
+							{
+							    "dscp" : 13
+							},
+							{
+							    "dscp" : 14
+							},
+							{
+							    "dscp" : 15
+							}
+						    ]
+						}
+					    ],
+					    "traffic-class" : 3
+					}
+				    ],
+				    "vyatta-policy-qos-groupings-v1:token-bucket-size" : 250000,
+				    "vyatta-policy-qos-groupings-v1:traffic-class-period" : 10,
+				    "qos-class" : 0,
+				    "vyatta-policy-qos-groupings-v1:weighted-round-robin-weights" : [
+					{
+					    "weight" : 1,
+					    "queue" : 0
+					},
+					{
+					    "queue" : 1,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 2,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 3,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 4,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 5,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 6,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 7,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 8
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 9
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 10
+					},
+					{
+					    "queue" : 11,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 12
+					},
+					{
+					    "queue" : 13,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 14,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 15,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 16
+					},
+					{
+					    "queue" : 17,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 18
+					},
+					{
+					    "queue" : 19,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 20
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 21
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 22
+					},
+					{
+					    "queue" : 23,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 24,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 25
+					},
+					{
+					    "queue" : 26,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 27
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 28
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 29
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 30
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 31
+					}
+				    ],
+				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 62500000,
+				    "qos-profile" : "default-profile",
+				    "pipe" : 0,
+				    "vyatta-policy-qos-groupings-v1:traffic-class-rates" : [
+					{
+					    "traffic-class" : 0,
+					    "rate" : 62500000
+					},
+					{
+					    "rate" : 62500000,
+					    "traffic-class" : 1
+					},
+					{
+					    "rate" : 62500000,
+					    "traffic-class" : 2
+					},
+					{
+					    "rate" : 62500000,
+					    "traffic-class" : 3
+					}
+				    ],
+				    "dscp-to-queue-map" : [
+					{
+					    "dscp" : 0,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "dscp" : 3,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 4,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 5,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 6
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 7
+					},
+					{
+					    "dscp" : 8,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "dscp" : 9,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "dscp" : 10,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 11,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "dscp" : 12,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "dscp" : 13,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 14,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 15,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "dscp" : 16,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "dscp" : 17,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 18,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "dscp" : 19,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 20
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 21
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 22
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "dscp" : 23,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "dscp" : 24,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 25
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 26,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 27,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "dscp" : 28,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "dscp" : 29,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "dscp" : 30,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "dscp" : 31,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 32,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 33,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 34,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 35
+					},
+					{
+					    "dscp" : 36,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 37,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "dscp" : 38,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "dscp" : 39,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 40,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 41
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "dscp" : 42,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "dscp" : 43,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "dscp" : 44,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 45,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 46,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "dscp" : 47,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 48,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 49
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 50,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 51
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 52,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 53
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 54,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 55,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 56,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "dscp" : 57,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 58,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "dscp" : 59,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 60
+					},
+					{
+					    "dscp" : 61,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 62,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 63,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					}
+				    ]
+				},
+				{
+				    "vyatta-policy-qos-groupings-v1:token-bucket-size" : 150000,
+				    "vyatta-policy-qos-groupings-v1:weighted-round-robin-weights" : [
+					{
+					    "queue" : 0,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 1,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 2,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 3,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 4
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 5
+					},
+					{
+					    "queue" : 6,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 7
+					},
+					{
+					    "queue" : 8,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 9,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 10,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 11,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 12
+					},
+					{
+					    "queue" : 13,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 14,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 15,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 16,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 17,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 18
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 19
+					},
+					{
+					    "queue" : 20,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 21,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 22
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 23
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 24
+					},
+					{
+					    "queue" : 25,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 26,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 27,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 28,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 29
+					},
+					{
+					    "queue" : 30,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 31
+					}
+				    ],
+				    "qos-profile" : "profile-3",
+				    "dscp-to-queue-map" : [
+					{
+					    "dscp" : 0,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 2,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 3,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "dscp" : 4,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "dscp" : 5,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "dscp" : 6,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "dscp" : 7,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 8,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 9
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 10
+					},
+					{
+					    "dscp" : 11,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 12
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "dscp" : 13,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 14,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 15
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "dscp" : 16,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 17,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 18,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "dscp" : 19,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 20
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 21
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 22
+					},
+					{
+					    "dscp" : 23,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 24,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "dscp" : 25,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "dscp" : 26,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "dscp" : 27,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "dscp" : 28,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 29,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 30
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 31
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 32
+					},
+					{
+					    "dscp" : 33,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 34
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 35,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 36
+					},
+					{
+					    "dscp" : 37,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 38,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 39
+					},
+					{
+					    "dscp" : 40,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "dscp" : 41,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 42,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "dscp" : 43,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 44
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 45,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "dscp" : 46,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "dscp" : 47,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 48,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "dscp" : 49,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 50,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "dscp" : 51,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 52,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 53,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "dscp" : 54,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 55
+					},
+					{
+					    "dscp" : 56,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 57,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 58,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 59,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 60,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 61,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "dscp" : 62,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 63,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					}
+				    ],
+				    "traffic-class-queues-list" : [
+					{
+					    "traffic-class" : 0,
+					    "queue-statistics" : [
+						{
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
+						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
+						    "queue" : 0,
+						    "priority-local" : false,
+						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+						    "dscp-values" : [
+							{
+							    "dscp" : 48
+							},
+							{
+							    "dscp" : 49
+							},
+							{
+							    "dscp" : 50
+							},
+							{
+							    "dscp" : 51
+							},
+							{
+							    "dscp" : 52
+							},
+							{
+							    "dscp" : 53
+							},
+							{
+							    "dscp" : 54
+							},
+							{
+							    "dscp" : 55
+							},
+							{
+							    "dscp" : 56
+							},
+							{
+							    "dscp" : 57
+							},
+							{
+							    "dscp" : 58
+							},
+							{
+							    "dscp" : 59
+							},
+							{
+							    "dscp" : 60
+							},
+							{
+							    "dscp" : 61
+							},
+							{
+							    "dscp" : 62
+							},
+							{
+							    "dscp" : 63
+							}
+						    ]
+						}
+					    ]
+					},
+					{
+					    "queue-statistics" : [
+						{
+						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
+						    "queue" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
+						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
+						    "priority-local" : false,
+						    "vyatta-policy-qos-groupings-v1:packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "dscp-values" : [
+							{
+							    "dscp" : 32
+							},
+							{
+							    "dscp" : 33
+							},
+							{
+							    "dscp" : 34
+							},
+							{
+							    "dscp" : 35
+							},
+							{
+							    "dscp" : 36
+							},
+							{
+							    "dscp" : 37
+							},
+							{
+							    "dscp" : 38
+							},
+							{
+							    "dscp" : 39
+							},
+							{
+							    "dscp" : 40
+							},
+							{
+							    "dscp" : 41
+							},
+							{
+							    "dscp" : 42
+							},
+							{
+							    "dscp" : 43
+							},
+							{
+							    "dscp" : 44
+							},
+							{
+							    "dscp" : 45
+							},
+							{
+							    "dscp" : 46
+							},
+							{
+							    "dscp" : 47
+							}
+						    ]
+						}
+					    ],
+					    "traffic-class" : 1
+					},
+					{
+					    "traffic-class" : 2,
+					    "queue-statistics" : [
+						{
+						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
+						    "queue" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+						    "priority-local" : false,
+						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "dscp-values" : [
+							{
+							    "dscp" : 16
+							},
+							{
+							    "dscp" : 17
+							},
+							{
+							    "dscp" : 18
+							},
+							{
+							    "dscp" : 19
+							},
+							{
+							    "dscp" : 20
+							},
+							{
+							    "dscp" : 21
+							},
+							{
+							    "dscp" : 22
+							},
+							{
+							    "dscp" : 23
+							},
+							{
+							    "dscp" : 24
+							},
+							{
+							    "dscp" : 25
+							},
+							{
+							    "dscp" : 26
+							},
+							{
+							    "dscp" : 27
+							},
+							{
+							    "dscp" : 28
+							},
+							{
+							    "dscp" : 29
+							},
+							{
+							    "dscp" : 30
+							},
+							{
+							    "dscp" : 31
+							}
+						    ]
+						}
+					    ]
+					},
+					{
+					    "queue-statistics" : [
+						{
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
+						    "queue" : 0,
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:packets" : 0,
+						    "priority-local" : false,
+						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+						    "dscp-values" : [
+							{
+							    "dscp" : 0
+							},
+							{
+							    "dscp" : 1
+							},
+							{
+							    "dscp" : 2
+							},
+							{
+							    "dscp" : 3
+							},
+							{
+							    "dscp" : 4
+							},
+							{
+							    "dscp" : 5
+							},
+							{
+							    "dscp" : 6
+							},
+							{
+							    "dscp" : 7
+							},
+							{
+							    "dscp" : 8
+							},
+							{
+							    "dscp" : 9
+							},
+							{
+							    "dscp" : 10
+							},
+							{
+							    "dscp" : 11
+							},
+							{
+							    "dscp" : 12
+							},
+							{
+							    "dscp" : 13
+							},
+							{
+							    "dscp" : 14
+							},
+							{
+							    "dscp" : 15
+							}
+						    ]
+						}
+					    ],
+					    "traffic-class" : 3
+					}
+				    ],
+				    "vyatta-policy-qos-groupings-v1:traffic-class-period" : 10,
+				    "qos-class" : 1,
+				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 37500000,
+				    "pipe" : 1,
+				    "vyatta-policy-qos-groupings-v1:traffic-class-rates" : [
+					{
+					    "rate" : 37500000,
+					    "traffic-class" : 0
+					},
+					{
+					    "rate" : 37500000,
+					    "traffic-class" : 1
+					},
+					{
+					    "rate" : 37500000,
+					    "traffic-class" : 2
+					},
+					{
+					    "rate" : 37500000,
+					    "traffic-class" : 3
+					}
+				    ]
+				},
+				{
+				    "vyatta-policy-qos-groupings-v1:weighted-round-robin-weights" : [
+					{
+					    "queue" : 0,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 1,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 2,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 3,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 4,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 5
+					},
+					{
+					    "queue" : 6,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 7
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 8
+					},
+					{
+					    "queue" : 9,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 10
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 11
+					},
+					{
+					    "queue" : 12,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 13
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 14
+					},
+					{
+					    "queue" : 15,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 16
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 17
+					},
+					{
+					    "queue" : 18,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 19
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 20
+					},
+					{
+					    "queue" : 21,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 22
+					},
+					{
+					    "queue" : 23,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 24,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 25
+					},
+					{
+					    "queue" : 26,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 27,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 28
+					},
+					{
+					    "queue" : 29,
+					    "weight" : 1
+					},
+					{
+					    "queue" : 30,
+					    "weight" : 1
+					},
+					{
+					    "weight" : 1,
+					    "queue" : 31
+					}
+				    ],
+				    "qos-class" : 2,
+				    "vyatta-policy-qos-groupings-v1:traffic-class-period" : 10,
+				    "vyatta-policy-qos-groupings-v1:token-bucket-size" : 150000,
+				    "traffic-class-queues-list" : [
+					{
+					    "queue-statistics" : [
+						{
+						    "priority-local" : false,
+						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
+						    "queue" : 0,
+						    "dscp-values" : [
+							{
+							    "dscp" : 48
+							},
+							{
+							    "dscp" : 49
+							},
+							{
+							    "dscp" : 50
+							},
+							{
+							    "dscp" : 51
+							},
+							{
+							    "dscp" : 52
+							},
+							{
+							    "dscp" : 53
+							},
+							{
+							    "dscp" : 54
+							},
+							{
+							    "dscp" : 55
+							},
+							{
+							    "dscp" : 56
+							},
+							{
+							    "dscp" : 57
+							},
+							{
+							    "dscp" : 58
+							},
+							{
+							    "dscp" : 59
+							},
+							{
+							    "dscp" : 60
+							},
+							{
+							    "dscp" : 61
+							},
+							{
+							    "dscp" : 62
+							},
+							{
+							    "dscp" : 63
+							}
+						    ],
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:dropped" : 0
+						}
+					    ],
+					    "traffic-class" : 0
+					},
+					{
+					    "queue-statistics" : [
+						{
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:packets" : 0,
+						    "priority-local" : false,
+						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
+						    "dscp-values" : [
+							{
+							    "dscp" : 32
+							},
+							{
+							    "dscp" : 33
+							},
+							{
+							    "dscp" : 34
+							},
+							{
+							    "dscp" : 35
+							},
+							{
+							    "dscp" : 36
+							},
+							{
+							    "dscp" : 37
+							},
+							{
+							    "dscp" : 38
+							},
+							{
+							    "dscp" : 39
+							},
+							{
+							    "dscp" : 40
+							},
+							{
+							    "dscp" : 41
+							},
+							{
+							    "dscp" : 42
+							},
+							{
+							    "dscp" : 43
+							},
+							{
+							    "dscp" : 44
+							},
+							{
+							    "dscp" : 45
+							},
+							{
+							    "dscp" : 46
+							},
+							{
+							    "dscp" : 47
+							}
+						    ],
+						    "queue" : 0
+						}
+					    ],
+					    "traffic-class" : 1
+					},
+					{
+					    "traffic-class" : 2,
+					    "queue-statistics" : [
+						{
+						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+						    "queue" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
+						    "dscp-values" : [
+							{
+							    "dscp" : 16
+							},
+							{
+							    "dscp" : 17
+							},
+							{
+							    "dscp" : 18
+							},
+							{
+							    "dscp" : 19
+							},
+							{
+							    "dscp" : 20
+							},
+							{
+							    "dscp" : 21
+							},
+							{
+							    "dscp" : 22
+							},
+							{
+							    "dscp" : 23
+							},
+							{
+							    "dscp" : 24
+							},
+							{
+							    "dscp" : 25
+							},
+							{
+							    "dscp" : 26
+							},
+							{
+							    "dscp" : 27
+							},
+							{
+							    "dscp" : 28
+							},
+							{
+							    "dscp" : 29
+							},
+							{
+							    "dscp" : 30
+							},
+							{
+							    "dscp" : 31
+							}
+						    ],
+						    "priority-local" : false
+						}
+					    ]
+					},
+					{
+					    "traffic-class" : 3,
+					    "queue-statistics" : [
+						{
+						    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:packets" : 0,
+						    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:bytes" : 0,
+						    "priority-local" : false,
+						    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+						    "vyatta-policy-qos-groupings-v1:dropped" : 0,
+						    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+						    "queue" : 0,
+						    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen" : 0,
+						    "vyatta-policy-qos-groupings-v1:qlen-packets" : 0,
+						    "dscp-values" : [
+							{
+							    "dscp" : 0
+							},
+							{
+							    "dscp" : 1
+							},
+							{
+							    "dscp" : 2
+							},
+							{
+							    "dscp" : 3
+							},
+							{
+							    "dscp" : 4
+							},
+							{
+							    "dscp" : 5
+							},
+							{
+							    "dscp" : 6
+							},
+							{
+							    "dscp" : 7
+							},
+							{
+							    "dscp" : 8
+							},
+							{
+							    "dscp" : 9
+							},
+							{
+							    "dscp" : 10
+							},
+							{
+							    "dscp" : 11
+							},
+							{
+							    "dscp" : 12
+							},
+							{
+							    "dscp" : 13
+							},
+							{
+							    "dscp" : 14
+							},
+							{
+							    "dscp" : 15
+							}
+						    ]
+						}
+					    ]
+					}
+				    ],
+				    "dscp-to-queue-map" : [
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 2,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 3,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "dscp" : 4,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "dscp" : 5,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "dscp" : 6,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 7
+					},
+					{
+					    "dscp" : 8,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "dscp" : 9,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 10
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "dscp" : 11,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "dscp" : 12,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 13,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "dscp" : 14,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 3,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 15
+					},
+					{
+					    "dscp" : 16,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 17,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "dscp" : 18,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "dscp" : 19,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 20
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "dscp" : 21,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 22,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 23,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "dscp" : 24,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 25,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "dscp" : 26,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 27
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "dscp" : 28,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "dscp" : 29,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "dscp" : 30,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 2,
+					    "dscp" : 31,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "dscp" : 32,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 33
+					},
+					{
+					    "dscp" : 34,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "dscp" : 35,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "dscp" : 36,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 37
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "dscp" : 38,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 39
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "dscp" : 40,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "dscp" : 41,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "dscp" : 42,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "dscp" : 43,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "dscp" : 44,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1,
+					    "dscp" : 45,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "dscp" : 46,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 47,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 1
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 48
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 49
+					},
+					{
+					    "dscp" : 50,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "dscp" : 51,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 52,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 53
+					},
+					{
+					    "dscp" : 54,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 55,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "dscp" : 56,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "dscp" : 57,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 58
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 59,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					},
+					{
+					    "dscp" : 60,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "dscp" : 61,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:queue" : 0,
+					    "dscp" : 62,
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0
+					},
+					{
+					    "vyatta-policy-qos-groupings-v1:traffic-class" : 0,
+					    "dscp" : 63,
+					    "vyatta-policy-qos-groupings-v1:queue" : 0
+					}
+				    ],
+				    "vyatta-policy-qos-groupings-v1:traffic-class-rates" : [
+					{
+					    "traffic-class" : 0,
+					    "rate" : 37500000
+					},
+					{
+					    "rate" : 37500000,
+					    "traffic-class" : 1
+					},
+					{
+					    "rate" : 37500000,
+					    "traffic-class" : 2
+					},
+					{
+					    "traffic-class" : 3,
+					    "rate" : 37500000
+					}
+				    ],
+				    "qos-profile" : "profile-3",
+				    "pipe" : 2,
+				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 37500000
+				}
+			    ],
+			    "subport" : 0,
+			    "traffic-class-list" : [
+				{
+				    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:dropped" : 0,
+				    "vyatta-policy-qos-groupings-v1:packets" : 0,
+				    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
+				    "vyatta-policy-qos-groupings-v1:bytes" : 0,
+				    "traffic-class" : 0,
+				    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0"
+				},
+				{
+				    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
+				    "vyatta-policy-qos-groupings-v1:bytes" : 0,
+				    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:dropped" : 0,
+				    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:packets" : 0,
+				    "traffic-class" : 1
+				},
+				{
+				    "vyatta-policy-qos-groupings-v1:bytes" : 0,
+				    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
+				    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+				    "traffic-class" : 2,
+				    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:packets" : 0,
+				    "vyatta-policy-qos-groupings-v1:dropped" : 0
+				},
+				{
+				    "vyatta-policy-qos-groupings-v1:bytes-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:packets" : 0,
+				    "vyatta-policy-qos-groupings-v1:dropped" : 0,
+				    "vyatta-policy-qos-groupings-v1:packets-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:dropped-64" : "0",
+				    "vyatta-policy-qos-groupings-v1:bytes" : 0,
+				    "vyatta-policy-qos-groupings-v1:random-drop" : 0,
+				    "vyatta-policy-qos-groupings-v1:random-drop-64" : "0",
+				    "traffic-class" : 3
+				}
+			    ]
+			}
+		    ],
+		    "vlan-list" : []
+		}
 	    }
 	]
     }

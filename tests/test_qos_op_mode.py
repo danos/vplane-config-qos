@@ -24,6 +24,7 @@ def test_qos_op_mode():
 
        set interfaces dataplane dp0s4 policy qos policy-2
        set interfaces dataplane dp0s5 policy qos policy-1
+       set interfaces dataplane dp0s6 policy qos policy-3
        set policy qos name policy-1 shaper class 1 match m1 source address 10.10.10.0/24
        set policy qos name policy-1 shaper class 1 profile profile-2
        set policy qos name policy-1 shaper default profile-1
@@ -36,6 +37,16 @@ def test_qos_op_mode():
        set policy qos name policy-2 shaper traffic-class 1 random-detect mark-probability 50
        set policy qos name policy-2 shaper traffic-class 1 random-detect max-threshold 8191
        set policy qos name policy-2 shaper traffic-class 1 random-detect min-threshold 4096
+       set policy action name act-grp-1 police ratelimit 300Kpps
+       set policy qos name policy-3 shaper class 1 match m1 police bandwidth 123Mbit
+       set policy qos name policy-3 shaper class 1 match m1 source address 10.10.0.0/24
+       set policy qos name policy-3 shaper class 1 profile profile-1
+       set policy qos name policy-3 shaper class 2 match m2 action-group act-grp-1
+       set policy qos name policy-3 shaper class 2 match m2 destination address 20.20.0.0/24
+       set policy qos name policy-3 shaper class 2 profile profile-1
+       set policy qos name policy-3 shaper default default-profile
+       set policy qos name policy-3 shaper profile default-profile bandwidth 500Mbit
+       set policy qos name policy-3 shaper profile profile-1 bandwidth 300Mbit
 
     then using '/opt/vyatta/bin/vplsh -lc "qos optimised-show" | json_pp' to
     generate test_data, and '/opt/vyatta/bin/qos-op-mode.pl --all | json_pp' to

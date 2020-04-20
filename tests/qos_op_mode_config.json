@@ -12,10 +12,26 @@
                     "vyatta-interfaces-policy-v1:policy": {
                         "vyatta-policy-qos-v1:qos": "policy-1"
                     }
-                }
+                },
+                {
+                    "tagnode": "dp0s6",
+                    "vyatta-interfaces-policy-v1:policy": {
+                        "vyatta-policy-qos-v1:qos": "policy-3"
+                    }
+		}
             ]
         },
         "vyatta-policy-v1:policy": {
+            "vyatta-policy-action-v1:action": {
+                "name": [
+                    {
+                        "id": "act-grp-1",
+                        "police": {
+                            "ratelimit": "300Kpps"
+                        }
+                    }
+                ]
+            },
             "vyatta-policy-qos-v1:qos": {
                 "name": [
                     {
@@ -74,6 +90,56 @@
                                         "max-threshold": 8191,
                                         "min-threshold": 4096
                                     }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "id": "policy-3",
+                        "shaper": {
+                            "bandwidth": "10Gbit",
+                            "class": [
+                                {
+                                    "id": 1,
+                                    "match": [
+                                        {
+                                            "id": "m1",
+                                            "action": "pass",
+                                            "police": {
+                                                "bandwidth": "123Mbit"
+                                            },
+                                            "source": {
+                                                "address": "10.10.0.0/24"
+                                            }
+                                        }
+                                    ],
+                                    "profile": "profile-3"
+                                },
+                                {
+                                    "id": 2,
+                                    "match": [
+                                        {
+                                            "id": "m2",
+                                            "action": "pass",
+                                            "action-group": "act-grp-1",
+                                            "destination": {
+                                                "address": "20.20.0.0/24"
+                                            }
+                                        }
+                                    ],
+                                    "profile": "profile-3"
+                                }
+                            ],
+                            "default": "default-profile",
+                            "frame-overhead": "24",
+                            "profile": [
+                                {
+                                    "id": "default-profile",
+                                    "bandwidth": "500Mbit"
+                                },
+                                {
+                                    "id": "profile-3",
+                                    "bandwidth": "300Mbit"
                                 }
                             ]
                         }

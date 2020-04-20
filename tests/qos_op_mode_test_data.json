@@ -581,5 +581,578 @@
                     }
                 ]
             }
-        }
-    }
+        },
+        "dp0s6" : {
+	    "shaper" : {
+		"subports" : [
+		    {
+			"rules" : {
+			    "groups" : [
+				{
+				    "direction" : "out",
+				    "rules" : {
+					"2" : {
+					    "match" : "to 20.20.0.0/24 ",
+					    "rprocs" : {
+						"action-group" : {
+						    "rules" : {
+							"0" : {
+							    "rule" : "rproc=policer(307200,0,0,drop,,0,1000)"
+							}
+						    },
+						    "name" : "act-grp-1",
+						    "policer" : {
+							"exceed-bytes" : 0,
+							"exceed-packets" : 0
+						    }
+						}
+					    },
+					    "config" : "action=accept dst-addr=20.20.0.0/24 rproc=action-group(act-grp-1) handle=tag(2)",
+					    "action" : "pass ",
+					    "operation" : "apply action-group(act-grp-1), tag(2)",
+					    "bytes" : 0,
+					    "packets" : 0
+					},
+					"1" : {
+					    "operation" : "apply policer(0,15375000,61500,drop,,0,20), tag(1)",
+					    "action" : "pass ",
+					    "config" : "action=accept src-addr=10.10.0.0/24 rproc=policer(0,15375000,61500,drop,,0,20) handle=tag(1)",
+					    "rprocs" : {
+						"policer" : {
+						    "exceed-packets" : 0,
+						    "exceed-bytes" : 0
+						}
+					    },
+					    "match" : "from 10.10.0.0/24 ",
+					    "bytes" : 0,
+					    "packets" : 0
+					}
+				    },
+				    "name" : "dp0s6/0",
+				    "class" : "qos"
+				}
+			    ]
+			},
+			"tc" : [
+			    {
+				"dropped" : 0,
+				"packets" : 0,
+				"random_drop" : 0,
+				"bytes" : 0
+			    },
+			    {
+				"packets" : 0,
+				"dropped" : 0,
+				"bytes" : 0,
+				"random_drop" : 0
+			    },
+			    {
+				"packets" : 0,
+				"dropped" : 0,
+				"bytes" : 0,
+				"random_drop" : 0
+			    },
+			    {
+				"dropped" : 0,
+				"packets" : 0,
+				"random_drop" : 0,
+				"bytes" : 0
+			    }
+			],
+			"pipes" : [
+			    {
+				"tc" : [
+				    [
+					{
+					    "prio_local" : false,
+					    "dropped" : 0,
+					    "queue" : 0,
+					    "traffic-class" : 0,
+					    "random_drop" : 0,
+					    "bytes" : 0,
+					    "qlen" : 0,
+					    "packets" : 0
+					}
+				    ],
+				    [
+					{
+					    "qlen" : 0,
+					    "packets" : 0,
+					    "random_drop" : 0,
+					    "bytes" : 0,
+					    "prio_local" : false,
+					    "dropped" : 0,
+					    "queue" : 0,
+					    "traffic-class" : 1
+					}
+				    ],
+				    [
+					{
+					    "dropped" : 0,
+					    "queue" : 0,
+					    "prio_local" : false,
+					    "traffic-class" : 2,
+					    "random_drop" : 0,
+					    "bytes" : 0,
+					    "qlen" : 0,
+					    "packets" : 0
+					}
+				    ],
+				    [
+					{
+					    "packets" : 0,
+					    "qlen" : 0,
+					    "traffic-class" : 3,
+					    "dropped" : 0,
+					    "queue" : 0,
+					    "prio_local" : false,
+					    "bytes" : 0,
+					    "random_drop" : 0
+					}
+				    ]
+				],
+				"params" : {
+				    "tb_size" : 250000,
+				    "tc_rates" : [
+					62500000,
+					62500000,
+					62500000,
+					62500000
+				    ],
+				    "wrr_weights" : [
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1
+				    ],
+				    "tc_period" : 10,
+				    "tb_rate" : 62500000
+				},
+				"dscp2q" : [
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0
+				]
+			    },
+			    {
+				"tc" : [
+				    [
+					{
+					    "random_drop" : 0,
+					    "bytes" : 0,
+					    "dropped" : 0,
+					    "queue" : 0,
+					    "prio_local" : false,
+					    "traffic-class" : 0,
+					    "qlen" : 0,
+					    "packets" : 0
+					}
+				    ],
+				    [
+					{
+					    "packets" : 0,
+					    "qlen" : 0,
+					    "bytes" : 0,
+					    "random_drop" : 0,
+					    "traffic-class" : 1,
+					    "queue" : 0,
+					    "dropped" : 0,
+					    "prio_local" : false
+					}
+				    ],
+				    [
+					{
+					    "qlen" : 0,
+					    "packets" : 0,
+					    "random_drop" : 0,
+					    "bytes" : 0,
+					    "prio_local" : false,
+					    "dropped" : 0,
+					    "queue" : 0,
+					    "traffic-class" : 2
+					}
+				    ],
+				    [
+					{
+					    "packets" : 0,
+					    "qlen" : 0,
+					    "bytes" : 0,
+					    "random_drop" : 0,
+					    "traffic-class" : 3,
+					    "queue" : 0,
+					    "dropped" : 0,
+					    "prio_local" : false
+					}
+				    ]
+				],
+				"params" : {
+				    "tc_rates" : [
+					37500000,
+					37500000,
+					37500000,
+					37500000
+				    ],
+				    "tb_size" : 150000,
+				    "wrr_weights" : [
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1
+				    ],
+				    "tc_period" : 10,
+				    "tb_rate" : 37500000
+				},
+				"dscp2q" : [
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0
+				]
+			    },
+			    {
+				"dscp2q" : [
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    3,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    2,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    1,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0,
+				    0
+				],
+				"params" : {
+				    "tb_size" : 150000,
+				    "tc_rates" : [
+					37500000,
+					37500000,
+					37500000,
+					37500000
+				    ],
+				    "wrr_weights" : [
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1
+				    ],
+				    "tc_period" : 10,
+				    "tb_rate" : 37500000
+				},
+				"tc" : [
+				    [
+					{
+					    "qlen" : 0,
+					    "packets" : 0,
+					    "prio_local" : false,
+					    "dropped" : 0,
+					    "queue" : 0,
+					    "traffic-class" : 0,
+					    "random_drop" : 0,
+					    "bytes" : 0
+					}
+				    ],
+				    [
+					{
+					    "traffic-class" : 1,
+					    "queue" : 0,
+					    "dropped" : 0,
+					    "prio_local" : false,
+					    "bytes" : 0,
+					    "random_drop" : 0,
+					    "packets" : 0,
+					    "qlen" : 0
+					}
+				    ],
+				    [
+					{
+					    "random_drop" : 0,
+					    "bytes" : 0,
+					    "prio_local" : false,
+					    "queue" : 0,
+					    "dropped" : 0,
+					    "traffic-class" : 2,
+					    "qlen" : 0,
+					    "packets" : 0
+					}
+				    ],
+				    [
+					{
+					    "random_drop" : 0,
+					    "bytes" : 0,
+					    "prio_local" : false,
+					    "queue" : 0,
+					    "dropped" : 0,
+					    "traffic-class" : 3,
+					    "qlen" : 0,
+					    "packets" : 0
+					}
+				    ]
+				]
+			    }
+			]
+		    }
+		],
+		"vlans" : []
+	    }
+	}
+}
