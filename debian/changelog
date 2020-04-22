@@ -1,3 +1,11 @@
+vplane-config-qos (3.0.3) unstable; urgency=medium
+
+  [ Alan Dewar ]
+  * Fix qos_op_mode.py to parse rprocs JSON element (Fixes: VRVDR-50611)
+  * UT: update test_qos_op_mode.py for more coverage
+
+ -- aroberts <aroberts@mail.eng.vyatta.net>  Wed, 22 Apr 2020 10:57:16 +0100
+
 vplane-config-qos (3.0.2) unstable; urgency=medium
 
   [ Brian Russell ]
