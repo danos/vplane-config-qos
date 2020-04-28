@@ -60,6 +60,10 @@ module vyatta-op-policy-qos-v1 {
 
 		 YANG module for policy QoS operational mode commands.";
 
+	revision 2020-04-28 {
+		description "Give QoS show commands privilege for operators
+			    as they access a socket to the dataplane";
+	}
 	revision 2020-01-25 {
 		description "Update the show commands to support the
 			    ingress map commands and add a feature flag";
@@ -98,6 +102,10 @@ module vyatta-op-policy-qos-v1 {
 		opd:command queuing {
 			opd:help "Clear QoS queuing counters";
 			opd:on-enter "qos-clear-counters.pl --clear-all";
+			opd:privileged true;
+			opd:inherit "inherit privileged statement" {
+				opd:privileged true;
+			}
 
 			opd:argument interface-name {
 				opd:help "Interface name";
@@ -113,6 +121,10 @@ module vyatta-op-policy-qos-v1 {
 		opd:command qos {
 			opd:help "Clear QoS queuing counters";
 			opd:on-enter "qos-clear-counters.pl --clear-all";
+			opd:privileged true;
+			opd:inherit "inherit privileged statement" {
+				opd:privileged true;
+			}
 
 			opd:argument interface-name {
 				opd:help "Interface name";
@@ -199,6 +211,10 @@ module vyatta-op-policy-qos-v1 {
 		opd:command queuing {
 			opd:help "Show dataplane queuing summary";
 			opd:on-enter "show-queueing.pl --summary";
+			opd:privileged true;
+			opd:inherit "inherit privileged statement" {
+				opd:privileged true;
+			}
 
 			opd:command class {
 				opd:help "Show dataplane matching summary";
@@ -221,6 +237,10 @@ module vyatta-op-policy-qos-v1 {
 		opd:command qos {
 			opd:help "Show dataplane queuing summary";
 			opd:on-enter "show-queueing.pl --64 --summary";
+			opd:privileged true;
+			opd:inherit "inherit privileged statement" {
+				opd:privileged true;
+			}
 
 			opd:command platform {
 				if-feature show-platform;
@@ -271,6 +291,7 @@ module vyatta-op-policy-qos-v1 {
 			opd:command qos {
 				opd:help "Monitor dataplane queuing information";
 				opd:on-enter "show-queueing.pl --64 --monitor";
+				opd:privileged true;
 			}
 		}
 	}
