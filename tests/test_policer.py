@@ -52,17 +52,17 @@ def test_parse_bandwidth(test_input, expected_result):
 TEST_DATA_RATELIMIT = [
     # each tuple contains (<test_input>, <expected_result>)
     # Good values
-    (None, None),
-    ("1234", 1234),
-    ("400pps", 400),
-    ("1kpps", 1024),
-    ("2Kpps", 2048),
-    ("34Mpps", 34000000),
-    ("567mpps", 567000000),
+    (None, (None, False)),
+    ("1234", (1234, False)),
+    ("400pps", (400, True)),
+    ("1kpps", (1024, True)),
+    ("2Kpps", (2048, True)),
+    ("34Mpps", (34000000, True)),
+    ("567mpps", (567000000, True)),
     # Bad values
-    ("abc", None),
-    ("123apps", None),
-    ("123abc", None)
+    ("abc", (None, False)),
+    ("123apps", (None, False)),
+    ("123abc", (None, False))
 ]
 
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA_RATELIMIT)
@@ -201,7 +201,19 @@ TEST_DATA_POLICER = [
         "policer(512000,0,0,drop,,0,1000)"
     ),
     (
-        # Add a tc-period which should also be ignored
+        # Remove the ratelimit's "kpps" suffix and add a tc-period which
+        # will be set
+        {
+            "burst": 4321,
+            "frame-overhead": "-5",
+            "ratelimit": "500",
+            "tc": 345
+        },
+        "policer(500,0,0,drop,,0,345)"
+    ),
+    (
+        # Replace the ratelimit's "kpps", this time the tc-period will be
+        # ignored
         {
             "burst": 4321,
             "frame-overhead": "-5",
