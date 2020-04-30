@@ -100,21 +100,19 @@ def parse_ratelimit(rate_str):
     index = rate_str.find('pps')
     multiplier_symbol = rate_str[index-1]
 
-    multiplier = 1
-    if not multiplier_symbol.isalpha():
-        LOG.error(f"Invalid rate-limit string: {rate_str}")
-        return None
-
-    index -= 1
-    # We should have a K, k, M or m to deal with
-    multiplier_symbol = multiplier_symbol.lower()
-    if multiplier_symbol == 'k':
-        multiplier = 1024
-    elif multiplier_symbol == 'm':
-        multiplier = 1000000
+    if multiplier_symbol.isdigit():
+        multiplier = 1
     else:
-        LOG.error(f"Invalid rate-limit string: {rate_str}")
-        return None
+        index -= 1
+        # We should have a K, k, M or m to deal with
+        multiplier_symbol = multiplier_symbol.lower()
+        if multiplier_symbol == 'k':
+            multiplier = 1024
+        elif multiplier_symbol == 'm':
+            multiplier = 1000000
+        else:
+            LOG.error(f"Invalid rate-limit string: {rate_str}")
+            return None
 
     rate = int(rate_str[:index])
 

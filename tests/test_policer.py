@@ -54,6 +54,7 @@ TEST_DATA_RATELIMIT = [
     # Good values
     (None, None),
     ("1234", 1234),
+    ("400pps", 400),
     ("1kpps", 1024),
     ("2Kpps", 2048),
     ("34Mpps", 34000000),
@@ -274,7 +275,7 @@ TEST_DATA_POLICER = [
 ]
 
 
-@pytest.mark.parametrize("test_input, expected_result", TEST_DATA_POLICER)    
+@pytest.mark.parametrize("test_input, expected_result", TEST_DATA_POLICER)
 def test_policer_class(test_input, expected_result):
     """ Simple unit-test for policer class """
     policer = Policer(test_input)
