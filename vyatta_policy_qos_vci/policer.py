@@ -90,12 +90,13 @@ def parse_ratelimit(rate_str):
     Convert a ratelimit string into a packets/second integer.
     The format of rate_str is <number>[<suffix>] where the optional suffix
     is one of the following: pps, Kpps, kpps, Mpps or mpps.
+    Also return an indication if the ratelimit was suffixed by "pps".
     """
     if rate_str is None:
-        return None
+        return None, False
 
     if rate_str.isdigit():
-        return int(rate_str)
+        return int(rate_str), False
 
     index = rate_str.find('pps')
     multiplier_symbol = rate_str[index-1]
@@ -112,11 +113,11 @@ def parse_ratelimit(rate_str):
             multiplier = 1000000
         else:
             LOG.error(f"Invalid rate-limit string: {rate_str}")
-            return None
+            return None, False
 
     rate = int(rate_str[:index])
 
-    return rate * multiplier
+    return rate * multiplier, True
 
 
 class Policer:
@@ -130,7 +131,9 @@ class Policer:
         self._bandwidth = parse_bandwidth(policer_dict.get('bandwidth'))
         self._burst = policer_dict.get('burst')
         self._overhead = policer_dict.get('frame-overhead')
-        self._ratelimit = parse_ratelimit(policer_dict.get('ratelimit'))
+        rate, pps_suffix = parse_ratelimit(policer_dict.get('ratelimit'))
+        self._ratelimit = rate
+        self._pps_suffix = pps_suffix
         self._tc = policer_dict.get('tc')
         self._then_action = "drop"
         self._mark_value = ""
@@ -193,11 +196,19 @@ class Policer:
 
             output += (f"(0,{bandwidth},{burst},{self._then_action},"
                        f"{self._mark_value},{overhead},{tcsize}")
+
         else:
             # We have a ratelimit policer to configure
-            # The burst, overhead and tc parameters are ignored
+            if self._tc is None:
+                self._tc = 1000
+            else:
+                # If the ratelimit has a pps suffix, the tc period is 1 second
+                if self._pps_suffix and self._tc != 1000:
+                    self._tc = 1000
+
+            # The burst and overhead parameters are ignored
             output += (f"({self._ratelimit},0,0,{self._then_action},"
-                       f"{self._mark_value},0,1000")
+                       f"{self._mark_value},0,{self._tc}")
 
         if self._then_action == "markpcp":
             if not self._pcp_inner:
