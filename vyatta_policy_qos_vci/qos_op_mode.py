@@ -757,6 +757,8 @@ def convert_if_list(cmd, op_mode_dict):
 
     if_list_out - a tagged JSON array of QoS op-mode state of each physical port
     """
+    global config
+
     if_list_out = []
     for ifname, interface in sorted(op_mode_dict.items()):
         shaper_in = interface['shaper']
@@ -767,4 +769,5 @@ def convert_if_list(cmd, op_mode_dict):
         }
         if_list_out.append(if_shaper_out)
 
+    config.clear()
     return if_list_out
