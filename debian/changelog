@@ -1,3 +1,26 @@
+vplane-config-qos (3.1.0) unstable; urgency=medium
+
+  [ Brian Russell ]
+  * Remove mark-map on trunk check
+  * Allow QoS directly on dataplane interfaces for s9500
+  * Allow ingress maps directly on dataplane interfaces
+  * Restrict designation in mark maps
+  * Deviations for J2
+
+  [ Alan Dewar ]
+  * Fix qos_op_mode.py to parse rprocs JSON element (Fixes: VRVDR-50611)
+  * UT: update test_qos_op_mode.py for more coverage
+
+  [ Brian Russell ]
+  * Give op-mode commands privilege
+
+  [ Alan Dewar ]
+  * VCI: allow policer ratelimits in pps (Fixes: VRVDR-50820)
+  * VCI: ratelimit period does not override default (Fixes: VRVDR-50820)
+  * VCI: empty the qos_op_mode.py config cache (Fixes: VRVDR-50818)
+
+ -- aroberts <aroberts@mail.eng.vyatta.net>  Tue, 05 May 2020 09:37:32 +0100
+
 vplane-config-qos (3.0.1) unstable; urgency=medium
 
   [ Alan Dewar ]
