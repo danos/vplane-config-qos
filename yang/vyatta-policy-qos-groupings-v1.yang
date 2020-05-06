@@ -66,8 +66,10 @@ module vyatta-policy-qos-groupings-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
-	revision 2020-04-16 {
-		description "Add the designation keyword to policy qos
+	revision 2020-05-06 {
+		description "Ensure pipe queue used in designation mapping
+			     exists.
+			     Add the designation keyword to policy qos
 			     map command and mark-map commands. Only allowed
 			     if ingress maps are used.
 			     Add the feature ingress-map.
@@ -519,6 +521,9 @@ module vyatta-policy-qos-groupings-v1 {
 					refine to {
 						must "count(../../designation[to=current()]) <= 1" {
 							error-message "Cannot map multiple designations to one pipe queue";
+						}
+						must "../../../queue[id=current()]" {
+							error-message "Each designation must map to a pipe queue in this profile";
 						}
 					}
 				}
