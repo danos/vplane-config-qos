@@ -1,3 +1,14 @@
+vplane-config-qos (3.0.6) unstable; urgency=medium
+
+  [ Brian Russell ]
+  * Ensure pipe queue used in designation map exists
+
+  [ Alan Dewar ]
+  * VCI: allow policer ratelimits in pps (Fixes: VRVDR-50820)
+  * VCI: ratelimit period does not override default (Fixes: VRVDR-50820)
+
+ -- aroberts <aroberts@mail.eng.vyatta.net>  Wed, 06 May 2020 12:47:53 +0100
+
 vplane-config-qos (3.0.5) unstable; urgency=medium
 
   [ Alan Dewar ]
