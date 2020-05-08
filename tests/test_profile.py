@@ -498,6 +498,38 @@ TEST_DATA = [
             "qos lo profile 0 queue 0x3 wrr-weight 1 6",
             "qos lo profile 0 queue 0x7 wrr-weight 1 7"
         ]
+    ),
+    (
+        # A profile with a dscp-group map that does have any pipe-queue to
+        # traffic-class assignment - the dscp-group map will be ignored
+        # test_input
+        {
+            "bandwidth": "10Gbit",
+            "default": "pro-1",
+            "frame-overhead": "24",
+            "profile": [
+                {
+                    "id": "pro-1",
+                    "bandwidth": "1Gbps",
+                    "map": {
+                        "dscp-group": [
+                            {
+                                "group-name": "real-time",
+                                "to": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        # expected result
+        [
+            "qos lo profile 0 rate 1250000000 msec 4 period 10",
+            "qos lo profile 0 queue 0 percent 100 msec 4",
+            "qos lo profile 0 queue 1 percent 100 msec 4",
+            "qos lo profile 0 queue 2 percent 100 msec 4",
+            "qos lo profile 0 queue 3 percent 100 msec 4"
+        ]
     )
 ]
 
