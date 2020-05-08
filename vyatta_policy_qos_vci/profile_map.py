@@ -151,12 +151,16 @@ class ProfileMap:
         if self._map_type == 'dscp-group':
             dscp_group_names = sorted(self._dscp_group_map.keys())
             for dscp_group_name in dscp_group_names:
-                pipe_queue_id = self._dscp_group_map[dscp_group_name]
-                dp = self._drop_precedence[dscp_group_name]
-                queue = pipe_queues.pipe_queue(pipe_queue_id)
-                qmap = (dp << 5 | queue.wrr_id << 2 | queue.tc_id)
-                cmd_list.append(f"{cmd_prefix} dscp-group {dscp_group_name}"
-                                f" {hex(qmap)}")
+                try:
+                    pipe_queue_id = self._dscp_group_map[dscp_group_name]
+                    dp = self._drop_precedence[dscp_group_name]
+                    queue = pipe_queues.pipe_queue(pipe_queue_id)
+                    qmap = (dp << 5 | queue.wrr_id << 2 | queue.tc_id)
+                    cmd_list.append(f"{cmd_prefix} dscp-group {dscp_group_name}"
+                                    f" {hex(qmap)}")
+
+                except KeyError:
+                    pass
 
         if self._map_type == 'dscp':
             for dscp in range(MIN_DSCP, MAX_DSCP+1):
