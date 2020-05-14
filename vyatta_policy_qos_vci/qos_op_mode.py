@@ -627,7 +627,7 @@ def convert_npf_rule(rules_in):
             rule_out['qos-class'] = "{}".format(search_obj.group(1))
 
         if "action-group" in rule_operation:
-            rule_out['action-group'] = rule_in['rprocs']['action-group']
+            rule_out['action-group'] = rule_in['rprocs']['action-group']['name']
             policer = rule_in['rprocs']['action-group'].get('policer')
             if policer is not None:
                 rule_out['exceeded-packets'] = f"{policer['exceed-packets']}"

@@ -2429,18 +2429,7 @@
 						"exceeded-packets" : "0",
 						"exceeded-bytes" : "0",
 						"rule-number" : "2",
-						"action-group" : {
-						    "policer" : {
-							"exceed-packets" : 0,
-							"exceed-bytes" : 0
-						    },
-						    "rules" : {
-							"0" : {
-							    "rule" : "rproc=policer(307200,0,0,drop,,0,1000)"
-							}
-						    },
-						    "name" : "act-grp-1"
-						},
+						"action-group" : "act-grp-1",
 						"bytes" : 0
 					    },
 					    {
