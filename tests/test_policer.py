@@ -28,6 +28,8 @@ TEST_DATA_BANDWIDTH = [
     ("8Mibit", 1048576),
     ("10gibit", 1342177280),
     ("0.1Gbit", 12500000),
+    ("1.3Gbit", 162500000),
+    ("123.456mbit", 15432000),
     # good values - bytes per second
     ("1bps", 1),
     ("2kbps", 2000),
@@ -38,6 +40,7 @@ TEST_DATA_BANDWIDTH = [
     ("4Kibps", 4096),
     ("8mibps", 8388608),
     ("16Gibps", 17179869184),
+    ("2.8kbps", 2800),
     # bad values
     ("a", None),
     ("1a", None)
