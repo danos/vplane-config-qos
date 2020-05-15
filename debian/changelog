@@ -1,3 +1,10 @@
+vplane-config-qos (3.0.9) unstable; urgency=medium
+
+  [ Alan Dewar ]
+  * VCI: support decimal fractional bandwidths (Fixes: VRVDR-51152)
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Fri, 15 May 2020 18:26:00 +0100
+
 vplane-config-qos (3.0.8) unstable; urgency=medium
 
   [ Brian Russell ]
