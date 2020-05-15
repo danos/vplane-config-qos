@@ -1,3 +1,10 @@
+vplane-config-qos (3.0.8) unstable; urgency=medium
+
+  [ Brian Russell ]
+  * Don't send all action group json in one field
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Fri, 15 May 2020 13:39:51 +0100
+
 vplane-config-qos (3.0.7) unstable; urgency=medium
 
   [ Alan Dewar ]
