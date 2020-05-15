@@ -28,7 +28,7 @@ def parse_bandwidth(bandwidth):
     if bandwidth is None:
         return None
 
-    match = re.match(r"(0*\.?[0-9]+)([a-z]+)", bandwidth, flags=re.IGNORECASE)
+    match = re.match(r"(\d*\.?\d+)([a-z]+)", bandwidth, flags=re.IGNORECASE)
     if match:
         items = match.groups()
         prefix = items[0]
