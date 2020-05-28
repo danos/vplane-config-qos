@@ -105,7 +105,7 @@ class Config(vci.Config):
         # If the QoS VCI process has been restarted we may an empty self.config
         # in which case we need to read the current config from the saved
         # config file.
-        if self.config:
+        if not self.config:
             self.config = get_config()
 
         return self.config
