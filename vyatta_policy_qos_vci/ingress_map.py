@@ -138,6 +138,10 @@ class IngressMap:
         """ Check to see if this ingress-map is complete """
         status = True
         LOG.debug(f"ingress-map:check - {self._name}")
+        if self._map_type is None:
+            LOG.debug(f"ingress-map:check map-type not configured")
+            status = False
+
         if self._map_type == 'pcp':
             for pcp in range(MIN_PCP, MAX_PCP+1):
                 if self._pcp2des.get(pcp) is None:
