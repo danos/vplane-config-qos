@@ -1,3 +1,10 @@
+vplane-config-qos (3.0.10) unstable; urgency=medium
+
+  [ Alan Dewar ]
+  * VCI: check ingress-maps have their map-type set (Fixes: VRVDR-51554)
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Mon, 15 Jun 2020 13:07:19 +0100
+
 vplane-config-qos (3.0.9) unstable; urgency=medium
 
   [ Alan Dewar ]
