@@ -46,6 +46,23 @@ def remove_deferred_ingress_maps(config, deferred_in_map_list):
                 del in_map_list[index]
                 break
 
+def remove_deferred_egress_maps(config, deferred_eg_map_list):
+    """
+    Delete any deferred egress-maps from the JSON config dictionary.
+    """
+    policy_dict = config.get('vyatta-policy-v1:policy')
+    if policy_dict is None:
+        return
+
+    eg_map_list = policy_dict.get('vyatta-policy-qos-v1:egress-map')
+    if eg_map_list is None:
+        return
+
+    for eg_map_name in deferred_eg_map_list:
+        for index, eg_map_dict in enumerate(eg_map_list):
+            if eg_map_dict['id'] == eg_map_name:
+                del eg_map_list[index]
+                break
 
 def send_qos_config_to_dataplane(new_config):
     """
@@ -60,11 +77,14 @@ def send_qos_config_to_dataplane(new_config):
             prov.commands(ctrl)
 
         LOG.debug(f"deferred ingress-maps: {prov.deferred_ingress_maps}")
-        # Copy the requested config, then remove any deferred ingress maps, then
+        # Copy the requested config, then remove any deferred maps, then
         # save it as the actioned config.
         actioned_config = deepcopy(new_config)
         remove_deferred_ingress_maps(actioned_config,
                                      prov.deferred_ingress_maps)
+        LOG.debug(f"deferred egress-maps: {prov.deferred_egress_maps}")
+        remove_deferred_egress_maps(actioned_config,
+                                    prov.deferred_egress_maps)
         save_config(actioned_config)
 
     except ControllerException:
@@ -121,8 +141,14 @@ class Config(vci.Config):
                                     f"Incomplete ingress-map {ingress_map.name}",
                                     "policy/ingress-map")
 
-        return
+        for egress_map in config.egress_maps.values():
+            if not egress_map.check(proposed_config):
+                LOG.info(f"Config:check failed for egress-map: {egress_map.name}")
+                raise vci.Exception("vyatta-policy-qos-vci",
+                                    f"Incomplete egress-map {egress_map.name}",
+                                    "policy/egress-map")
 
+        return
 
 class State(vci.State):
     """

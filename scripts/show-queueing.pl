@@ -64,6 +64,7 @@ sub get_interface {
       unless ( $intf->type() eq 'dataplane'
         or $intf->type() eq 'uplink'
         or $intf->type() eq 'bonding'
+        or $intf->type() eq 'switch'
         or $intf->type() eq 'vhost' );
 
     my $fabric = $intf->dpid();
@@ -550,6 +551,51 @@ sub show_bcm_buffer_errors {
     }
 }
 
+sub show_egress_map {
+    my ($decoded) = @_;
+    return unless defined($decoded);
+
+    return unless defined( $decoded->{'egress-maps'} );
+
+    foreach my $map ( @{ $decoded->{'egress-maps'} } ) {
+        my $proto = $map->{type};
+        my $str   = "";
+        my $str1  = "";
+
+        if ( $proto eq "dscp" ) {
+            $str  = "designator to dscp";
+            $str1 = "\nDes->DSCP\n";
+        } elsif ( $proto eq "pcp" ) {
+            $str  = "designator to pcp";
+            $str1 = "\nDes->PCP\n";
+        }
+
+        print "\nEgress-map: $map->{name}   type: $str\n";
+        my @values;
+
+        my $max_entries = 8;
+
+        for my $entry ( @{ $map->{map} } ) {
+            my $designation = $entry->{designation};
+            my $map_value   = $entry->{value};
+
+            $values[$designation]->{designator} = $designation;
+            $values[$designation]->{value}      = $map_value;
+        }
+        if ( $proto eq "dscp" || $proto eq "pcp" ) {
+            print $str1;
+            for my $i ( 0 .. 7 ) {
+                if ( defined( $values[$i] ) ) {
+                    printf " %d -> %d\n", $values[$i]->{designator},
+                      $values[$i]->{value};
+                } else {
+                    print " $i -> 0/0\n";
+                }
+            }
+        }
+    }
+}
+
 sub show_ingress_map {
     my ($decoded) = @_;
     return unless defined($decoded);
@@ -638,6 +684,30 @@ sub show_buffer_errors {
     print $hdr, '-' x length($hdr), "\n";
 
     walk_fabrics( "qos show buffer-errors", \&show_bcm_buffer_errors, $fmt );
+}
+
+sub show_egress_maps {
+    my $interface = shift;
+
+    if ( $interface eq '' ) {
+        walk_fabrics( "qos show egress-maps", \&show_egress_map );
+        return;
+    }
+
+    my $pos = index( $interface, "sw" );
+    if ( $pos != 0 ) {
+        my ( $port, $vif ) = split_ifname($interface);
+        if ( defined($vif) ) {
+            walk_fabrics( "qos show egress-maps vlan $vif $port",
+                \&show_egress_map );
+        } else {
+            walk_fabrics( "qos show egress-maps vlan 0 $port",
+                \&show_egress_map );
+        }
+    } else {
+        walk_fabrics( "qos show egress-maps vlan 0 $interface",
+            \&show_egress_map );
+    }
 }
 
 sub show_ingress_maps {
@@ -745,10 +815,11 @@ sub show_monitor {
 }
 
 sub show_bcm_platform_egress_map {
-    my $subport     = shift;
-    my $pipe        = $subport->{pipes}->[0];
-    my $platdscpmap = $pipe->{'fal-bcm-qos-dscp2dot1p'};
-    my $platdesmap  = $pipe->{'fal-bcm-qos-des2dot1p'};
+    my $subport         = shift;
+    my $pipe            = $subport->{pipes}->[0];
+    my $platdscpmap     = $pipe->{'fal-bcm-qos-dscp2dot1p'};
+    my $platdesmap      = $pipe->{'fal-bcm-qos-des2dot1p'};
+    my $platdes2dscpmap = $pipe->{'fal-bcm-qos-des2dscp'};
 
     if ( defined($platdesmap) ) {
         print "\nDes->PCP\n";
@@ -761,6 +832,17 @@ sub show_bcm_platform_egress_map {
         }
     }
 
+    if ( defined($platdes2dscpmap) ) {
+        print "\nDes->DSCP\n";
+        for my $i ( 0 .. 7 ) {
+            my $map_entry;
+
+            $map_entry = $platdes2dscpmap->[$i];
+
+            printf " %d -> %d\n", $i, $map_entry->{'dscp'};
+        }
+    }
+
     if ( defined($platdscpmap) ) {
 
         # Print output in columns for readability
@@ -769,7 +851,7 @@ sub show_bcm_platform_egress_map {
             my $dscp;
             my $map_entry;
 
-            $dscp = ( $i % 4 ) * 16 + ( $i / 4 );
+            $dscp      = ( $i % 4 ) * 16 + ( $i / 4 );
             $map_entry = $platdscpmap->[$dscp];
             printf " %2d -> %d", $dscp, $map_entry->{'pcp'};
             if ( ( $i % 4 ) == 3 ) {
@@ -855,14 +937,44 @@ sub show_platform_ingress_maps {
     show_bcm_platform_ingress_map( $platdscpmap, $platpcpmap );
 }
 
+sub show_platform_egress_maps {
+    my ( $ifname, $data, $intf_data, $vif ) = @_;
+
+    my $platdscpmap;
+    my $platdesmap;
+    my $platdes2dscpmap;
+    my $maps = $intf_data->{'egress-maps'} if ( defined($intf_data) );
+
+    if ( defined($maps) ) {
+
+        if ( !defined($vif) ) {
+            $vif = 0;
+        }
+
+        for my $binding ( @{$maps} ) {
+            if ( $binding->{'vlan'} eq $vif ) {
+                $platdscpmap     = $binding->{'fal-bcm-qos-dscp2dot1p'};
+                $platdesmap      = $binding->{'fal-bcm-qos-des2dot1p'};
+                $platdes2dscpmap = $binding->{'fal-bcm-qos-des2dscp'};
+                last;
+            }
+        }
+    }
+
+    show_bcm_platform_egress_map( $platdscpmap, $platdesmap, $platdes2dscpmap );
+}
+
 sub show_platform_map {
     my ( $ifname, $ingress ) = @_;
     my ( $port,   $vif )     = split_ifname($ifname);
-    my $data = get_interface( $port, "qos show platform", 1 );
+    my $data      = get_interface( $port, "qos show platform", 1 );
     my $intf_data = $data->{$port};
 
     if ( $ingress == 1 ) {
         show_platform_ingress_maps( $ifname, $data, $intf_data, $vif );
+        return;
+    } else {
+        show_platform_egress_maps( $ifname, $data, $intf_data, $vif );
         return;
     }
 
@@ -1295,13 +1407,14 @@ sub usage {
     print "       $0 [--64] --summary\n";
     print "       $0 [--64] INTERFACE...\n";
     print "       $0 --ingress-maps\n";
+    print "       $0 --egress-maps\n";
     exit 1;
 }
 
 my (
-    $brief,      $dscp,     $mark,     $pcp,
-    $monitor,    $class,    $summary,  $platmapegr,
-    $platmaping, $platinfo, $buf_errs, $ingress_maps
+    $brief,    $dscp,         $mark,       $pcp,        $monitor,
+    $class,    $summary,      $platmapegr, $platmaping, $platinfo,
+    $buf_errs, $ingress_maps, $egress_maps
 );
 
 GetOptions(
@@ -1318,6 +1431,7 @@ GetOptions(
     'class:s'        => \$class,
     'summary'        => \$summary,
     'ingress-maps:s' => \$ingress_maps,
+    'egress-maps:s'  => \$egress_maps,
 ) or usage();
 
 show_brief($brief) if $brief;
@@ -1332,6 +1446,7 @@ show_summary()                   if $summary;
 show_platform_info()             if $platinfo;
 show_buffer_errors()             if $buf_errs;
 show_ingress_maps($ingress_maps) if defined($ingress_maps);
+show_egress_maps($egress_maps)   if defined($egress_maps);
 
 foreach my $ifname (@ARGV) {
     show($ifname);

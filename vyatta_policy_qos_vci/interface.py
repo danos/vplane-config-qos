@@ -11,6 +11,7 @@ A module to define the Interface class of objects
 import logging
 
 from vyatta_policy_qos_vci.ingress_map_binding import IngressMapBinding
+from vyatta_policy_qos_vci.egress_map_binding import EgressMapBinding
 from vyatta_policy_qos_vci.subport import Subport
 from vyatta_policy_qos_vci.wred_map import byte_limits
 
@@ -19,7 +20,8 @@ LOG = logging.getLogger('Policy QoS VCI')
 POLICY_KEY = {
     'bonding': 'vyatta-interfaces-bonding-qos-v1',
     'dataplane': 'vyatta-policy-qos-v1',
-    'vhost': 'vyatta-interfaces-vhost-qos-v1'
+    'vhost': 'vyatta-interfaces-vhost-qos-v1',
+    'switch': 'vyatta-policy-qos-v1',
 }
 
 class Interface:
@@ -27,22 +29,27 @@ class Interface:
     A class for interface objects.  We will have one Interface object for
     each physical port that has QoS configured on it.
     """
-    def __init__(self, if_type, if_dict, qos_policy_dict, ingress_map_dict):
+    def __init__(self, if_type, if_dict, qos_policy_dict, ingress_map_dict, egress_map_dict):
         """
         Create an interface object for a physical port
-        if_type is one of "dataplane", "bonding" or "vhost"
+        if_type is one of "dataplane", "bonding", "vhost" or "switch"
         """
         self._if_dict = if_dict
         if if_type == 'vhost':
             self._name = if_dict.get('name')
             policy_namespace = 'vyatta-interfaces-vhost-policy-v1'
             vif_namespace = 'vyatta-interfaces-vhost-vif-v1:'
+        elif if_type == 'switch':
+            self._name = if_dict.get('name')
+            policy_namespace = 'vyatta-interfaces-switch-vif-policy-v1'
+            vif_namespace = ''
         else:
             self._name = if_dict.get('tagnode')
             policy_namespace = 'vyatta-interfaces-policy-v1'
             vif_namespace = ''
         self._subports = []
         self._ingress_map_bindings = []
+        self._egress_map_bindings = []
         self._policies = []
         self._profile_index = {}
 
@@ -98,6 +105,18 @@ class Interface:
                 # Maybe there is no ingress map for this interface
                 pass
 
+            try:
+                egress_map_name = if_policy_dict['vyatta-policy-qos-v1:egress-map']
+                egress_map = egress_map_dict[egress_map_name]
+                binding = EgressMapBinding(self, 0, egress_map)
+                # cross-link the egress-map and the binding
+                self._egress_map_bindings.append(binding)
+                egress_map.add_binding(binding)
+
+            except KeyError:
+                # Maybe there is no egress map for this interface
+                pass
+
         # Look for subports
 
         # Try the normal vyatta VM style
@@ -106,6 +125,8 @@ class Interface:
             subport_id = 1
             for vif in vif_list:
                 vlan_id = vif['tagnode']
+                if if_type == 'switch':
+                    self._name = self._name + '.' + str(vlan_id)
                 if_policy_dict = vif[f"{policy_namespace}:policy"]
                 try:
                     if_policy_name = if_policy_dict[f'{namespace}:qos']
@@ -135,6 +156,18 @@ class Interface:
 
                 except KeyError:
                     # Maybe there's no ingress map for this vif
+                    pass
+
+                try:
+                    egress_map_name = if_policy_dict['vyatta-policy-qos-v1:egress-map']
+                    egress_map = egress_map_dict[egress_map_name]
+                    binding = EgressMapBinding(self, vlan_id, egress_map)
+                    # cross-link the egress-map and the binding
+                    self._egress_map_bindings.append(binding)
+                    egress_map.add_binding(binding)
+
+                except KeyError:
+                    # Maybe there's no egress map for this vif
                     pass
 
         # Try the SIAD hardware-switch platform style
@@ -176,6 +209,18 @@ class Interface:
 
                 except KeyError:
                     # Maybe there's no ingress map for this vlan
+                    pass
+
+                try:
+                    egress_map_name = if_policy_dict['vyatta-policy-qos-v1:egress-map']
+                    egress_map = egress_map_dict[egress_map_name]
+                    binding = EgressMapBinding(self, vlan_id, egress_map)
+                    # cross-link the egress-map and the binding
+                    self._egress_map_bindings.append(binding)
+                    egress_map.add_binding(binding)
+
+                except KeyError:
+                    # Maybe there's no egress map for this vlan
                     pass
 
         for subport in self._subports:
@@ -245,6 +290,14 @@ class Interface:
         any vlans associated with this interface.
         """
         return self._ingress_map_bindings
+
+    @property
+    def egress_map_bindings(self):
+        """
+        Return the list of egress-maps that are bound to this interface or
+        any vlans associated with this interface.
+        """
+        return self._egress_map_bindings
 
     def commands(self):
         """

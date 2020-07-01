@@ -31,7 +31,8 @@ TEST_DATA = [
                             "port-parameters": {
                                 "vyatta-interfaces-switch-policy-v1:policy": {
                                     "vyatta-policy-qos-v1:qos": "policy-1",
-                                    "vyatta-policy-qos-v1:ingress-map": "bill"
+                                    "vyatta-policy-qos-v1:ingress-map": "bill",
+                                    "vyatta-policy-qos-v1:egress-map": "bill"
                                 }
                             }
                         }
@@ -95,6 +96,38 @@ TEST_DATA = [
                             }
                         ],
                         'system-default': [None]
+                    }
+                ],
+                "vyatta-policy-qos-v1:egress-map": [
+                    {
+                        "id": "bill",
+                        "designation": [
+                            {
+                                "id": 0,
+                                "dscp": 0
+                            }, {
+                                "id": 1,
+                                "dscp": 1
+                            }, {
+                                "id": 2,
+                                "dscp": 2
+                            }, {
+                                "id": 3,
+                                "dscp": 3
+                            }, {
+                                "id": 4,
+                                "dscp": 4
+                            }, {
+                                "id": 5,
+                                "dscp": 5
+                            }, {
+                                "id": 6,
+                                "dscp": 6
+                            }, {
+                                "id": 7,
+                                "dscp": 7
+                            }
+                        ],
                     }
                 ],
                 "vyatta-policy-qos-v1:qos": {

@@ -60,6 +60,10 @@ module vyatta-op-policy-qos-v1 {
 
 		 YANG module for policy QoS operational mode commands.";
 
+	revision 2020-06-07 {
+		description "Update the show commands to support the
+			    egress map commands";
+	}
 	revision 2020-04-28 {
 		description "Give QoS show commands privilege for operators
 			    as they access a socket to the dataplane";
@@ -95,6 +99,10 @@ module vyatta-op-policy-qos-v1 {
 
 	feature ingress-map {
 		description "QoS ingress-map show command support";
+	}
+
+	feature egress-map {
+		description "QoS egress-map show command support";
 	}
 
 	opd:augment /clear:clear {
@@ -204,6 +212,11 @@ module vyatta-op-policy-qos-v1 {
 			opd:help "Show the ingress-map used in the dataplane";
 			opd:on-enter "show-queueing.pl --ingress-maps $4";
 		}
+		opd:command egress-map {
+			if-feature egress-map;
+			opd:help "Show the egress-map used in the dataplane";
+			opd:on-enter "show-queueing.pl --egress-maps $4";
+		}
 	}
 
 	opd:augment /show:show {
@@ -270,7 +283,7 @@ module vyatta-op-policy-qos-v1 {
 
 			opd:argument interface-name {
 				opd:help "Show dataplane interface queuing summary";
-				opd:allowed "vyatta-interfaces.pl --show=dataplane,vhost,bonding";
+				opd:allowed "vyatta-interfaces.pl --show=dataplane,vhost,bonding,switch";
 				opd:on-enter "show-queueing.pl --64 $4";
 				type string;
 
@@ -281,6 +294,12 @@ module vyatta-op-policy-qos-v1 {
 				if-feature ingress-map;
 				opd:help "Show all ingress-maps downloaded to the dataplane";
 				opd:on-enter "show-queueing.pl --ingress-maps";
+			}
+
+			opd:command egress-maps {
+				if-feature egress-map;
+				opd:help "Show all egress-maps downloaded to the dataplane";
+				opd:on-enter "show-queueing.pl --egress-maps";
 			}
 		}
 	}

@@ -72,6 +72,7 @@ class Provisioner:
         self._if_updates = []
         self._if_creates = []
         self._in_map_deferred = []
+        self._eg_map_deferred = []
 
         self._obj_delete = []
         self._obj_update = []
@@ -87,6 +88,7 @@ class Provisioner:
         self._check_mark_maps(old_config, new_config)
         self._check_action_groups(old_config, new_config)
         self._check_ingress_maps(old_config, new_config)
+        self._check_egress_maps(old_config, new_config)
 
     def _check_interfaces(self, old_config, new_config):
         """ Check for any changes to interface config """
@@ -212,6 +214,37 @@ class Provisioner:
         """ Return the list of ingress-map names that have been deferred """
         return self._in_map_deferred
 
+    def _check_egress_maps(self, old_config, new_config):
+        """ Check for any changes to egress_maps """
+        for egress_map in new_config.egress_maps.values():
+            old_egress_map = old_config.get_egress_map(egress_map.name)
+            if old_egress_map is not None:
+                # We have an existing egress_map, has it changed?
+                if egress_map != old_egress_map:
+                    # It has changed, delete the old, create the new one if it
+                    # is being used by any vlan or port
+                    self._obj_delete.append(old_egress_map)
+                    if egress_map.bindings:
+                        self._obj_create.append(egress_map)
+            else:
+                # We have a new egress-map - is it being used by any port or
+                # vlan
+                if egress_map.bindings:
+                    self._obj_create.append(egress_map)
+                else:
+                    self._eg_map_deferred.append(egress_map.name)
+
+        for egress_map in old_config.egress_maps.values():
+            new_egress_map = new_config.get_egress_map(egress_map.name)
+            if new_egress_map is None:
+                # Delete the old egress-map
+                self._obj_delete.append(egress_map)
+
+    @property
+    def deferred_egress_maps(self):
+        """ Return the list of egress-map names that have been deferred """
+        return self._eg_map_deferred
+
     def _detach_policy(self, ctrl, interface):
         """
         Detach the QoS policy from the specified interface.
@@ -278,7 +311,7 @@ class Provisioner:
         return cmd_count
 
     def _delete_objects(self, ctrl):
-        """ Delete any old action-groups, ingress-maps or mark-maps """
+        """ Delete any old action-groups,ingress-maps,egress-maps,mark-maps """
         cmd_count = 0
         for dataplane in ctrl.get_dataplanes():
             with dataplane:
@@ -292,7 +325,8 @@ class Provisioner:
 
     def _create_objects(self, ctrl):
         """
-        Create any new or modified action-groups, ingress-maps or mark-maps.
+        Create any new or modified action-groups,ingress-maps,egress-maps or
+        mark-maps.
         """
         cmd_count = 0
         for dataplane in ctrl.get_dataplanes():

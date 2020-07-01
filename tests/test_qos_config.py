@@ -131,6 +131,34 @@ TEST_DATA = {
                     {'id': 'group-3', 'designation': 2}
                 ]
             }
+        ],
+        'vyatta-policy-qos-v1:egress-map': [
+            {
+                'id': 'out-map-1',
+                'designation': [
+                    {'id': 0, 'dscp': 0},
+                    {'id': 1, 'dscp': 1},
+                    {'id': 2, 'dscp': 2},
+                    {'id': 3, 'dscp': 3},
+                    {'id': 4, 'dscp': 4},
+                    {'id': 5, 'dscp': 5},
+                    {'id': 6, 'dscp': 6},
+                    {'id': 7, 'dscp': 7}
+                ]
+            },
+            {
+                'id': 'out-map-2',
+                'designation': [
+                    {'id': 0, 'pcp': 7},
+                    {'id': 1, 'pcp': 6},
+                    {'id': 2, 'pcp': 5},
+                    {'id': 3, 'pcp': 4},
+                    {'id': 4, 'pcp': 3},
+                    {'id': 5, 'pcp': 2},
+                    {'id': 6, 'pcp': 1},
+                    {'id': 7, 'pcp': 0}
+                ]
+            }
         ]
     }
 }
