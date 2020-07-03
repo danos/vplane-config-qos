@@ -143,6 +143,12 @@ class Provisioner:
                 # We have an existing mark-map, has it changed?
                 if mark_map != old_mark_map:
                     # It has so delete the old, and create the new
+                    # Is this mark-map used in any shaper?
+                    for interface in new_config.interfaces.values():
+                        for policy in interface.policies:
+                            if policy.shaper in mark_map.shapers:
+                                if interface not in self._if_updates:
+                                    self._if_updates.append(interface)
                     self._obj_delete.append(old_mark_map)
                     self._obj_create.append(mark_map)
             else:
