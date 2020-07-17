@@ -66,6 +66,9 @@ module vyatta-policy-qos-groupings-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
+	revision 2020-07-17 {
+		description "Add drop-predence field to mark-map";
+	}
 	revision 2020-05-06 {
 		description "Ensure pipe queue used in designation mapping
 			     exists.
@@ -233,6 +236,25 @@ module vyatta-policy-qos-groupings-v1 {
 		type uint32 {
 			range 0..7;
 			configd:help "A value used to classify packets";
+		}
+	}
+
+	grouping drop-precedence {
+		leaf colour {
+			type enumeration {
+				enum "green" {
+					description "Packets marked with drop precedence green";
+					configd:help "Packets marked with drop precedence green";
+				}
+				enum "yellow" {
+					description "Packets marked with drop precedence yellow";
+					configd:help "Packets marked with drop precedence yellow";
+				}
+				enum "red" {
+					description "Packets marked with drop precedence red";
+					configd:help "Packets marked with drop precedence red";
+				}
+			}
 		}
 	}
 
@@ -612,22 +634,7 @@ module vyatta-policy-qos-groupings-v1 {
 				}
 				key "colour";
 				max-elements "3";
-				leaf colour {
-					type enumeration {
-						enum "green" {
-							description "Packets marked with drop precedence green";
-							configd:help "Packets marked with drop precedence green";
-						}
-						enum "yellow" {
-							description "Packets marked with drop precedence yellow";
-							configd:help "Packets marked with drop precedence yellow";
-						}
-						enum "red" {
-							description "Packets marked with drop precedence red";
-							configd:help "Packets marked with drop precedence red";
-						}
-					}
-				}
+				uses drop-precedence;
 				uses wred-base-bytes;
 			}
 			leaf filter-weight {
@@ -1023,6 +1030,15 @@ module vyatta-policy-qos-groupings-v1 {
 		}
 	}
 
+	grouping pcp-mark-non-mandatory {
+		leaf pcp-mark {
+			description "PCP value to mark packet with";
+			configd:help "PCP value to mark packet with";
+			type pcp-value-type;
+			status deprecated;
+		}
+	}
+
 	grouping mark-map-list {
 		list mark-map {
 			if-feature mark-map;
@@ -1070,7 +1086,17 @@ module vyatta-policy-qos-groupings-v1 {
 				leaf designation-type {
 					type designation-type;
 				}
-				uses pcp-mark;
+				uses pcp-mark-non-mandatory;
+				list drop-precedence {
+					description "Drop precedence marked at ingress";
+					configd:help "Drop precedence marked at ingress";
+					must "not(../pcp-mark)" {
+						error-message "If drop-precedence is specified, pcp-mark must be set per drop-precedence";
+					}
+					key "colour";
+					uses drop-precedence;
+					uses pcp-mark;
+				}
 			}
 		}
 	}
