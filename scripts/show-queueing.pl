@@ -751,13 +751,13 @@ sub show_bcm_platform_egress_map {
     my $platdesmap  = $pipe->{'fal-bcm-qos-des2dot1p'};
 
     if ( defined($platdesmap) ) {
-        print "\nDes->PCP\n";
-        for my $i ( 0 .. 7 ) {
+        print "\nDes/DP->PCP\n";
+        for my $i ( 0 .. 23 ) {
             my $map_entry;
 
             $map_entry = $platdesmap->[$i];
 
-            printf " %d -> %d\n", $i, $map_entry->{'pcp'};
+            printf " %d/%d -> %d\n", $i / 3, $i % 3, $map_entry->{'pcp'};
         }
     }
 
@@ -1011,11 +1011,12 @@ sub show_mark_map {
             my @pcp_values = @{ $mark_maps[$map]->{'pcp-values'} };
 
             if ( $mark_maps[$map]->{'map-type'} eq 'designation' ) {
-                print "Designation->PCP mark map for $ifname:\n\n";
+                print "Designation/DP->PCP mark map for $ifname:\n\n";
 
-                print "\nDes->PCP\n";
-                for my $des ( 0 .. 7 ) {
-                    printf " %d -> %d\n", $des, $pcp_values[$des];
+                print "\nDes/DP->PCP\n";
+                for my $entry ( 0 .. 23 ) {
+                    printf " %d/%d -> %d\n", $entry / 3, $entry % 3,
+                      $pcp_values[$entry];
                 }
             } else {
                 print "DSCP->PCP mark map for $ifname: (dscp=d1d2)\n\n";

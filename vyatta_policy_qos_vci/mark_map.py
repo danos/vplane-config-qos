@@ -18,7 +18,7 @@ class MarkMap:
         self._map_dict = map_dict
         self._name = map_dict['id']
         self._dscp_groups = {}
-        self._designations = {}
+        self._des_mappings = {}
         self._shapers = []
 
         dscp_group_list = map_dict.get('dscp-group')
@@ -28,12 +28,25 @@ class MarkMap:
                 pcp_mark = dscp_group['pcp-mark']
                 self._dscp_groups[group_name] = pcp_mark
 
+        # Designation mappings can be either
+        #  Des->PCP
+        #     or
+        #  Des/DP->PCP
         designation_list = map_dict.get('designation')
         if designation_list is not None:
             for designation in designation_list:
                 des = designation['designation-type']
-                pcp_mark = designation['pcp-mark']
-                self._designations[des] = pcp_mark
+                pcp_mark = designation.get('pcp-mark')
+                if pcp_mark is None:
+                    dp_list = designation['drop-precedence']
+                    for drop_prec in dp_list:
+                        dp = drop_prec['colour']
+                        pcp_mark = drop_prec['pcp-mark']
+                        self._des_mappings[des, dp] = pcp_mark
+                else:
+                    self._des_mappings[des, 'green'] = pcp_mark
+                    self._des_mappings[des, 'yellow'] = pcp_mark
+                    self._des_mappings[des, 'red'] = pcp_mark
 
     def __eq__(self, mark_map):
         """ Compare the JSON of two mark-maps """
@@ -75,10 +88,12 @@ class MarkMap:
                 ifname = "ALL"
                 cmd_list.append((path, cmd, ifname))
 
-        if self._designations:
-            for des, pcp_mark in sorted(self._designations.items()):
-                path = f"qos mark-map {self._name} designation {des}"
-                cmd = (f"qos global-object-cmd mark-map {self._name} designation {des} "
+        if self._des_mappings:
+            for des, dp in self._des_mappings:
+                pcp_mark = self._des_mappings[des, dp]
+
+                path = f"qos mark-map {self._name} designation {des} drop-prec {dp}"
+                cmd = (f"qos global-object-cmd mark-map {self._name} designation {des} drop-prec {dp} "
                        f"pcp {pcp_mark}")
                 ifname = "ALL"
                 cmd_list.append((path, cmd, ifname))
