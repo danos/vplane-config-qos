@@ -85,11 +85,57 @@ TEST_DATA = [
         },
         # expected_output
         [
-            ("qos mark-map test123 designation 0",
-             "qos global-object-cmd mark-map test123 designation 0 pcp 5",
+            ("qos mark-map test123 designation 0 drop-prec green",
+             "qos global-object-cmd mark-map test123 designation 0 drop-prec green pcp 5",
              "ALL"),
-            ("qos mark-map test123 designation 1",
-             "qos global-object-cmd mark-map test123 designation 1 pcp 6",
+            ("qos mark-map test123 designation 0 drop-prec yellow",
+             "qos global-object-cmd mark-map test123 designation 0 drop-prec yellow pcp 5",
+             "ALL"),
+            ("qos mark-map test123 designation 0 drop-prec red",
+             "qos global-object-cmd mark-map test123 designation 0 drop-prec red pcp 5",
+             "ALL"),
+            ("qos mark-map test123 designation 1 drop-prec green",
+             "qos global-object-cmd mark-map test123 designation 1 drop-prec green pcp 6",
+             "ALL"),
+            ("qos mark-map test123 designation 1 drop-prec yellow",
+             "qos global-object-cmd mark-map test123 designation 1 drop-prec yellow pcp 6",
+             "ALL"),
+            ("qos mark-map test123 designation 1 drop-prec red",
+             "qos global-object-cmd mark-map test123 designation 1 drop-prec red pcp 6",
+             "ALL")
+        ]
+    ),
+    (
+        # test_input
+        {
+            "id": "test123",
+            "designation": [
+                {
+                    "designation-type": 0,
+                    "drop-precedence": [
+                        {
+                            "colour": "green",
+                            "pcp-mark": 3
+                        }
+                    ]
+                }, {
+                    "designation-type": 1,
+                    "drop-precedence": [
+                        {
+                            "colour": "yellow",
+                            "pcp-mark": 6
+                        }
+                    ]
+                }
+            ]
+        },
+        # expected_output
+        [
+            ("qos mark-map test123 designation 0 drop-prec green",
+             "qos global-object-cmd mark-map test123 designation 0 drop-prec green pcp 3",
+             "ALL"),
+            ("qos mark-map test123 designation 1 drop-prec yellow",
+             "qos global-object-cmd mark-map test123 designation 1 drop-prec yellow pcp 6",
              "ALL")
         ]
     )
