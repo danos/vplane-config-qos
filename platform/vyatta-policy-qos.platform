@@ -20,6 +20,9 @@ vyatta-op-policy-qos-v1:ingress-map,              \
 vyatta-policy-qos-v1:ingress-map,		  \
 vyatta-policy-qos-groupings-v1:ingress-map
 
+[Platform accton.as5916-54xks]
+Yang=vyatta-policy-qos-deviation-unsup-sw-platform-v1.yang
+
 [Platform ufi.s9500-30xs:opennsl]
 Yang=vyatta-policy-qos-deviation-unsup-sw-platform-v1.yang
 
