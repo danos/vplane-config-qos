@@ -11,7 +11,6 @@ The module that defines the QosConfig class.
 
 from vyatta_policy_qos_vci.action import Action
 from vyatta_policy_qos_vci.ingress_map import IngressMap
-from vyatta_policy_qos_vci.egress_map import EgressMap
 from vyatta_policy_qos_vci.interface import Interface
 from vyatta_policy_qos_vci.mark_map import MarkMap
 from vyatta_policy_qos_vci.policy import Policy
@@ -29,7 +28,6 @@ class QosConfig:
         self._mark_maps = {}
         self._global_profiles = {}
         self._ingress_maps = {}
-        self._egress_maps = {}
         self._interfaces = {}
         self._policies = {}
 
@@ -45,9 +43,6 @@ class QosConfig:
 
         in_map_dict = policy_dict.get('vyatta-policy-qos-v1:ingress-map')
         self._process_ingress_map(in_map_dict)
-
-        eg_map_dict = policy_dict.get('vyatta-policy-qos-v1:egress-map')
-        self._process_egress_map(eg_map_dict)
 
         if_dict = config_dict.get('vyatta-interfaces-v1:interfaces')
         self._process_interfaces(if_dict)
@@ -100,7 +95,7 @@ class QosConfig:
                 if_type = key.split(':')[1]
                 for interface in interfaces:
                     int_obj = Interface(if_type, interface, self._policies,
-                                        self._ingress_maps, self._egress_maps)
+                                        self._ingress_maps)
                     self._interfaces[int_obj.ifname] = int_obj
 
     def _process_ingress_map(self, ingress_map_list):
@@ -109,13 +104,6 @@ class QosConfig:
             for ingress_map_dict in ingress_map_list:
                 in_map_obj = IngressMap(ingress_map_dict)
                 self._ingress_maps[in_map_obj.name] = in_map_obj
-
-    def _process_egress_map(self, egress_map_list):
-        """ Process the egress-map list """
-        if egress_map_list is not None:
-            for egress_map_dict in egress_map_list:
-                eg_map_obj = EgressMap(egress_map_dict)
-                self._egress_maps[eg_map_obj.name] = eg_map_obj
 
     @property
     def interfaces(self):
@@ -170,12 +158,3 @@ class QosConfig:
     def get_ingress_map(self, name):
         """ Return the named ingress-map or None """
         return self._ingress_maps.get(name)
-
-    @property
-    def egress_maps(self):
-        """ Return the dictionary of egress-map objects """
-        return self._egress_maps
-
-    def get_egress_map(self, name):
-        """ Return the named egress-map or None """
-        return self._egress_maps.get(name)

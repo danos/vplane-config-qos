@@ -13,7 +13,6 @@ Unit-tests for the interface.py module.
 import pytest
 
 from vyatta_policy_qos_vci.ingress_map import IngressMap
-from vyatta_policy_qos_vci.egress_map import EgressMap
 from vyatta_policy_qos_vci.interface import Interface
 from vyatta_policy_qos_vci.policy import Policy
 
@@ -89,8 +88,7 @@ SIAD_IF_DICT = {
         "port-parameters": {
             "vyatta-interfaces-switch-policy-v1:policy": {
                 "vyatta-policy-qos-v1:qos": "policy-3",
-                "vyatta-policy-qos-v1:ingress-map": "in-map-1",
-                "vyatta-policy-qos-v1:egress-map": "out-map-1"
+                "vyatta-policy-qos-v1:ingress-map": "in-map-1"
             }
         }
     }
@@ -113,8 +111,7 @@ SIAD_VLAN_DICT = {
                             "vlan-id": 20,
                             "vyatta-interfaces-switch-policy-v1:policy": {
                                 "vyatta-policy-qos-v1:qos": "policy-5",
-                                "vyatta-policy-qos-v1:ingress-map": "in-map-2",
-                                "vyatta-policy-qos-v1:egress-map": "out-map-2"
+                                "vyatta-policy-qos-v1:ingress-map": "in-map-2"
                             }
                         },
                     ]
@@ -547,45 +544,14 @@ IN_MAP_2_DICT = {
     'system-default': 1
 }
 
-OUT_MAP_1_DICT = {
-    'id': 'out-map-1',
-    'designation': [
-        {'id': 0, 'dscp': 0},
-        {'id': 1, 'dscp': 1},
-        {'id': 2, 'dscp': 2},
-        {'id': 3, 'dscp': 3},
-        {'id': 4, 'dscp': 4},
-        {'id': 5, 'dscp': 5},
-        {'id': 6, 'dscp': 6},
-        {'id': 7, 'dscp': 7}
-    ]
-}
-
-OUT_MAP_2_DICT = {
-    'id': 'out-map-2',
-    'designation': [
-        {'id': 0, 'pcp': 7},
-        {'id': 1, 'pcp': 6},
-        {'id': 2, 'pcp': 5},
-        {'id': 3, 'pcp': 4},
-        {'id': 4, 'pcp': 3},
-        {'id': 5, 'pcp': 2},
-        {'id': 6, 'pcp': 1},
-        {'id': 7, 'pcp': 0}
-    ]
-}
-
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
 def test_interface(test_input, expected_result):
     """ Unit-test the interface class with simple configs """
     ingress_map_dict = {}
     ingress_map_dict['in-map-1'] = IngressMap(IN_MAP_1_DICT)
     ingress_map_dict['in-map-2'] = IngressMap(IN_MAP_2_DICT)
-    egress_map_dict = {}
-    egress_map_dict['out-map-1'] = EgressMap(OUT_MAP_1_DICT)
-    egress_map_dict['out-map-2'] = EgressMap(OUT_MAP_2_DICT)
     if_type, if_dict = test_input
-    interface = Interface(if_type, if_dict, QOS_POLICY_DICT, ingress_map_dict, egress_map_dict)
+    interface = Interface(if_type, if_dict, QOS_POLICY_DICT, ingress_map_dict)
 
     assert interface is not None
     assert interface.commands() == expected_result
