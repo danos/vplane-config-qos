@@ -1,3 +1,35 @@
+vplane-config-qos (4.0.0) unstable; urgency=medium
+
+  [ Brian Russell ]
+  * Ensure pipe queue used in designation map exists
+
+  [ Alan Dewar ]
+  * VCI: stop QoS VCI crashing with incomplete config (Fixes: VRVDR-50967)
+  * UT: update test_profile.py
+
+  [ Brian Russell ]
+  * Don't send all action group json in one field
+
+  [ Alan Dewar ]
+  * VCI: support decimal fractional bandwidths (Fixes: VRVDR-51152)
+
+  [ Brian Russell ]
+  * Reload config on process restart
+
+  [ Alan Dewar ]
+  * VCI: check ingress-maps have their map-type set (Fixes: VRVDR-51554)
+
+  [ Robert Shearman ]
+  * platform: block QoS config on DANOS AS5916-54XKS platform
+
+  [ Brian Russell ]
+  * Reinstall policies when mark map changed
+
+  [ Ramkumar Ganapathysubramanian ]
+  * CLI: Added support for egress-map in Policy command.
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Tue, 28 Jul 2020 13:03:25 +0100
+
 vplane-config-qos (3.1.0) unstable; urgency=medium
 
   [ Brian Russell ]
