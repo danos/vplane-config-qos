@@ -581,6 +581,18 @@ module vyatta-policy-qos-v1 {
 					}
 					configd:help "External buffer congestion threshold";
 				}
+				leaf priority-local-designation {
+					if-feature ingress-map;
+					type qos-groupings:designation-type;
+					description "Designation for high priority (DSCP value >= 48) locally generated traffic";
+					configd:help "Designation for high priority (DSCP value >= 48) locally generated traffic";
+					must "../../../ingress-map" {
+						error-message "Priority-local designation requires the use of an ingress map";
+					}
+					must "not(../../../ingress-map/dscp-group/designation = current()) and not(../../../ingress-map/pcp/designation = current())" {
+						error-message "The priority-local designation may not appear in an ingress-map";
+					}
+				}
 			}
 		}
 		list ingress-map {
