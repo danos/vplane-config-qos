@@ -171,6 +171,23 @@ class Provisioner:
         elif old_config.plat_buf_thresh is not None:
             self._obj_delete.append(old_config.plat_buf_thresh)
 
+        lp_des_changed = False
+        if new_config.plat_lp_des is not None:
+            if new_config.plat_lp_des != old_config.plat_lp_des:
+                self._obj_create.append(new_config.plat_lp_des)
+                lp_des_changed = True
+        elif old_config.plat_lp_des is not None:
+            self._obj_delete.append(old_config.plat_lp_des)
+            lp_des_changed = True
+
+        # If the local prio designator changes, then all policies need
+        # an update
+        if lp_des_changed:
+            for interface in new_config.interfaces.values():
+                if (interface not in self._if_creates and
+                   interface not in self._if_updates):
+                    self._if_updates.append(interface)
+
     def _check_action_groups(self, old_config, new_config):
         """ Check for any changes to action-groups """
         for action_group in new_config.action_groups.values():

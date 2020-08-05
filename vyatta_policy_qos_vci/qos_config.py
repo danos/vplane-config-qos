@@ -17,6 +17,8 @@ from vyatta_policy_qos_vci.mark_map import MarkMap
 from vyatta_policy_qos_vci.policy import Policy
 from vyatta_policy_qos_vci.profile import Profile
 from vyatta_policy_qos_vci.platform import PlatformBufferThreshold
+from vyatta_policy_qos_vci.platform import PlatformLPDes
+
 
 class QosConfig:
     """
@@ -34,6 +36,7 @@ class QosConfig:
         self._interfaces = {}
         self._policies = {}
         self._plat_buf_thresh = None
+        self._plat_lp_des = None
 
         policy_dict = config_dict.get('vyatta-policy-v1:policy')
         if policy_dict is None:
@@ -74,9 +77,12 @@ class QosConfig:
         # Process platform params
         platform = qos_dict.get('platform')
         if platform is not None:
-            buf_thresh =  platform.get('buffer-threshold')
+            buf_thresh = platform.get('buffer-threshold')
             if buf_thresh is not None:
                 self._plat_buf_thresh = PlatformBufferThreshold(buf_thresh)
+            lp_des = platform.get('priority-local-designation')
+            if lp_des is not None:
+                self._plat_lp_des = PlatformLPDes(lp_des)
 
         # Process mark-maps
         mark_maps_list = qos_dict.get('mark-map')
@@ -157,6 +163,11 @@ class QosConfig:
     def plat_buf_thresh(self):
         """ Return the platform buffer threshold """
         return self._plat_buf_thresh
+
+    @property
+    def plat_lp_des(self):
+        """ Return the platform local priority designator """
+        return self._plat_lp_des
 
     @property
     def mark_maps(self):

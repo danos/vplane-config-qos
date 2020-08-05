@@ -47,3 +47,42 @@ class PlatformBufferThreshold:
             cmd_list.append((path, cmd, ifname))
 
         return cmd_list
+
+
+class PlatformLPDes:
+    """
+    Platform wide local priority designator parameter
+    """
+    def __init__(self, lp_des):
+        """ Create an object """
+        self._local_prio_des = lp_des
+
+    @property
+    def designation(self):
+        """ Return the value of the param """
+        return self._local_prio_des
+
+    def __eq__(self, lp_des):
+        if lp_des is None:
+            return False
+        return self._local_prio_des == lp_des.designation
+
+    def delete_cmd(self):
+        """ Generate the necessary path and command to delete this object """
+        cmd_list = []
+        path = f"qos lp-des"
+        cmd = f"qos global-object-cmd lp-des delete"
+        ifname = "ALL"
+        cmd_list.append((path, cmd, ifname))
+        return cmd_list
+
+    def commands(self):
+        cmd_list = []
+
+        if self._local_prio_des is not None:
+            path = f"qos lp-des"
+            cmd = f"qos global-object-cmd lp-des {self._local_prio_des}"
+            ifname = "ALL"
+            cmd_list.append((path, cmd, ifname))
+
+        return cmd_list
