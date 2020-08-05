@@ -16,6 +16,7 @@ from vyatta_policy_qos_vci.interface import Interface
 from vyatta_policy_qos_vci.mark_map import MarkMap
 from vyatta_policy_qos_vci.policy import Policy
 from vyatta_policy_qos_vci.profile import Profile
+from vyatta_policy_qos_vci.platform import PlatformBufferThreshold
 
 class QosConfig:
     """
@@ -32,6 +33,7 @@ class QosConfig:
         self._egress_maps = {}
         self._interfaces = {}
         self._policies = {}
+        self._plat_buf_thresh = None
 
         policy_dict = config_dict.get('vyatta-policy-v1:policy')
         if policy_dict is None:
@@ -68,6 +70,13 @@ class QosConfig:
         """
         if qos_dict is None:
             return
+
+        # Process platform params
+        platform = qos_dict.get('platform')
+        if platform is not None:
+            buf_thresh =  platform.get('buffer-threshold')
+            if buf_thresh is not None:
+                self._plat_buf_thresh = PlatformBufferThreshold(buf_thresh)
 
         # Process mark-maps
         mark_maps_list = qos_dict.get('mark-map')
@@ -143,6 +152,11 @@ class QosConfig:
     def get_policy(self, name):
         """ Return the named policy object or None """
         return self._policies.get(name)
+
+    @property
+    def plat_buf_thresh(self):
+        """ Return the platform buffer threshold """
+        return self._plat_buf_thresh
 
     @property
     def mark_maps(self):

@@ -82,6 +82,7 @@ class Provisioner:
         old_config = QosConfig(old)
         new_config = QosConfig(new)
 
+        self._check_platform_params(old_config, new_config)
         self._check_interfaces(old_config, new_config)
         self._check_policies(old_config, new_config)
         self._check_global_profiles(old_config, new_config)
@@ -162,6 +163,13 @@ class Provisioner:
             if new_mark_map is None:
                 # Delete the old mark-map
                 self._obj_delete.append(mark_map)
+
+    def _check_platform_params(self, old_config, new_config):
+        """ Check for any changes to platform params """
+        if new_config.plat_buf_thresh is not None:
+            self._obj_create.append(new_config.plat_buf_thresh)
+        elif old_config.plat_buf_thresh is not None:
+            self._obj_delete.append(old_config.plat_buf_thresh)
 
     def _check_action_groups(self, old_config, new_config):
         """ Check for any changes to action-groups """
