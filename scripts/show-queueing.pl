@@ -578,12 +578,11 @@ sub show_ingress_map {
 
         for my $entry ( @{ $map->{map} } ) {
             my $designation = $entry->{designation};
-            my $dp          = $entry->{DPs}[0]->{DP};
-
-            my $x    = Math::BigInt->new( $entry->{DPs}[0]->{'pcp/mask'} );
-            my $mask = $x->as_int();
 
             for my $dp ( @{ $entry->{DPs} } ) {
+                my $x    = Math::BigInt->new( $dp->{'pcp/mask'} );
+                my $mask = $x->as_int();
+
                 for my $i ( 0 .. $max_entries ) {
                     if ( $mask & ( 1 << $i ) ) {
                         $values[$i]->{designator} = $designation;
