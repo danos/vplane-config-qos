@@ -7,7 +7,7 @@ vyatta-policy-qos-groupings-v1:byte-limits,       \
 vyatta-op-policy-qos-v1:show-platform,            \
 vyatta-op-policy-qos-v1:ingress-map,              \
 vyatta-policy-qos-v1:ingress-map,		  \
-vyatta-policy-qos-groupings-v1:ingress-map \
+vyatta-policy-qos-groupings-v1:ingress-map,	  \
 vyatta-op-policy-qos-v1:egress-map,              \
 vyatta-policy-qos-v1:egress-map
 
