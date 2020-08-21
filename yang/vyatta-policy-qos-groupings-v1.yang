@@ -66,6 +66,12 @@ module vyatta-policy-qos-groupings-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
+	revision 2020-08-27 {
+		description "Add a Qos specific bandwidth-suffix so we only
+			     use the new range and auto default in the
+			     queueing paths.
+			     Add new range types for 64bit support";
+	}
 	revision 2020-07-17 {
 		description "Add drop-predence field to mark-map";
 	}
@@ -149,6 +155,31 @@ module vyatta-policy-qos-groupings-v1 {
 
 	feature byte-limits {
 		description "Queue limit and WRED thresholds in bytes";
+	}
+
+	typedef bandwidth-auto-suffix {
+		type string {   /* Number followed by suffix */
+			pattern '((100|([1-9][0-9](\.([0-9]+))?))[gG][iI]?(bit|bps)?)|'
+				+ '([0-9]+(\.([0-9]+))?(([KMBkm][iI]?)?(bit|bps))?)|'
+                                + '(auto)';
+			configd:pattern-help "<<number><suffix>>
+   Suffixes are either 'bit' for bits-per-second or 'bps' for bytes-per-second.
+   These can be preceded by a decimal (K,M,G) or binary (Ki,Mi,Gi)
+   multiplier. No suffix implies Kbit (1000 bits per second).
+";
+		}
+	}
+
+	typedef bandwidth-suffix {
+		type string {   /* Number followed by suffix */
+			pattern '((100|([1-9][0-9](\.([0-9]+))?))[gG][iI]?(bit|bps)?)|'
+				+ '([0-9]+(\.([0-9]+))?(([KMBkm][iI]?)?(bit|bps))?)';
+			configd:pattern-help "<<number><suffix>>
+   Suffixes are either 'bit' for bits-per-second or 'bps' for bytes-per-second.
+   These can be preceded by a decimal (K,M,G) or binary (Ki,Mi,Gi)
+   multiplier. No suffix implies Kbit (1000 bits per second).
+";
+		}
 	}
 
 	typedef name {
@@ -333,7 +364,7 @@ module vyatta-policy-qos-groupings-v1 {
 	grouping bandwidth-combo {
 		leaf bandwidth {
 			type union {
-				type npf:bandwidth-suffix;
+				type bandwidth-auto-suffix;
 				type bandwidth-percent;
 			}
 			default "100%";
@@ -658,7 +689,7 @@ module vyatta-policy-qos-groupings-v1 {
 
 		uses burst-combo;
 		leaf bandwidth {
-			type npf:bandwidth-suffix;
+			type bandwidth-suffix;
 			description "Bandwidth limit";
 			configd:help "Bandwidth limit";
 		}
@@ -810,7 +841,7 @@ module vyatta-policy-qos-groupings-v1 {
 				}
 				uses bandwidth-combo {
 					refine bandwidth {
-						default "10Gbit";
+						default "auto";
 					}
 				}
 				uses burst-combo;
@@ -934,6 +965,10 @@ module vyatta-policy-qos-groupings-v1 {
 			description "The rate at which tokens are added to the token bucket";
 			type uint32;
 		}
+		leaf token-bucket-rate-64 {
+			description "The rate at which tokens are added to the token bucket";
+			type uint64;
+		}
 		leaf token-bucket-size {
 			description "The size of the token bucket";
 			type uint32;
@@ -947,6 +982,9 @@ module vyatta-policy-qos-groupings-v1 {
 			}
 			leaf rate {
 				type uint32;
+			}
+			leaf rate-64 {
+				type uint64;
 			}
 		}
 		leaf traffic-class-period {

@@ -16,8 +16,8 @@ use Vyatta::Rate qw(parse_rate);
 use Vyatta::QoS::Debug;
 use Readonly;
 
-Readonly my $MAX_BANDWIDTH => 10_000_000_000 / 8; # 10Gbit in bytes per second
-Readonly my $MIN_BANDWIDTH => 1000;               # 8Kbit or 1K bytes per second
+Readonly my $MAX_BANDWIDTH => 100_000_000_000/8;  # 100Gbit in bytes per second
+Readonly my $MIN_BANDWIDTH => 1000;    # 8Kbit or 1K bytes per second
 
 # Default burst size = 4ms in bytes at rate
 use constant DEFAULT_BURST_MS => 4;
@@ -38,14 +38,14 @@ sub new {
     my $bps = $MAX_BANDWIDTH;
     if ( $bandwidth =~ /^([0-9]*\.?[0-9]+)%$/ ) {
         $percent = $1;
-        $bps = int( ( $parent->{bps} * $percent ) / 100. )
+        $bps     = int( ( $parent->{bps} * $percent ) / 100. )
           unless !defined($parent);
-    } else {
+    } elsif ( $bandwidth ne 'auto' ) {
         $bps = int( parse_rate($bandwidth) / 8 );
     }
 
     if ( $bps > $MAX_BANDWIDTH ) {
-        invalid 'Bandwidth cannot be higher than 10Gbit';
+        invalid 'Bandwidth cannot be higher than 100Gbits';
     }
     if ( $bps < $MIN_BANDWIDTH ) {
         invalid 'Bandwidth cannot be lower than 8Kbit';

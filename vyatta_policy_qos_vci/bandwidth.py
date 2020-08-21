@@ -32,6 +32,7 @@ class Bandwidth:
         self._burst_msec = None
         self._bps = 0
         self._percent = None
+        self._auto = False
 
         if config_dict is not None:
             bandwidth = config_dict.get('bandwidth')
@@ -45,7 +46,13 @@ class Bandwidth:
             if parent_bw_obj is not None:
                 self._bps = int(parent_bw_obj.bps * int(search_obj.group(1)) / 100)
         else:
-            self._bps = parse_bandwidth(bandwidth)
+            if parent_bw_obj is None:
+                if bandwidth == 'auto':
+                    self._auto = True
+                else:
+                    self._bps = parse_bandwidth(bandwidth)
+            else:
+                self._bps = parse_bandwidth(bandwidth)
 
         if self._burst is None:
             self._burst_msec = DEFAULT_BURST_MS
@@ -68,7 +75,10 @@ class Bandwidth:
     def commands(self, cmd_prefix, period):
         """ Return the required command strings for this bandwidth object """
         if self._percent is None:
-            cmd = f"{cmd_prefix} rate {self._bps}"
+            if self._auto:
+                cmd = f"{cmd_prefix} auto"
+            else:
+                cmd = f"{cmd_prefix} rate {self._bps}"
         else:
             cmd = f"{cmd_prefix} percent {self._percent}"
 

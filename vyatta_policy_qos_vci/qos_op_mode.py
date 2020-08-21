@@ -221,7 +221,8 @@ def convert_tc_rates(tc_rates_in):
     for tc_rate in tc_rates_in:
         tc_rate_out = {
             'traffic-class': tc_id,
-            'rate': tc_rate
+            'rate': (tc_rate & 0xFFFFFFFF),
+            'rate-64': f"{tc_rate}"
         }
         tc_rates_out.append(tc_rate_out)
         tc_id += 1
@@ -504,7 +505,9 @@ def convert_pipe(cmd, pipe_in, pipe_id, profile_name):
         # vyatta-policy-qos-groupings-v1.yang hence we need to specify
         # their namespace.
         pipe_out['vyatta-policy-qos-groupings-v1:token-bucket-rate'] = (
-            pipe_in['params']['tb_rate'])
+            (pipe_in['params']['tb_rate'] & 0xFFFFFFFF))
+        pipe_out['vyatta-policy-qos-groupings-v1:token-bucket-rate-64'] = (
+            f"{pipe_in['params']['tb_rate']}")
         pipe_out['vyatta-policy-qos-groupings-v1:token-bucket-size'] = (
             pipe_in['params']['tb_size'])
         pipe_out['vyatta-policy-qos-groupings-v1:traffic-class-period'] = (
