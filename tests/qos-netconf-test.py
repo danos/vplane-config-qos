@@ -116,6 +116,8 @@ def parse_traffic_class_rates(tc_rates_elem, indent, formatted):
     tc = tc_rates_elem.find(QOS_URN + "traffic-class")
     rate = tc_rates_elem.find(QOS_URN + "rate")
     print "{}traffic-class: {}, rate: {}".format(spaces, tc, rate)
+    rate = tc_rates_elem.find(QOS_URN + "rate-64")
+    print "{}traffic-class: {}, rate: {}".format(spaces, tc, rate)
 
 def parse_weighted_round_robin_weights(wrr_weights_elem, indent, formatted):
     """ """
@@ -135,6 +137,7 @@ def parse_token_bucket_rate(tb_rate_elem, indent, formatted):
     spaces = "".ljust(indent)
     tb_rate = tb_rate_elem.text
     print "{}token-bucket-rate: {}".format(spaces, tb_rate)
+    print "{}token-bucket-rate-64: {}".format(spaces, tb_rate)
 
 def parse_token_bucket_size(tb_size_elem, indent, formatted):
     """ """

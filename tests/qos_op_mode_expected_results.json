@@ -11,18 +11,22 @@
 				    "vyatta-policy-qos-groupings-v1:traffic-class-rates" : [
 					{
 					    "rate" : 12500000,
+					    "rate-64" : "12500000",
 					    "traffic-class" : 0
 					},
 					{
 					    "traffic-class" : 1,
-					    "rate" : 12500000
+					    "rate" : 12500000,
+					    "rate-64" : "12500000"
 					},
 					{
 					    "rate" : 12500000,
+					    "rate-64" : "12500000",
 					    "traffic-class" : 2
 					},
 					{
 					    "rate" : 12500000,
+					    "rate-64" : "12500000",
 					    "traffic-class" : 3
 					}
 				    ],
@@ -631,6 +635,7 @@
 				    "qos-profile" : "profile-2",
 				    "vyatta-policy-qos-groupings-v1:traffic-class-period" : 10,
 				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 12500000,
+				    "vyatta-policy-qos-groupings-v1:token-bucket-rate-64" : "12500000",
 				    "vyatta-policy-qos-groupings-v1:token-bucket-size" : 1542,
 				    "vyatta-policy-qos-groupings-v1:weighted-round-robin-weights" : [
 					{
@@ -895,6 +900,7 @@
 				    "qos-profile" : "profile-1",
 				    "vyatta-policy-qos-groupings-v1:traffic-class-period" : 10,
 				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 37500000,
+				    "vyatta-policy-qos-groupings-v1:token-bucket-rate-64" : "37500000",
 				    "vyatta-policy-qos-groupings-v1:token-bucket-size" : 1542,
 				    "vyatta-policy-qos-groupings-v1:weighted-round-robin-weights" : [
 					{
@@ -1029,18 +1035,22 @@
 				    "vyatta-policy-qos-groupings-v1:traffic-class-rates" : [
 					{
 					    "traffic-class" : 0,
-					    "rate" : 37500000
+					    "rate" : 37500000,
+					    "rate-64" : "37500000"
 					},
 					{
 					    "traffic-class" : 1,
-					    "rate" : 37500000
+					    "rate" : 37500000,
+					    "rate-64" : "37500000"
 					},
 					{
 					    "traffic-class" : 2,
-					    "rate" : 37500000
+					    "rate" : 37500000,
+					    "rate-64" : "37500000"
 					},
 					{
 					    "rate" : 37500000,
+					    "rate-64" : "37500000",
 					    "traffic-class" : 3
 					}
 				    ],
@@ -1651,6 +1661,7 @@
 				    "qos-profile" : "profile-2",
 				    "vyatta-policy-qos-groupings-v1:traffic-class-period" : 10,
 				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 25000000,
+				    "vyatta-policy-qos-groupings-v1:token-bucket-rate-64" : "25000000",
 				    "vyatta-policy-qos-groupings-v1:token-bucket-size" : 1542,
 				    "vyatta-policy-qos-groupings-v1:weighted-round-robin-weights" : [
 					{
@@ -1785,18 +1796,22 @@
 				    "vyatta-policy-qos-groupings-v1:traffic-class-rates" : [
 					{
 					    "rate" : 25000000,
+					    "rate-64" : "25000000",
 					    "traffic-class" : 0
 					},
 					{
 					    "traffic-class" : 1,
-					    "rate" : 25000000
+					    "rate" : 25000000,
+					    "rate-64" : "25000000"
 					},
 					{
 					    "rate" : 25000000,
+					    "rate-64" : "25000000",
 					    "traffic-class" : 2
 					},
 					{
 					    "rate" : 25000000,
+					    "rate-64" : "25000000",
 					    "traffic-class" : 3
 					}
 				    ],
@@ -2859,23 +2874,28 @@
 					}
 				    ],
 				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 62500000,
+				    "vyatta-policy-qos-groupings-v1:token-bucket-rate-64" : "62500000",
 				    "qos-profile" : "default-profile",
 				    "pipe" : 0,
 				    "vyatta-policy-qos-groupings-v1:traffic-class-rates" : [
 					{
 					    "traffic-class" : 0,
-					    "rate" : 62500000
+					    "rate" : 62500000,
+					    "rate-64" : "62500000"
 					},
 					{
 					    "rate" : 62500000,
+					    "rate-64" : "62500000",
 					    "traffic-class" : 1
 					},
 					{
 					    "rate" : 62500000,
+					    "rate-64" : "62500000",
 					    "traffic-class" : 2
 					},
 					{
 					    "rate" : 62500000,
+					    "rate-64" : "62500000",
 					    "traffic-class" : 3
 					}
 				    ],
@@ -3938,22 +3958,27 @@
 				    "vyatta-policy-qos-groupings-v1:traffic-class-period" : 10,
 				    "qos-class" : 1,
 				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 37500000,
+				    "vyatta-policy-qos-groupings-v1:token-bucket-rate-64" : "37500000",
 				    "pipe" : 1,
 				    "vyatta-policy-qos-groupings-v1:traffic-class-rates" : [
 					{
 					    "rate" : 37500000,
+					    "rate-64" : "37500000",
 					    "traffic-class" : 0
 					},
 					{
 					    "rate" : 37500000,
+					    "rate-64" : "37500000",
 					    "traffic-class" : 1
 					},
 					{
 					    "rate" : 37500000,
+					    "rate-64" : "37500000",
 					    "traffic-class" : 2
 					},
 					{
 					    "rate" : 37500000,
+					    "rate-64" : "37500000",
 					    "traffic-class" : 3
 					}
 				    ]
@@ -4695,24 +4720,29 @@
 				    "vyatta-policy-qos-groupings-v1:traffic-class-rates" : [
 					{
 					    "traffic-class" : 0,
-					    "rate" : 37500000
+					    "rate" : 37500000,
+					    "rate-64" : "37500000"
 					},
 					{
 					    "rate" : 37500000,
+					    "rate-64" : "37500000",
 					    "traffic-class" : 1
 					},
 					{
 					    "rate" : 37500000,
+					    "rate-64" : "37500000",
 					    "traffic-class" : 2
 					},
 					{
 					    "traffic-class" : 3,
-					    "rate" : 37500000
+					    "rate" : 37500000,
+					    "rate-64" : "37500000"
 					}
 				    ],
 				    "qos-profile" : "profile-3",
 				    "pipe" : 2,
-				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 37500000
+				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 37500000,
+				    "vyatta-policy-qos-groupings-v1:token-bucket-rate-64" : "37500000"
 				}
 			    ],
 			    "subport" : 0,

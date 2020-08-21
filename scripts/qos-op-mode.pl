@@ -109,6 +109,7 @@ sub convert_tc_rates {
 
         $tc_rate_out{'traffic-class'} = $tc_id;
         $tc_rate_out{rate} = $tc;
+        $tc_rate_out{'rate-64'} = "$tc";
         push @tc_rates_out, \%tc_rate_out;
         $tc_id += 1;
     }
@@ -318,6 +319,7 @@ sub convert_pipe {
     $pipe_out{'qos-profile'} = $profile_name;
     if ( $cmd eq 'all' ) {
         $pipe_out{'token-bucket-rate'}    = $pipe_in->{params}->{tb_rate};
+        $pipe_out{'token-bucket-rate-64'} = "$pipe_in->{params}->{tb_rate}";
         $pipe_out{'token-bucket-size'}    = $pipe_in->{params}->{tb_size};
         $pipe_out{'traffic-class-period'} = $pipe_in->{params}->{tc_period};
         $pipe_out{'traffic-class-rates'} =

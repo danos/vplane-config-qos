@@ -54,6 +54,11 @@ module vyatta-policy-qos-augment-v1 {
 
 		 This module provides the Quality of Service policy configuration.";
 
+	revision 2020-08-27 {
+		description "Change bandwidth default to auto so the platform
+			     can determine the maximum range.";
+	}
+
 	revision 2017-09-15 {
 		description "Initial revision for version 1.";
 	}
@@ -72,7 +77,7 @@ module vyatta-policy-qos-augment-v1 {
 					}
 				}
 				refine profile/bandwidth {
-					default "10Gbit";
+					default "auto";
 				}
 			}
 		}

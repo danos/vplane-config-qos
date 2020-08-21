@@ -84,8 +84,9 @@ module vyatta-policy-qos-v1 {
 
 		 This module implements vyatta-policy-qos-v1.";
 
-	revision 2020-08-14 {
-		description "Add designator CLI for Local Priority Queue";
+	revision 2020-08-27 {
+		description "Removed default bandwidth from a profile.
+			     Add designator CLI for Local Priority Queue";
 	}
 
 	revision 2020-06-07 {
@@ -568,9 +569,6 @@ module vyatta-policy-qos-v1 {
 					must "not(current() = /policy:policy/qos/name/shaper/profile/id)" {
 						error-message "Clash between global and local profile name";
 					}
-				}
-				refine profile/bandwidth {
-					default "10Gbit";
 				}
 			}
 			uses queuing-state;
