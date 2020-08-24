@@ -84,6 +84,10 @@ module vyatta-policy-qos-v1 {
 
 		 This module implements vyatta-policy-qos-v1.";
 
+	revision 2020-08-14 {
+		description "Add designator CLI for Local Priority Queue";
+	}
+
 	revision 2020-06-07 {
 		description "Allow egress-maps to be attached directly to
 			     dataplane interfaces and VIFs.";
