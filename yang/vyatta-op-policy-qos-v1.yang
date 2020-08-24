@@ -60,7 +60,7 @@ module vyatta-op-policy-qos-v1 {
 
 		 YANG module for policy QoS operational mode commands.";
 
-	revision 2020-04-28 {
+	revision 2020-04-29 {
 		description "Give QoS show commands privilege for operators
 			    as they access a socket to the dataplane";
 	}
