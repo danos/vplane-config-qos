@@ -460,8 +460,8 @@ sub convert_npf_rule {
             $rule_out{'exceeded-bytes'}   = $policer->{'exceed-bytes'};
         }
 
-        $rule_out{packets} = $rule_in->{packets};
-        $rule_out{bytes}   = $rule_in->{bytes};
+        $rule_out{packets} = "$rule_in->{packets}";
+        $rule_out{bytes}   = "$rule_in->{bytes}";
 
         push @rules_out, \%rule_out;
     }

@@ -618,8 +618,8 @@ def convert_npf_rule(rules_in):
         rule_operation = rule_in['operation']
         rule_out = {
             'rule-number': "{}".format(rule_id),
-            'packets': rule_in['packets'],
-            'bytes': rule_in['bytes']
+            'packets': f"{rule_in['packets']}",
+            'bytes': f"{rule_in['bytes']}"
         }
 
         search_obj = re.search(r'tag\(([0-9]+)\)', rule_operation, flags=0)
