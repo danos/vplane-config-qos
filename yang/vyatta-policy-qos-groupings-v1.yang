@@ -67,7 +67,9 @@ module vyatta-policy-qos-groupings-v1 {
 		 This module provides common groupings for Quality of Service.";
 
 	revision 2020-08-27 {
-		description "Add a Qos specific bandwidth-suffix so we only
+		description "Allow the bandwidth parameter to accept
+			     single digit numbers.
+			     Add a Qos specific bandwidth-suffix so we only
 			     use the new range and auto default in the
 			     queueing paths.
 			     Add new range types for 64bit support";
@@ -159,7 +161,7 @@ module vyatta-policy-qos-groupings-v1 {
 
 	typedef bandwidth-auto-suffix {
 		type string {   /* Number followed by suffix */
-			pattern '((100|([1-9][0-9](\.([0-9]+))?))[gG][iI]?(bit|bps)?)|'
+			pattern '((100|([0-9]+(\.([0-9]+))?))[gG][iI]?(bit|bps)?)|'
 				+ '([0-9]+(\.([0-9]+))?(([KMBkm][iI]?)?(bit|bps))?)|'
                                 + '(auto)';
 			configd:pattern-help "<<number><suffix>>
@@ -172,7 +174,7 @@ module vyatta-policy-qos-groupings-v1 {
 
 	typedef bandwidth-suffix {
 		type string {   /* Number followed by suffix */
-			pattern '((100|([1-9][0-9](\.([0-9]+))?))[gG][iI]?(bit|bps)?)|'
+			pattern '((100|([0-9]+(\.([0-9]+))?))[gG][iI]?(bit|bps)?)|'
 				+ '([0-9]+(\.([0-9]+))?(([KMBkm][iI]?)?(bit|bps))?)';
 			configd:pattern-help "<<number><suffix>>
    Suffixes are either 'bit' for bits-per-second or 'bps' for bytes-per-second.

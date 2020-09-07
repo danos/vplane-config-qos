@@ -86,11 +86,6 @@ module vyatta-policy-qos-v1 {
 			     Add designator CLI for Local Priority Queue";
 	}
 
-	revision 2020-06-07 {
-		description "Allow egress-maps to be attached directly to
-			     dataplane interfaces and VIFs.";
-	}
-
 	revision 2020-03-26 {
 		description "Allow ingress-maps to be attached directly to
 			     dataplane interfaces and VIFs.";
