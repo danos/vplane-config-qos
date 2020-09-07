@@ -1,3 +1,10 @@
+vplane-config-qos (4.0.4) unstable; urgency=medium
+
+  [ Alan Dewar ]
+  * NPF rule "bytes" and "packets" are 64-bit counters (Fixes: VRVDR-52905)
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Mon, 07 Sep 2020 12:27:11 +0100
+
 vplane-config-qos (4.0.3) unstable; urgency=medium
 
   [ Alan Dewar ]
