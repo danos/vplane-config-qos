@@ -837,8 +837,8 @@
 					    {
 						"qos-class" : "1",
 						"rule-number" : "1",
-						"packets" : 0,
-						"bytes" : 0
+						"packets" : "0",
+						"bytes" : "0"
 					    }
 					],
 					"direction" : "out",
@@ -2440,20 +2440,20 @@
 					"vyatta-policy-qos-groupings-v1:rule" : [
 					    {
 						"qos-class" : "2",
-						"packets" : 0,
+						"packets" : "0",
 						"exceeded-packets" : "0",
 						"exceeded-bytes" : "0",
 						"rule-number" : "2",
 						"action-group" : "act-grp-1",
-						"bytes" : 0
+						"bytes" : "0"
 					    },
 					    {
 						"exceeded-bytes" : "0",
 						"exceeded-packets" : "0",
 						"rule-number" : "1",
-						"bytes" : 0,
+						"bytes" : "0",
 						"qos-class" : "1",
-						"packets" : 0
+						"packets" : "0"
 					    }
 					],
 					"ifindex" : "8"
