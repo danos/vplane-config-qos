@@ -1,3 +1,17 @@
+vplane-config-qos (5.0.1) unstable; urgency=medium
+
+  [ aroberts ]
+  * Add missing revision comment for Local Priority Queue CLI
+  * Add 100G bandwidth support
+
+  [ Alan Dewar ]
+  * NPF rule "bytes" and "packets" are 64-bit counters (Fixes: VRVDR-52905)
+
+  [ aroberts ]
+  * Allow number range 1-100 for input bandwidths
+
+ -- Alan Dewar <alan.dewar@att.com>  Mon, 19 Oct 2020 15:00:37 +0100
+
 vplane-config-qos (5.0.0) unstable; urgency=medium
 
   [ Brian Russell ]
