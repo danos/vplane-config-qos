@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019-2020, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -40,8 +40,15 @@ class Shaper:
             if mark_map is not None:
                 mark_map.shapers.append(self)
 
-        if self._period is None:
-            self._period = PERIOD_DEFAULT_MS
+        if self._period is not None:
+            # period is specified in microseconds
+            self._period = int(self._period) * 1000
+        else:
+            self._period = shaper_dict.get('micro-seconds-period')
+            if self._period is not None:
+                self._period = int(self._period)
+            else:
+                self._period = PERIOD_DEFAULT_MS * 1000
 
         class_list = shaper_dict.get('class')
         if class_list is not None:

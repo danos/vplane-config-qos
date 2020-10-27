@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019-2020, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -32,7 +32,7 @@ TEST_DATA = [
         },
         # expected_results
         [
-            "qos lo subport 0 rate 1250000000 msec 4 period 40",
+            "qos lo subport 0 rate 1250000000 msec 4 period 40000",
             "qos lo subport 0 queue 0 percent 100 msec 4",
             "qos lo param subport 0 0 limit packets 64",
             "qos lo subport 0 queue 1 percent 100 msec 4",
@@ -42,7 +42,7 @@ TEST_DATA = [
             "qos lo subport 0 queue 3 percent 100 msec 4",
             "qos lo param subport 0 3 limit packets 64",
             "qos lo vlan 0 0",
-            "qos lo profile 0 rate 125000000 msec 4 period 10",
+            "qos lo profile 0 rate 125000000 msec 4 period 10000",
             "qos lo profile 0 queue 0 percent 100 msec 4",
             "qos lo profile 0 queue 1 percent 100 msec 4",
             "qos lo profile 0 queue 2 percent 100 msec 4",

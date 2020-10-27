@@ -66,6 +66,13 @@ module vyatta-policy-qos-groupings-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
+	revision 2020-10-29 {
+		description "Extend the 'period' keyword so that it can accept
+			     a decimal64 values allowing the user to specify
+			     periods in microseconds.
+			     Add new traffic-class-period-usec leaf node to
+			     op-mode state pipe-params grouping.";
+	}
 	revision 2020-09-27 {
 		description "Make sure the bandwidth parameter accepts
 			     single digit numbers.
@@ -405,8 +412,14 @@ module vyatta-policy-qos-groupings-v1 {
 
 	grouping period {
 		leaf period {
-			type uint32 {
-				range 1..3000;
+			type union {
+				type uint32 {
+					range 1..3000;
+				}
+				type decimal64 {
+					fraction-digits 3;
+					range "0.1..3000.0";
+				}
 			}
 			description "Enforcement period (ms)";
 			configd:help "Enforcement period (ms)";
@@ -990,7 +1003,11 @@ module vyatta-policy-qos-groupings-v1 {
 			}
 		}
 		leaf traffic-class-period {
-			description "The period over which traffic class bandwidth is calculated";
+			description "The period over which traffic class bandwidth is calculated in milliseconds";
+			type uint32;
+		}
+		leaf traffic-class-period-usec {
+			description "The period over which traffic class bandwidth is calculated in microseconds";
 			type uint32;
 		}
 		list weighted-round-robin-weights {

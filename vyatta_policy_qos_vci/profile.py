@@ -30,6 +30,15 @@ class Profile:
         self._profile_name = profile_dict.get('id')
         self._bandwidth = Bandwidth(profile_dict, parent_bw)
         self._period = profile_dict.get('period')
+        if self._period is not None:
+            # period now specified in microseconds
+            self._period = int(self._period) * 1000
+        else:
+            self._period = profile_dict.get('micro-seconds-period')
+            if self._period is not None:
+                self._period = int(self._period)
+            else:
+                self._period = PERIOD_DEFAULT_MS * 1000
 
         # _shapers only used for global profiles
         self._shapers = []
