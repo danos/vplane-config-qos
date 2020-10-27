@@ -512,6 +512,8 @@ def convert_pipe(cmd, pipe_in, pipe_id, profile_name):
             pipe_in['params']['tb_size'])
         pipe_out['vyatta-policy-qos-groupings-v1:traffic-class-period'] = (
             pipe_in['params']['tc_period'])
+        pipe_out['vyatta-policy-qos-groupings-v1:traffic-class-period-usec'] = (
+            pipe_in['params']['tc_period_us'])
         pipe_out['vyatta-policy-qos-groupings-v1:traffic-class-rates'] = (
             convert_tc_rates(pipe_in['params']['tc_rates']))
         pipe_out['vyatta-policy-qos-groupings-v1:weighted-round-robin-weights'] = (

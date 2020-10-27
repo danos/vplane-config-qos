@@ -251,8 +251,8 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos lo qos lo subport 0 rate 1250000000 size 16000 period 40',
-                'qos lo subport 0 rate 1250000000 size 16000 period 40',
+                'qos lo qos lo subport 0 rate 1250000000 size 16000 period 40000',
+                'qos lo subport 0 rate 1250000000 size 16000 period 40000',
                 'lo',
                 'SET'
             ),
@@ -317,8 +317,8 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos lo qos lo profile 4 percent 100 size 16000 period 10',
-                'qos lo profile 4 percent 100 size 16000 period 10',
+                'qos lo qos lo profile 4 percent 100 size 16000 period 10000',
+                'qos lo profile 4 percent 100 size 16000 period 10000',
                 'lo',
                 'SET'
             ),
@@ -347,8 +347,8 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos lo qos lo profile 0 rate 12500000 size 16000 period 10',
-                'qos lo profile 0 rate 12500000 size 16000 period 10',
+                'qos lo qos lo profile 0 rate 12500000 size 16000 period 10000',
+                'qos lo profile 0 rate 12500000 size 16000 period 10000',
                 'lo',
                 'SET'
             ),
@@ -377,8 +377,8 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos lo qos lo profile 1 rate 25000000 msec 20 period 10',
-                'qos lo profile 1 rate 25000000 msec 20 period 10',
+                'qos lo qos lo profile 1 rate 25000000 msec 20 period 10000',
+                'qos lo profile 1 rate 25000000 msec 20 period 10000',
                 'lo',
                 'SET'
             ),
@@ -407,8 +407,8 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos lo qos lo profile 2 rate 37500000 msec 30 period 10',
-                'qos lo profile 2 rate 37500000 msec 30 period 10',
+                'qos lo qos lo profile 2 rate 37500000 msec 30 period 10000',
+                'qos lo profile 2 rate 37500000 msec 30 period 10000',
                 'lo',
                 'SET'
             ),
@@ -436,8 +436,8 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos lo qos lo profile 3 rate 50000000 size 16000 period 10',
-                'qos lo profile 3 rate 50000000 size 16000 period 10',
+                'qos lo qos lo profile 3 rate 50000000 size 16000 period 10000',
+                'qos lo profile 3 rate 50000000 size 16000 period 10000',
                 'lo',
                 'SET'
             ),

@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 #
-# Copyright (c) 2017-2019, AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2020, AT&T Intellectual Property. All rights reserved.
 #
 # This script issues a "qos optimised-show" command to the vyatta dataplane and
 # in return receives the QoS operational state (including counters) encoded in
@@ -322,6 +322,8 @@ sub convert_pipe {
         $pipe_out{'token-bucket-rate-64'} = "$pipe_in->{params}->{tb_rate}";
         $pipe_out{'token-bucket-size'}    = $pipe_in->{params}->{tb_size};
         $pipe_out{'traffic-class-period'} = $pipe_in->{params}->{tc_period};
+	$pipe_out{'traffic-class-period-usec'} =
+	    $pipe_in->{params}->{tc_period_us};
         $pipe_out{'traffic-class-rates'} =
           convert_tc_rates( $cmd, $pipe_in->{params}->{tc_rates} );
         $pipe_out{'weighted-round-robin-weights'} =
