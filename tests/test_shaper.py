@@ -30,7 +30,7 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos lo subport 0 rate 1250000000 msec 4 period 40",
+            "qos lo subport 0 rate 1250000000 msec 4 period 40000",
             "qos lo subport 0 queue 0 percent 100 msec 4",
             "qos lo param subport 0 0 limit packets 64",
             "qos lo subport 0 queue 1 percent 100 msec 4",
@@ -40,7 +40,7 @@ TEST_DATA = [
             "qos lo subport 0 queue 3 percent 100 msec 4",
             "qos lo param subport 0 3 limit packets 64",
             "qos lo vlan 0 0",
-            "qos lo profile 0 rate 125000000 msec 4 period 10",
+            "qos lo profile 0 rate 125000000 msec 4 period 10000",
             "qos lo profile 0 queue 0 percent 100 msec 4",
             "qos lo profile 0 queue 1 percent 100 msec 4",
             "qos lo profile 0 queue 2 percent 100 msec 4",
@@ -63,7 +63,7 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos lo subport 0 rate 250000000 msec 321 period 33",
+            "qos lo subport 0 rate 250000000 msec 321 period 33000",
             "qos lo subport 0 queue 0 percent 100 msec 4",
             "qos lo param subport 0 0 limit packets 64",
             "qos lo subport 0 queue 1 percent 100 msec 4",
@@ -74,7 +74,7 @@ TEST_DATA = [
             "qos lo param subport 0 3 limit packets 64",
             "qos lo subport 0 mark-map test123",
             "qos lo vlan 0 0",
-            "qos lo profile 0 rate 125000000 msec 4 period 10",
+            "qos lo profile 0 rate 125000000 msec 4 period 10000",
             "qos lo profile 0 queue 0 percent 100 msec 4",
             "qos lo profile 0 queue 1 percent 100 msec 4",
             "qos lo profile 0 queue 2 percent 100 msec 4",
@@ -101,7 +101,7 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos lo subport 0 rate 250000000 size 12345 period 33",
+            "qos lo subport 0 rate 250000000 size 12345 period 33000",
             "qos lo subport 0 queue 0 percent 100 msec 4",
             "qos lo param subport 0 0 limit packets 128",
             "qos lo subport 0 queue 1 rate 12500000 msec 4",
@@ -111,7 +111,7 @@ TEST_DATA = [
             "qos lo subport 0 queue 3 percent 100 msec 4",
             "qos lo param subport 0 3 limit packets 64",
             "qos lo vlan 0 0",
-            "qos lo profile 0 rate 125000000 msec 4 period 10",
+            "qos lo profile 0 rate 125000000 msec 4 period 10000",
             "qos lo profile 0 queue 0 percent 100 msec 4",
             "qos lo profile 0 queue 1 percent 100 msec 4",
             "qos lo profile 0 queue 2 percent 100 msec 4",
@@ -147,7 +147,7 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos lo subport 0 rate 250000000 size 12345 period 33",
+            "qos lo subport 0 rate 250000000 size 12345 period 33000",
             "qos lo subport 0 queue 0 percent 100 msec 4",
             "qos lo param subport 0 0 limit packets 128",
             "qos lo subport 0 queue 1 rate 12500000 msec 4",
@@ -158,7 +158,39 @@ TEST_DATA = [
             "qos lo param subport 0 3 limit packets 64",
             "qos lo subport 0 mark-map pcp-egress-map",
             "qos lo vlan 0 0",
-            "qos lo profile 0 rate 125000000 msec 4 period 10",
+            "qos lo profile 0 rate 125000000 msec 4 period 10000",
+            "qos lo profile 0 queue 0 percent 100 msec 4",
+            "qos lo profile 0 queue 1 percent 100 msec 4",
+            "qos lo profile 0 queue 2 percent 100 msec 4",
+            "qos lo profile 0 queue 3 percent 100 msec 4",
+            "qos lo pipe 0 0 0"
+        ]
+    ),
+    (
+        # A simple shaper with a micro-seconds-period rather than a period
+        # test_input
+        {
+            "bandwidth": "10Gbit",
+            "default": "profile-1",
+            "frame-overhead": "24",
+            "micro-seconds-period": 100,
+            "profile": [
+                {"bandwidth": "1Gbit", "id": "profile-1"}
+            ]
+        },
+        # expected_result
+        [
+            "qos lo subport 0 rate 1250000000 msec 4 period 100",
+            "qos lo subport 0 queue 0 percent 100 msec 4",
+            "qos lo param subport 0 0 limit packets 64",
+            "qos lo subport 0 queue 1 percent 100 msec 4",
+            "qos lo param subport 0 1 limit packets 64",
+            "qos lo subport 0 queue 2 percent 100 msec 4",
+            "qos lo param subport 0 2 limit packets 64",
+            "qos lo subport 0 queue 3 percent 100 msec 4",
+            "qos lo param subport 0 3 limit packets 64",
+            "qos lo vlan 0 0",
+            "qos lo profile 0 rate 125000000 msec 4 period 10000",
             "qos lo profile 0 queue 0 percent 100 msec 4",
             "qos lo profile 0 queue 1 percent 100 msec 4",
             "qos lo profile 0 queue 2 percent 100 msec 4",

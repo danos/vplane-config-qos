@@ -1,6 +1,6 @@
 # Module QoS::Profile.pm
 #
-# Copyright (c) 2017-2019, AT&T Intellectual Property.
+# Copyright (c) 2017-2020, AT&T Intellectual Property.
 # All Rights Reserved.
 # Copyright (c) 2013-2017, Brocade Communications Systems, Inc.
 # All Rights Reserved.
@@ -42,10 +42,13 @@ sub new {
     $self->{name} = $1 if ( $level =~ m/([-\w]+)$/ );
 
     if ( $config->exists('period') ) {
-        $self->{period}            = $config->returnValue('period');
-        $self->{period_is_default} = $config->isDefault('period');
+
+        # period can be configured on CLI in integer or decimal format
+        # milliseconds - convert to microseconds
+        $self->{period} = int( $config->returnValue('period') * 1000 );
+        $self->{period_is_default} = 0;
     } else {
-        $self->{period}            = $PERIOD_DEFAULT;
+        $self->{period}            = $PERIOD_DEFAULT * 1000;
         $self->{period_is_default} = 1;
     }
 
@@ -100,7 +103,7 @@ sub getDscpGroupMap {
             my $q  = $queues->[$qid];
             my $dp = $q->getdp($name);
             $dscp2q[$index] = " $name ";
-            $dscp2q[$index++] .= $q->qmap() | ( $dp << TC_WRR_BITS );
+            $dscp2q[ $index++ ] .= $q->qmap() | ( $dp << TC_WRR_BITS );
         }
     }
 

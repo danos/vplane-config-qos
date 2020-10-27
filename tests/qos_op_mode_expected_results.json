@@ -634,6 +634,7 @@
 				    ],
 				    "qos-profile" : "profile-2",
 				    "vyatta-policy-qos-groupings-v1:traffic-class-period" : 10,
+				    "vyatta-policy-qos-groupings-v1:traffic-class-period-usec" : 10000,
 				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 12500000,
 				    "vyatta-policy-qos-groupings-v1:token-bucket-rate-64" : "12500000",
 				    "vyatta-policy-qos-groupings-v1:token-bucket-size" : 1542,
@@ -899,6 +900,7 @@
 				{
 				    "qos-profile" : "profile-1",
 				    "vyatta-policy-qos-groupings-v1:traffic-class-period" : 10,
+				    "vyatta-policy-qos-groupings-v1:traffic-class-period-usec" : 10000,
 				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 37500000,
 				    "vyatta-policy-qos-groupings-v1:token-bucket-rate-64" : "37500000",
 				    "vyatta-policy-qos-groupings-v1:token-bucket-size" : 1542,
@@ -1660,6 +1662,7 @@
 				{
 				    "qos-profile" : "profile-2",
 				    "vyatta-policy-qos-groupings-v1:traffic-class-period" : 10,
+				    "vyatta-policy-qos-groupings-v1:traffic-class-period-usec" : 10000,
 				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 25000000,
 				    "vyatta-policy-qos-groupings-v1:token-bucket-rate-64" : "25000000",
 				    "vyatta-policy-qos-groupings-v1:token-bucket-size" : 1542,
@@ -2742,6 +2745,7 @@
 				    ],
 				    "vyatta-policy-qos-groupings-v1:token-bucket-size" : 250000,
 				    "vyatta-policy-qos-groupings-v1:traffic-class-period" : 10,
+				    "vyatta-policy-qos-groupings-v1:traffic-class-period-usec" : 10000,
 				    "qos-class" : 0,
 				    "vyatta-policy-qos-groupings-v1:weighted-round-robin-weights" : [
 					{
@@ -3956,6 +3960,7 @@
 					}
 				    ],
 				    "vyatta-policy-qos-groupings-v1:traffic-class-period" : 10,
+				    "vyatta-policy-qos-groupings-v1:traffic-class-period-usec" : 10000,
 				    "qos-class" : 1,
 				    "vyatta-policy-qos-groupings-v1:token-bucket-rate" : 37500000,
 				    "vyatta-policy-qos-groupings-v1:token-bucket-rate-64" : "37500000",
@@ -4116,6 +4121,7 @@
 				    ],
 				    "qos-class" : 2,
 				    "vyatta-policy-qos-groupings-v1:traffic-class-period" : 10,
+				    "vyatta-policy-qos-groupings-v1:traffic-class-period-usec" : 10000,
 				    "vyatta-policy-qos-groupings-v1:token-bucket-size" : 150000,
 				    "traffic-class-queues-list" : [
 					{

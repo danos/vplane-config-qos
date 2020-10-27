@@ -27,7 +27,7 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos lo profile 0 percent 100 size 16000 period 10",
+            "qos lo profile 0 percent 100 size 16000 period 10000",
             "qos lo profile 0 queue 0 percent 100 msec 4",
             "qos lo profile 0 queue 1 percent 100 msec 4",
             "qos lo profile 0 queue 2 percent 100 msec 4",
@@ -45,7 +45,7 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos lo profile 0 rate 125000000 size 10000 period 50",
+            "qos lo profile 0 rate 125000000 size 10000 period 50000",
             "qos lo profile 0 queue 0 percent 100 msec 4",
             "qos lo profile 0 queue 1 percent 100 msec 4",
             "qos lo profile 0 queue 2 percent 100 msec 4",
@@ -63,7 +63,7 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos lo profile 0 rate 125000000 msec 10 period 50",
+            "qos lo profile 0 rate 125000000 msec 10 period 50000",
             "qos lo profile 0 queue 0 percent 100 msec 4",
             "qos lo profile 0 queue 1 percent 100 msec 4",
             "qos lo profile 0 queue 2 percent 100 msec 4",
@@ -87,7 +87,7 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos lo profile 0 rate 125000000 size 10000 period 50",
+            "qos lo profile 0 rate 125000000 size 10000 period 50000",
             "qos lo profile 0 queue 0 percent 10 msec 4",
             "qos lo profile 0 queue 1 percent 20 msec 4",
             "qos lo profile 0 queue 2 percent 30 msec 4",
@@ -111,7 +111,7 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos lo profile 0 rate 125000000 size 10000 period 50",
+            "qos lo profile 0 rate 125000000 size 10000 period 50000",
             "qos lo profile 0 queue 0 rate 125000000 msec 4",
             "qos lo profile 0 queue 1 rate 250000000 msec 4",
             "qos lo profile 0 queue 2 rate 375000000 msec 4",
@@ -143,7 +143,7 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos lo profile 0 rate 125000000 size 10000 period 50",
+            "qos lo profile 0 rate 125000000 size 10000 period 50000",
             "qos lo profile 0 queue 0 rate 125000000 msec 4",
             "qos lo profile 0 queue 1 rate 250000000 msec 4",
             "qos lo profile 0 queue 2 rate 375000000 msec 4",
@@ -187,7 +187,7 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos lo profile 0 rate 125000000 size 10000 period 50",
+            "qos lo profile 0 rate 125000000 size 10000 period 50000",
             "qos lo profile 0 queue 0 rate 125000000 msec 4",
             "qos lo profile 0 queue 1 rate 250000000 msec 4",
             "qos lo profile 0 queue 2 rate 375000000 msec 4",
@@ -235,7 +235,7 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos lo profile 0 rate 125000000 msec 4 period 10",
+            "qos lo profile 0 rate 125000000 msec 4 period 10000",
             "qos lo profile 0 queue 0 percent 100 msec 4",
             "qos lo profile 0 queue 1 percent 100 msec 4",
             "qos lo profile 0 queue 2 percent 100 msec 4",
@@ -349,7 +349,7 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos lo profile 0 rate 125000000 msec 4 period 10",
+            "qos lo profile 0 rate 125000000 msec 4 period 10000",
             "qos lo profile 0 queue 0 rate 125000000 msec 4",
             "qos lo profile 0 queue 1 rate 250000000 msec 4",
             "qos lo profile 0 queue 2 rate 375000000 msec 4",
@@ -419,7 +419,7 @@ TEST_DATA = [
         # expected_result
         [
             # packets limits generated during unit-test
-            "qos lo profile 0 rate 125000000 size 16000 period 10",
+            "qos lo profile 0 rate 125000000 size 16000 period 10000",
             "qos lo profile 0 queue 0 percent 100 msec 4",
             "qos lo profile 0 queue 1 percent 100 msec 4",
             "qos lo profile 0 queue 2 percent 100 msec 4",
@@ -476,7 +476,7 @@ TEST_DATA = [
         },
         # expected_result
         [
-            "qos lo profile 0 rate 125000000 msec 4 period 10",
+            "qos lo profile 0 rate 125000000 msec 4 period 10000",
             "qos lo profile 0 queue 0 rate 125000000 msec 4",
             "qos lo profile 0 queue 1 rate 250000000 msec 4",
             "qos lo profile 0 queue 2 rate 375000000 msec 4",
@@ -524,7 +524,24 @@ TEST_DATA = [
         },
         # expected result
         [
-            "qos lo profile 0 rate 1250000000 msec 4 period 10",
+            "qos lo profile 0 rate 1250000000 msec 4 period 10000",
+            "qos lo profile 0 queue 0 percent 100 msec 4",
+            "qos lo profile 0 queue 1 percent 100 msec 4",
+            "qos lo profile 0 queue 2 percent 100 msec 4",
+            "qos lo profile 0 queue 3 percent 100 msec 4"
+        ]
+    ),
+    (
+        # A simple profile with a micro-seconds-period
+        # test_input
+        {
+            "burst": "16000",
+            "id": "profile-1",
+            "micro-seconds-period": 123
+        },
+        # expected_result
+        [
+            "qos lo profile 0 percent 100 size 16000 period 123",
             "qos lo profile 0 queue 0 percent 100 msec 4",
             "qos lo profile 0 queue 1 percent 100 msec 4",
             "qos lo profile 0 queue 2 percent 100 msec 4",

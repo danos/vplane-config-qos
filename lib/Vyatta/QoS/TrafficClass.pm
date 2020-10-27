@@ -1,6 +1,6 @@
 # Module QoS::TrafficClass.pm
 #
-# Copyright (c) 2018-2019 AT&T Intellectual Property.
+# Copyright (c) 2018-2020 AT&T Intellectual Property.
 # All Rights Reserved.
 # Copyright (c) 2013-2017, Brocade Communications Systems, Inc.
 # All Rights Reserved.
@@ -120,9 +120,9 @@ sub valid_binding {
     for my $id ( 0 .. MAX_TRAFFIC_CLASS ) {
         my $tc = $self->[$id];
 
-        my $min_period = ( $min_pkt_len * 1000 ) / ( $tc->{rate}->{bps} );
+        my $min_period = ( $min_pkt_len * 1000000 ) / ( $tc->{rate}->{bps} );
         $min_period = int($min_period) + 1;
-        invalid "Minimum necessary period for $location is $min_period."
+        invalid "Minimum necessary period for $location is $min_period microseconds."
           if ( $min_period > $period && not $period_is_default );
 
         if ( defined $tc->{red} ) {
