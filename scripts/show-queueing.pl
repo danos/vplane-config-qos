@@ -69,6 +69,10 @@ sub get_interface {
 
     my $fabric = $intf->dpid();
 
+    if ( !defined($fabric) && $ifname =~ /^sw\d+/ ) {
+        $fabric = 0;
+    }
+
     my ( $dpids, $dpsocks ) = Vyatta::Dataplane::setup_fabric_conns($fabric);
     die "Dataplane $fabric is not connected or does not exist\n"
       unless ( scalar(@$dpids) > 0 );
@@ -311,12 +315,12 @@ sub show_subport {
 
     if ($bits64) {
         $fmt = "%-5s %2s %3s %8s %8s %-7s %3s %20s %-9s\n";
-        $l = sprintf $fmt, 'Class', 'TC', 'WRR', 'Pipe-QID', 'Qlength', '',
+        $l   = sprintf $fmt, 'Class', 'TC', 'WRR', 'Pipe-QID', 'Qlength', '',
           'PLQ',
           'Counters', '';
     } else {
         $fmt = "%-8s %4s %4s %7s %10s %16s %9s %9s %3s\n";
-        $l = sprintf $fmt, 'Class', 'Prio', 'WRR', 'Qlength',
+        $l   = sprintf $fmt, 'Class', 'Prio', 'WRR', 'Qlength',
           'Packets', 'Bytes', 'Tail-drop', 'RED-drop', 'PLQ';
     }
     print $l, '-' x length($l), "\n";
@@ -558,33 +562,52 @@ sub show_egress_map {
     return unless defined( $decoded->{'egress-maps'} );
 
     foreach my $map ( @{ $decoded->{'egress-maps'} } ) {
-        my $proto = $map->{type};
-        my $str   = "";
-        my $str1  = "";
+        my $proto       = $map->{type};
+        my $str         = "";
+        my $str1        = "";
+        my $max_entries = 0;
 
         if ( $proto eq "dscp" ) {
-            $str  = "designator to dscp";
-            $str1 = "\nDes->DSCP\n";
+            $str         = "In-DSCP to Out-DSCP";
+            $str1        = "\nInDSCP->DSCP\n";
+            $max_entries = 64;
         } elsif ( $proto eq "pcp" ) {
-            $str  = "designator to pcp";
-            $str1 = "\nDes->PCP\n";
+            $str         = "designator to pcp";
+            $str1        = "\nDes->PCP\n";
+            $max_entries = 8;
         }
 
         print "\nEgress-map: $map->{name}   type: $str\n";
         my @values;
 
-        my $max_entries = 8;
-
         for my $entry ( @{ $map->{map} } ) {
-            my $designation = $entry->{designation};
-            my $map_value   = $entry->{value};
+            my $indscp    = $entry->{indscp};
+            my $map_value = $entry->{value};
 
-            $values[$designation]->{designator} = $designation;
-            $values[$designation]->{value}      = $map_value;
+            $values[$indscp]->{indscp} = $indscp;
+            $values[$indscp]->{value}  = $map_value;
         }
-        if ( $proto eq "dscp" || $proto eq "pcp" ) {
+
+        if ( $proto eq "dscp" ) {
+            print
+              "\nInDSCP->DSCP   InDSCP->DSCP   InDSCP->DSCP   InDSCP->DSCP\n";
+            for my $i ( 0 .. ( $max_entries - 1 ) ) {
+
+                if ( defined( $values[$i] ) ) {
+                    printf " %2d -> %2d",
+                      $values[$i]->{indscp}, $values[$i]->{value};
+                } else {
+                    printf " %2d -> 0", $i;
+                }
+                if ( ( $i % 4 ) == 3 ) {
+                    print "\n";
+                } else {
+                    print "     ";
+                }
+            }
+        } elsif ( $proto eq "dscp" || $proto eq "pcp" ) {
             print $str1;
-            for my $i ( 0 .. 7 ) {
+            for my $i ( 0 .. ( $max_entries - 1 ) ) {
                 if ( defined( $values[$i] ) ) {
                     printf " %d -> %d\n", $values[$i]->{designator},
                       $values[$i]->{value};
@@ -691,18 +714,6 @@ sub show_egress_maps {
     if ( $interface eq '' ) {
         walk_fabrics( "qos show egress-maps", \&show_egress_map );
         return;
-    }
-
-    my $pos = index( $interface, "sw" );
-    if ( $pos != 0 ) {
-        my ( $port, $vif ) = split_ifname($interface);
-        if ( defined($vif) ) {
-            walk_fabrics( "qos show egress-maps vlan $vif $port",
-                \&show_egress_map );
-        } else {
-            walk_fabrics( "qos show egress-maps vlan 0 $port",
-                \&show_egress_map );
-        }
     } else {
         walk_fabrics( "qos show egress-maps vlan 0 $interface",
             \&show_egress_map );
@@ -814,11 +825,7 @@ sub show_monitor {
 }
 
 sub show_bcm_platform_egress_map {
-    my $subport         = shift;
-    my $pipe            = $subport->{pipes}->[0];
-    my $platdscpmap     = $pipe->{'fal-bcm-qos-dscp2dot1p'};
-    my $platdesmap      = $pipe->{'fal-bcm-qos-des2dot1p'};
-    my $platdes2dscpmap = $pipe->{'fal-bcm-qos-des2dscp'};
+    my ( $platdscpmap, $platdesmap, $platdscpgrp2dscpmap ) = @_;
 
     if ( defined($platdesmap) ) {
         print "\nDes/DP->PCP\n";
@@ -828,17 +835,6 @@ sub show_bcm_platform_egress_map {
             $map_entry = $platdesmap->[$i];
 
             printf " %d/%d -> %d\n", $i / 3, $i % 3, $map_entry->{'pcp'};
-        }
-    }
-
-    if ( defined($platdes2dscpmap) ) {
-        print "\nDes->DSCP\n";
-        for my $i ( 0 .. 7 ) {
-            my $map_entry;
-
-            $map_entry = $platdes2dscpmap->[$i];
-
-            printf " %d -> %d\n", $i, $map_entry->{'dscp'};
         }
     }
 
@@ -853,6 +849,23 @@ sub show_bcm_platform_egress_map {
             $dscp      = ( $i % 4 ) * 16 + ( $i / 4 );
             $map_entry = $platdscpmap->[$dscp];
             printf " %2d -> %d", $dscp, $map_entry->{'pcp'};
+            if ( ( $i % 4 ) == 3 ) {
+                print "\n";
+            } else {
+                print "   ";
+            }
+        }
+    }
+
+    if ( defined($platdscpgrp2dscpmap) ) {
+
+        # Print output in columns for readability
+        print "\nInDSCP->DSCP  InDSCP->DSCP  InDSCP->DSCP  InDSCP->DSCP\n";
+        for my $i ( 0 .. MAX_DSCP ) {
+            my $map_entry;
+
+            $map_entry = $platdscpgrp2dscpmap->[$i];
+            printf " %2d -> %2d", $i, $map_entry->{'dscp'};
             if ( ( $i % 4 ) == 3 ) {
                 print "\n";
             } else {
@@ -941,8 +954,14 @@ sub show_platform_egress_maps {
 
     my $platdscpmap;
     my $platdesmap;
-    my $platdes2dscpmap;
-    my $maps = $intf_data->{'egress-maps'} if ( defined($intf_data) );
+    my $platdscpgrp2dscpmap;
+    my $ismarkmap = 0;
+    my $maps      = $intf_data->{'egress-maps'} if ( defined($intf_data) );
+
+    if ( !defined($maps) ) {
+        $ismarkmap = 1;
+        $maps      = $intf_data->{'pipes'};
+    }
 
     if ( defined($maps) ) {
 
@@ -951,49 +970,60 @@ sub show_platform_egress_maps {
         }
 
         for my $binding ( @{$maps} ) {
-            if ( $binding->{'vlan'} eq $vif ) {
-                $platdscpmap     = $binding->{'fal-bcm-qos-dscp2dot1p'};
-                $platdesmap      = $binding->{'fal-bcm-qos-des2dot1p'};
-                $platdes2dscpmap = $binding->{'fal-bcm-qos-des2dscp'};
+            if ( !$ismarkmap and $binding->{'vlan'} eq $vif ) {
+                $platdscpmap         = $binding->{'fal-bcm-qos-dscp2dot1p'};
+                $platdscpgrp2dscpmap = $binding->{'fal-bcm-qos-dscpgrp2dscp'};
                 last;
+            } else {
+                $platdesmap = $binding->{'fal-bcm-qos-des2dot1p'};
             }
         }
     }
 
-    show_bcm_platform_egress_map( $platdscpmap, $platdesmap, $platdes2dscpmap );
+    show_bcm_platform_egress_map( $platdscpmap, $platdesmap,
+        $platdscpgrp2dscpmap );
 }
 
 sub show_platform_map {
     my ( $ifname, $ingress ) = @_;
     my ( $port,   $vif )     = split_ifname($ifname);
-    my $data      = get_interface( $port, "qos show platform", 1 );
-    my $intf_data = $data->{$port};
+    my $data      = get_interface( $ifname, "qos show platform", 1 );
+    my $intf_data = $data->{$ifname};
 
     if ( $ingress == 1 ) {
         show_platform_ingress_maps( $ifname, $data, $intf_data, $vif );
         return;
     } else {
-        show_platform_egress_maps( $ifname, $data, $intf_data, $vif );
-        return;
-    }
 
-    # Skip interfaces with no QoS
-    return unless defined($intf_data);
+        my $egressmaps = $intf_data->{'egress-maps'};
+        my $shaper     = $intf_data->{'shaper'};
 
-    my $shaper = $intf_data->{shaper};
-    return unless defined($shaper);
-
-    if ( defined($vif) ) {
-        my $id = find_vif( $shaper, $vif );
-
-        if ( defined($id) ) {
-            show_bcm_platform_egress_map( $shaper->{subports}->[$id] );
+        if ( defined($egressmaps) ) {
+            show_platform_egress_maps( $ifname, $data, $intf_data, $vif );
             return;
-        }
+        } else {
 
-        # If no QoS policy defined for vif then treat as untagged.
+            # Skip interfaces with no QoS
+            return unless defined($intf_data);
+
+            my $shaper = $intf_data->{shaper};
+            return unless defined($shaper);
+
+            if ( defined($vif) ) {
+                my $id = find_vif( $shaper, $vif );
+
+                if ( defined($id) ) {
+                    show_platform_egress_maps( $ifname, $data,
+                        $shaper->{subports}->[$id], $vif );
+                    return;
+                }
+
+                # If no QoS policy defined for vif then treat as untagged.
+            }
+            show_platform_egress_maps( $ifname, $data,
+                $shaper->{subports}->[0], $vif );
+        }
     }
-    show_bcm_platform_egress_map( $shaper->{subports}->[0] );
 }
 
 # show DSCP map for interface

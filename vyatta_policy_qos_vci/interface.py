@@ -35,6 +35,7 @@ class Interface:
         if_type is one of "dataplane", "bonding", "vhost" or "switch"
         """
         self._if_dict = if_dict
+        self._if_type = if_type
         if if_type == 'vhost':
             self._name = if_dict.get('name')
             policy_namespace = 'vyatta-interfaces-vhost-policy-v1'
@@ -125,8 +126,6 @@ class Interface:
             subport_id = 1
             for vif in vif_list:
                 vlan_id = vif['tagnode']
-                if if_type == 'switch':
-                    self._name = self._name + '.' + str(vlan_id)
                 if_policy_dict = vif[f"{policy_namespace}:policy"]
                 try:
                     if_policy_name = if_policy_dict[f'{namespace}:qos']
@@ -237,6 +236,11 @@ class Interface:
     def if_dict(self):
         """ Return the original JSON for this interface """
         return self._if_dict
+
+    @property
+    def if_type(self):
+        """ Return the interface type for this interface """
+        return self._if_type
 
     @property
     def ifname(self):

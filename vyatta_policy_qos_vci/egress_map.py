@@ -11,11 +11,12 @@ of egress maps.
 """
 
 import logging
+import sys
+
+from traceback import format_tb
 
 LOG = logging.getLogger('Policy QoS VCI')
 
-MIN_DESG = 0
-MAX_DESG = 7
 MIN_DSCP = 0
 MAX_DSCP = 63
 
@@ -32,31 +33,24 @@ class EgressMap:
         self._name = egress_map_dict['id']
         self._map_type = None
         self._bindings = []
-        designation = egress_map_dict.get('designation')
-        self._handle_dscp_pcp_mark(designation)
+        self._dscp_groups = {}
+        dscp_group_list = egress_map_dict.get('dscp-group')
+        self._handle_dscp_mark(dscp_group_list)
 
-    def _handle_dscp_pcp_mark(self, dscp_pcp_map_list):
-        """ Process a list of designation value to dscp """
-        self._des2dscp = {}
-        self._des2pcp = {}
-        if dscp_pcp_map_list is None:
+    def _handle_dscp_mark(self, dscp_grp_list):
+        """ Process a list of dscp-group list to egress dscp """
+        self._dscpgrp2dscp = {}
+        if dscp_grp_list is None:
             return
 
         try:
-
-            for entry_dict in dscp_pcp_map_list:
-                if 'dscp' in entry_dict:
-                    self._map_type = 'des2dscp'
-                    dscp_mark = entry_dict['dscp']
-                    self._des2dscp[entry_dict['id']] = dscp_mark
-
-                if 'pcp' in entry_dict:
-                    self._map_type = 'pcp'
-                    pcp = entry_dict['pcp']
-                    self._des2pcp[entry_dict['id']] = pcp
+            self._map_type = 'dscpgrp2dscp'
+            for entry_dict in dscp_grp_list:
+                dscp_mark = entry_dict['dscp']
+                self._dscpgrp2dscp[entry_dict['id']] = dscp_mark
 
         except KeyError:
-            LOG.error(f"EgressMap missing dscp or pcp data")
+            LOG.error(f"EgressMap missing dscp data")
 
     def __eq__(self, egress_map):
         """ Compare the original JSON dictionaries of two egress-maps """
@@ -81,19 +75,11 @@ class EgressMap:
         """ Return the original JSON for this egress-map """
         return self._eg_map_dict
 
-    def des_dscp_map(self, des):
+    def dscpgrp_dscp_map(self, dscp):
         """
-        Return the appropriate map-tuple for the requested designation
-        value
+        Return the appropriate map-tuple for the requested dscp value
         """
-        return self._des2dscp.get(des)
-
-    def des_pcp_map(self, des):
-        """
-        Return the appropriate map-tuple for the requested designation
-        value
-        """
-        return self._des2pcp.get(des)
+        return self._dscpgrp2dscp.get(dscp)
 
     def add_binding(self, binding):
         """
@@ -111,27 +97,46 @@ class EgressMap:
     def check(self, config_dict):
         """ Check to see if this egress-map is complete """
         status = True
-        cnt = 0
         LOG.debug(f"egress-map:check - {self._name}")
-        if self._map_type == 'pcp':
-            for des in range(MIN_DESG, MAX_DESG+1):
-                if self._des2pcp.get(des) is None:
-                    LOG.debug(f"egress-map:check pcp-value {des} not configured")
-
-                else:
-                    cnt += 1
-
-        if self._map_type == 'des2dscp':
-            for des in range(MIN_DESG, MAX_DESG+1):
-                if self._des2dscp.get(des) is None:
-                    LOG.debug(f"egress-map:check dscp-value {des} not configured")
-
-                else:
-                    cnt += 1
-
-        if cnt == 0:
-            LOG.debug(f"egress-map:check Empty egress-map")
+        if self._map_type is None:
+            LOG.debug(f"egress-map:check map-type not configured")
             status = False
+
+        if self._map_type == "dscpgrp2dscp":
+            dscp_values_set = [0] * 64
+
+            try:
+                res_dict = config_dict['vyatta-resources-v1:resources']
+                misc_dict = res_dict['vyatta-resources-group-misc-v1:group']
+                dscp_group_list = misc_dict['vyatta-resources-dscp-group-v1:dscp-group']
+
+                for grp_name, _ in self._dscpgrp2dscp.items():
+                    for dscp_group_json in dscp_group_list:
+                        if dscp_group_json['group-name'] == grp_name:
+                            for dscp_value in dscp_group_json['dscp']:
+                                dscp_values_set[int(dscp_value)] += 1
+
+                for dscp_value in range(MIN_DSCP, MAX_DSCP+1):
+                    if dscp_values_set[dscp_value] != 1:
+                        LOG.debug(f"egress-map {self._name} has dscp-value "
+                                  f"{dscp_value} assigned "
+                                  f"{dscp_values_set[dscp_value]} times")
+                        status = False
+
+            except KeyError:
+                LOG.debug(f"failed to find {sys.exc_info()[1]} in config")
+                status = False
+
+            except Exception:
+                tb_type = sys.exc_info()[0]
+                tb_value = sys.exc_info()[1]
+                tb_info = format_tb(sys.exc_info()[2])
+                tb_output = ""
+                for line in tb_info:
+                    tb_output += line
+
+                LOG.error(f"Unhandled exception: {tb_type}\n{tb_value}\n{tb_output}")
+                status = False
 
         return status
 
@@ -140,27 +145,12 @@ class EgressMap:
         cmd_list = []
         ifname = "ALL"
         cmd_prefix = f"qos global-object-cmd egress-map {self._name}"
-        if self._map_type == 'des2dscp':
-            for des in range(MIN_DESG, MAX_DESG+1):
-                dscp = self._des2dscp.get(des)
-                if dscp is None:
-                    LOG.error(f"Egress map {self._name} missing DSCP mark value "
-                              f"{dscp}")
-                else:
-                    path = f"{cmd_prefix} designation {des}"
-                    cmd = f"{path} dscp {dscp}"
-                    cmd_list.append((path, cmd, ifname))
-
-        if self._map_type == 'pcp':
-            for des in range(MIN_DESG, MAX_DESG+1):
-                pcp = self._des2pcp.get(des)
-                if pcp is None:
-                    LOG.error(f"Egress map {self._name} missing PCP value "
-                              f"{des}")
-                else:
-                    path = f"{cmd_prefix} designation {des}"
-                    cmd = f"{path} pcp {pcp}"
-                    cmd_list.append((path, cmd, ifname))
+        dscp_group_names = sorted(self._dscpgrp2dscp.keys())
+        for dscp_group_name in dscp_group_names:
+            dscp_mark = self._dscpgrp2dscp[dscp_group_name]
+            path = f"{cmd_prefix} dscp-group {dscp_group_name}"
+            cmd = f"{path} dscp {dscp_mark}"
+            cmd_list.append((path, cmd, ifname))
 
         path = cmd = f"{cmd_prefix} complete"
         cmd_list.append((path, cmd, ifname))

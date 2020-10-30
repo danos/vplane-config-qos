@@ -17,6 +17,7 @@ class EgressMapBinding:
         self._interface = interface
         self._egress_map = egress_map
         self._vlan_id = vlan_id
+        self._ifname = ""
 
     def __eq__(self, binding):
         """
@@ -42,11 +43,19 @@ class EgressMapBinding:
         Return the path, command, ifname tuple necessary to bind this egress-map
         to the interface/vlan.
         """
-        return self._egress_map.create_binding(self._interface.ifname, self._vlan_id)
+        if self._interface.if_type == 'switch' or self._interface.if_type == 'dataplane':
+            self._ifname = self._interface.ifname + '.' + str(self._vlan_id)
+        else:
+            self._ifname = self._interface.ifname
+        return self._egress_map.create_binding(self._ifname, self._vlan_id)
 
     def delete_binding(self):
         """
         Return the path, command, ifname tuple necessary to unbind this egress-map
         from the interface/vlan.
         """
-        return self._egress_map.delete_binding(self._interface.ifname, self._vlan_id)
+        if self._interface.if_type == 'switch' or self._interface.if_type == 'dataplane':
+            self._ifname = self._interface.ifname + '.' + str(self._vlan_id)
+        else:
+            self._ifname = self._interface.ifname
+        return self._egress_map.delete_binding(self._ifname, self._vlan_id)

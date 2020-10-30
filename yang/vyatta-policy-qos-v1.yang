@@ -84,7 +84,12 @@ module vyatta-policy-qos-v1 {
 
 		 This module implements vyatta-policy-qos-v1.";
 
-	revision 2020-09-27 {
+	revision 2020-11-05 {
+		description "Change egress maps to be based on DSCP group to
+			     DSCP.";
+	}
+
+	revision 2020-08-27 {
 		description "Removed default bandwidth from a profile.
 			     Add designator CLI for Local Priority Queue";
 	}
@@ -652,24 +657,23 @@ module vyatta-policy-qos-v1 {
 			if-feature egress-map;
 			description "Egress mark map";
 			configd:help "Egress mark map";
-			must "(not(/policy:policy/qos/mark-map))" {
-				error-message "Only mark-map or egress-map allowed not both";
-			}
 			key "id";
 			leaf id {
 				type name;
 				description "Egress-map name";
 				configd:help "Egress-map name";
 			}
-			list designation {
-				description "Designation value marked at ingress";
-				configd:help "Designation value marked at ingress";
+			list dscp-group {
+				description "dscp-group resource group name";
+				configd:help "dscp-group resource group name";
 				key "id";
+				max-elements 64;
 				leaf id {
-					type qos-groupings:designation-type;
+					type leafref {
+						path "/resources:resources/res-group:group/res-group:dscp-group/res-group:group-name";
+					}
 				}
 				uses dscp;
-				uses pcp;
 			}
 		}
 	}
