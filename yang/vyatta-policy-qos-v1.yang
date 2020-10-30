@@ -92,7 +92,12 @@ module vyatta-policy-qos-v1 {
 		description "Removed egress-map CLI command";
 	}
 
-	revision 2020-09-27 {
+	revision 2020-11-05 {
+		description "Change egress maps to be based on DSCP group to
+			     DSCP.";
+	}
+
+	revision 2020-08-27 {
 		description "Removed default bandwidth from a profile.
 			     Add designator CLI for Local Priority Queue";
 	}
