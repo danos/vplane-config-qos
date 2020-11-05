@@ -84,7 +84,7 @@ module vyatta-policy-qos-v1 {
 
 		 This module implements vyatta-policy-qos-v1.";
 
-	revision 2020-08-27 {
+	revision 2020-09-27 {
 		description "Removed default bandwidth from a profile.
 			     Add designator CLI for Local Priority Queue";
 	}
