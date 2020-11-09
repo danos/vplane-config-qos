@@ -1,3 +1,9 @@
+vplane-config-qos (5.0.2) unstable; urgency=medium
+
+  * Update the revision date so NCS/NSO upgrades correctly.
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Mon, 09 Nov 2020 10:13:54 +0000
+
 vplane-config-qos (5.0.1) unstable; urgency=medium
 
   [ aroberts ]
