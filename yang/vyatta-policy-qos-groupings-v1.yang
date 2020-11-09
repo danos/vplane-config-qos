@@ -66,8 +66,8 @@ module vyatta-policy-qos-groupings-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
-	revision 2020-08-27 {
-		description "Makse sure the bandwidth parameter accepts
+	revision 2020-09-27 {
+		description "Make sure the bandwidth parameter accepts
 			     single digit numbers.
 			     Add a Qos specific bandwidth-suffix so we only
 			     use the new range and auto default in the
