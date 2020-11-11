@@ -517,6 +517,296 @@ TEST_DATA = [
                 'SET'
             )
         ]
+    ),
+    (
+        # test_input - a couple of policies that only use global profiles
+        {
+            'vyatta-interfaces-v1:interfaces': {
+                'vyatta-interfaces-dataplane-v1:dataplane': [
+                    {
+                        'tagnode': 'lo',
+                        'vyatta-interfaces-policy-v1:policy': {
+                            'vyatta-policy-qos-v1:qos': 'No-Limit'
+                        },
+                        'vif': [
+                            {
+                                'tagnode': 100,
+                                'vyatta-interfaces-policy-v1:policy': {
+                                    'vyatta-policy-qos-v1:qos': 'UDP-Limit'
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            'vyatta-policy-v1:policy': {
+                'vyatta-policy-qos-v1:qos': {
+                    'name': [
+                        {
+                            'id': 'No-Limit',
+                            'shaper': {
+                                'bandwidth': 'auto',
+                                'default': 'no-shaping',
+                                'frame-overhead': '24'
+                            }
+                        }, {
+                            'id': 'UDP-Limit',
+                            'shaper': {
+                                'bandwidth': 'auto',
+                                'class': [
+                                    {
+                                        'id': 1,
+                                        'match': [
+                                            {
+                                                'id': 'UDP',
+                                                'action': 'pass',
+                                                'protocol': 'udp'
+                                            }
+                                        ],
+                                        'profile': '500M'
+                                    }
+                                ],
+                                'default': 'no-shaping',
+                                'frame-overhead': '24'
+                            }
+                        }
+                    ],
+                    'profile': [
+                        {
+                            'id': '500M',
+                            'bandwidth': '500Mbit'
+                        }, {
+                            'id': 'no-shaping'
+                        }
+                    ]
+                }
+            }
+        },
+        # expected results
+        [
+            (
+                'qos lo qos lo port subports 2 pipes 2 profiles 2 overhead 24 ql_packets',
+                'qos lo port subports 2 pipes 2 profiles 2 overhead 24 ql_packets',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo subport 0 auto msec 4 period 40',
+                'qos lo subport 0 auto msec 4 period 40',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo subport 0 queue 0 percent 100 msec 4',
+                'qos lo subport 0 queue 0 percent 100 msec 4',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo param subport 0 0 limit packets 64',
+                'qos lo param subport 0 0 limit packets 64',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo subport 0 queue 1 percent 100 msec 4',
+                'qos lo subport 0 queue 1 percent 100 msec 4',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo param subport 0 1 limit packets 64',
+                'qos lo param subport 0 1 limit packets 64',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo subport 0 queue 2 percent 100 msec 4',
+                'qos lo subport 0 queue 2 percent 100 msec 4',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo param subport 0 2 limit packets 64',
+                'qos lo param subport 0 2 limit packets 64',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo subport 0 queue 3 percent 100 msec 4',
+                'qos lo subport 0 queue 3 percent 100 msec 4',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo param subport 0 3 limit packets 64',
+                'qos lo param subport 0 3 limit packets 64',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo vlan 0 0',
+                'qos lo vlan 0 0',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo profile 0 rate 62500000 msec 4 period 10',
+                'qos lo profile 0 rate 62500000 msec 4 period 10',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo profile 0 queue 0 percent 100 msec 4',
+                'qos lo profile 0 queue 0 percent 100 msec 4',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo profile 0 queue 1 percent 100 msec 4',
+                'qos lo profile 0 queue 1 percent 100 msec 4',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo profile 0 queue 2 percent 100 msec 4',
+                'qos lo profile 0 queue 2 percent 100 msec 4',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo profile 0 queue 3 percent 100 msec 4',
+                'qos lo profile 0 queue 3 percent 100 msec 4',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo profile 1 percent 100 msec 4 period 10',
+                'qos lo profile 1 percent 100 msec 4 period 10',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo profile 1 queue 0 percent 100 msec 4',
+                'qos lo profile 1 queue 0 percent 100 msec 4',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo profile 1 queue 1 percent 100 msec 4',
+                'qos lo profile 1 queue 1 percent 100 msec 4',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo profile 1 queue 2 percent 100 msec 4',
+                'qos lo profile 1 queue 2 percent 100 msec 4',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo profile 1 queue 3 percent 100 msec 4',
+                'qos lo profile 1 queue 3 percent 100 msec 4',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo pipe 0 0 1',
+                'qos lo pipe 0 0 1',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo subport 1 auto msec 4 period 40',
+                'qos lo subport 1 auto msec 4 period 40',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo subport 1 queue 0 percent 100 msec 4',
+                'qos lo subport 1 queue 0 percent 100 msec 4',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo param subport 1 0 limit packets 64',
+                'qos lo param subport 1 0 limit packets 64',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo subport 1 queue 1 percent 100 msec 4',
+                'qos lo subport 1 queue 1 percent 100 msec 4',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo param subport 1 1 limit packets 64',
+                'qos lo param subport 1 1 limit packets 64',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo subport 1 queue 2 percent 100 msec 4',
+                'qos lo subport 1 queue 2 percent 100 msec 4',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo param subport 1 2 limit packets 64',
+                'qos lo param subport 1 2 limit packets 64',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo subport 1 queue 3 percent 100 msec 4',
+                'qos lo subport 1 queue 3 percent 100 msec 4',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo param subport 1 3 limit packets 64',
+                'qos lo param subport 1 3 limit packets 64',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo vlan 100 1',
+                'qos lo vlan 100 1',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo pipe 1 0 1',
+                'qos lo pipe 1 0 1',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo pipe 1 1 0',
+                'qos lo pipe 1 1 0',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo match 1 1 action=accept proto-final=17 handle=tag(1)',
+                'qos lo match 1 1 action=accept proto-final=17 handle=tag(1)',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos lo qos lo enable',
+                'qos lo enable',
+                'lo',
+                'SET'
+            ),
+            (
+                'qos commit',
+                'qos commit',
+                'ALL',
+                'SET'
+            )
+        ]
     )
 ]
 

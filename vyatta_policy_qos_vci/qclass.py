@@ -43,6 +43,9 @@ class Class:
         # add the class/pipe to profile mapping
         profile_key = f"{vlan_id} {self._profile_name}"
         profile_id = interface.profile_index_get(profile_key)
+        if profile_id is None:
+            profile_key = f"global {self._profile_name}"
+            profile_id = interface.profile_index_get(profile_key)
 
         cmd_list.append(f"{cmd_prefix} pipe {subport_id} {self._class_number} "
                         f"{profile_id}")
