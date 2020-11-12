@@ -18,7 +18,7 @@ class Queue:
     priority-local bit set and a number of different wred-maps objects
     attached to it.
     """
-    def __init__(self, tc_id, wrr_id, wrr_weight, priority_local, wred_map_dict):
+    def __init__(self, tc_id, wrr_id, wrr_weight, priority_local, wred_map_dict, is_time):
         """ Create a Queue object """
         self._tc_id = tc_id
         self._wrr_id = wrr_id
@@ -32,7 +32,7 @@ class Queue:
             try:
                 dscp_group_list = wred_map_dict['dscp-group']
                 for wred_group_dict in dscp_group_list:
-                    self._wred_maps.append(WredMap(wred_group_dict, 1))
+                    self._wred_maps.append(WredMap(wred_group_dict, 1, is_time))
 
             except KeyError:
                 pass
@@ -40,7 +40,7 @@ class Queue:
             try:
                 drop_prec_list = wred_map_dict['drop-precedence']
                 for wred_dp_dict in drop_prec_list:
-                    self._wred_maps.append(WredMap(wred_dp_dict, 0))
+                    self._wred_maps.append(WredMap(wred_dp_dict, 0, is_time))
 
             except KeyError:
                 pass

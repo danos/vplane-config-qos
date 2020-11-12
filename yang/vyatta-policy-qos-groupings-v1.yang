@@ -66,6 +66,14 @@ module vyatta-policy-qos-groupings-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
+	revision 2020-12-08 {
+		description "Add support for time based configuration of
+			     Queue depth and WRED.
+			     Add new wred-map-time container to accept
+			     WRED threshold configurations in millisecond.
+			     Add new queue-limit-time leaf node to accept
+			     queue-limit configuration in millisecond";
+	}
 	revision 2020-12-02 {
 		description "Extend the 'period' keyword so that it can accept
 			     a decimal64 values allowing the user to specify
@@ -466,6 +474,31 @@ module vyatta-policy-qos-groupings-v1 {
 		}
 	}
 
+	grouping thresholds-time {
+		leaf min-threshold {
+			type decimal64 {
+				fraction-digits 3;
+				range "0.001..499.0";
+			}
+			units "msec";
+			description "Minimum threshold in msec";
+			configd:help "Minimum threshold in msec";
+		}
+		leaf max-threshold {
+			must "not(../min-threshold) or (../max-threshold > ../min-threshold)" {
+				error-message "min-threshold must be less than" +
+					      " max-threshold";
+			}
+			type decimal64 {
+				fraction-digits 3;
+				range "0.002..500.0";
+			}
+			units "msec";
+			description "Maximum threshold in msec";
+			configd:help "Maximum threshold in msec";
+		}
+	}
+
 	grouping mark-probability {
 		leaf mark-probability {
 			type uint16 {
@@ -500,6 +533,13 @@ module vyatta-policy-qos-groupings-v1 {
 		description "Random Early Detection (RED) parameters";
 		configd:help "Random Early Detection (RED) parameters";
 		uses thresholds-bytes;
+		uses mark-probability;
+	}
+
+	grouping wred-base-time {
+		description "Random Early Detection (RED) parameters";
+		configd:help "Random Early Detection (RED) parameters";
+		uses thresholds-time;
 		uses mark-probability;
 	}
 
@@ -647,6 +687,13 @@ module vyatta-policy-qos-groupings-v1 {
 			must "(not(../../../traffic-class/random-detect))" {
 				error-message "Subport level wred must not be configured with per queue wred";
 			}
+			must "(not(../wred-map-time))" {
+				error-message "wred-map-bytes must not be configured with wred-map-time";
+			}
+			must "(not(../../../traffic-class/queue-limit-time))" {
+				error-message "Cannot mix Queue length and WRED threshold" +
+							"units (Bytes/Msec) within a policy";
+			}
 			list dscp-group {
 				description "Group of DSCP values to match in an incoming IP header";
 				configd:help "Group of DSCP values to match in an incoming IP header";
@@ -684,6 +731,68 @@ module vyatta-policy-qos-groupings-v1 {
 				max-elements "3";
 				uses drop-precedence;
 				uses wred-base-bytes;
+			}
+			leaf filter-weight {
+				type uint16 {
+					range 1..12;
+				}
+				description "Exponentially Weighted Moving Averages Filter Weight";
+				configd:help "EWMA Filter Weight";
+				default "9";
+			}
+		}
+		container wred-map-time {
+			if-feature byte-limits;
+			presence "Per queue wred maps";
+			description "WRED configuration with msec thresholds";
+			configd:help "WRED configuration with msec thresholds";
+			must "(not(../../../traffic-class/random-detect))" {
+				error-message "Subport level wred must not be configured with per queue wred";
+			}
+			must "(not(../wred-map-bytes))" {
+				error-message "wred-map-time must not be configured with wred-map-bytes";
+			}
+			must "(not(../../../traffic-class/queue-limit-bytes))" {
+				error-message "Cannot mix Queue length and WRED threshold" +
+							"units (Bytes/Msec) within a policy";
+			}
+			list dscp-group {
+				description "Group of DSCP values to match in an incoming IP header";
+				configd:help "Group of DSCP values to match in an incoming IP header";
+				must "not(../drop-precedence)" {
+					error-message "WRED configuration must be specified using either dscp-group or drop-precedence";
+				}
+				must "not(/policy:policy/ingress-map)" {
+					error-message "DSCP group configuration is incompatible with the use of an ingress map";
+				}
+
+				key "group-name";
+				max-elements "4";
+				leaf group-name {
+					must "current() = ../../../../map/dscp-group[to = current()/../../../id]/group-name and " +
+					     "count(../../dscp-group) = count(../../../../map/dscp-group[to = current()/../../../id])"{
+						error-message "The queue must have the same dscp-groups configured as the map";
+					}
+					type leafref {
+						path "/resources:resources/res-group:group/res-group:dscp-group/res-group:group-name";
+					}
+				}
+				uses wred-base-time;
+			}
+			list drop-precedence {
+				if-feature ingress-map;
+				description "Drop precedence marked at ingress";
+				configd:help "Drop precedence marked at ingress";
+				must "not(../dscp-group)" {
+					error-message "WRED configuration must be specified using either dscp-group or drop-precedence";
+				}
+				must "/policy:policy/ingress-map" {
+					error-message "Drop-precedence configuration requires the use of an ingress map";
+				}
+				key "colour";
+				max-elements "3";
+				uses drop-precedence;
+				uses wred-base-time;
 			}
 			leaf filter-weight {
 				type uint16 {
@@ -783,9 +892,34 @@ module vyatta-policy-qos-groupings-v1 {
 				range 9000..500000000;
 				configd:help "Maximum queue length in bytes";
 			}
-			description "Queue limit setting in bytes";
+			must "not(../queue-limit-time)" {
+				error-message "Can only specify one type of queue-limit";
+			}
+			must "not(../../profile/queue/wred-map-time)" {
+				error-message "Cannot mix Queue length and WRED threshold" +
+							"units (Bytes/Msec) within a policy";
+			}
+			description "Queue limit setting in bytes.
+				     When limits are not specified a default
+				     queue-limit-bytes value of 65536 will be configured";
 			configd:help "Queue limit setting in bytes";
-			default "65536";
+		}
+		leaf queue-limit-time {
+			if-feature byte-limits;
+			must "not(../queue-limit-bytes)" {
+				error-message "Can only specify one type of queue-limit";
+			}
+			must "not(../../profile/queue/wred-map-bytes)" {
+				error-message "Cannot mix Queue length and WRED threshold" +
+							"units (Bytes/Msec) within a policy";
+			}
+			type decimal64 {
+				fraction-digits 3;
+				range "0.001..500.0";
+			}
+			units "msec";
+			description "Queue limit setting in msec";
+			configd:help "Queue limit setting in msec";
 		}
 	}
 

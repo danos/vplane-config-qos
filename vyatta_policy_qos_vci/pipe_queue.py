@@ -30,13 +30,18 @@ class PipeQueues:
             tc_id = pipe_queue.get('traffic-class')
             wrr_weight = pipe_queue.get('weight')
             priority_local = pipe_queue.get('priority-local')
-            wred_map_dict = pipe_queue.get('wred-map-bytes')
             wrr_id = tc_block.add_pipe_queue(tc_id, pipe_queue_id,
                                              priority_local)
+            is_time = 1
+            wred_map_dict = pipe_queue.get('wred-map-time')
+
+            if wred_map_dict is None:
+                is_time = 0
+                wred_map_dict = pipe_queue.get('wred-map-bytes')
 
             self._pipe_queue[pipe_queue_id] = Queue(tc_id, wrr_id, wrr_weight,
                                                     priority_local,
-                                                    wred_map_dict)
+                                                    wred_map_dict, is_time)
 
     def pipe_queue(self, pipe_queue_id):
         """ Return the specified pipe_queue tuple """

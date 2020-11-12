@@ -66,6 +66,36 @@ TEST_DATA = [
          " queue 0xf dscp-group priority-group-high packets 30000 20000 5",
          " queue 0xf dscp-group priority-group-low packets 50000 40000 10",
          " queue 0xf wred-weight 10"]
+    ),
+    (
+        # test_input
+        {
+            "id": 4,
+            "traffic-class": 3,
+            "weight": 4,
+            "wred-map-time": {
+                "dscp-group": [
+                    {
+                        "group-name": "priority-group-high",
+                        "mark-probability": 5,
+                        "max-threshold": "30",
+                        "min-threshold": "20"
+                    },
+                    {
+                        "group-name": "priority-group-low",
+                        "mark-probability": 10,
+                        "max-threshold": "50",
+                        "min-threshold": "40"
+                    }
+                ],
+                "filter-weight": 10
+            }
+        },
+        # expected_result
+        [" queue 0x13 wrr-weight 4 4",
+         " queue 0x13 dscp-group priority-group-high usec 30000 20000 5",
+         " queue 0x13 dscp-group priority-group-low usec 50000 40000 10",
+         " queue 0x13 wred-weight 10"]
     )
 ]
 
@@ -76,7 +106,11 @@ def test_queue(test_input, expected_result):
     wrr_id = test_input.get('id')
     wrr_weight = test_input.get('weight')
     priority_local = test_input.get('priority-local')
+    is_time = 0
     wred_map_dict = test_input.get('wred-map-bytes')
-    queue = Queue(tc_id, wrr_id, wrr_weight, priority_local, wred_map_dict)
+    if wred_map_dict is None:
+        wred_map_dict = test_input.get('wred-map-time')
+        is_time = 1
+    queue = Queue(tc_id, wrr_id, wrr_weight, priority_local, wred_map_dict, is_time)
     assert queue is not None
     assert queue.commands("", queue.wrr_id) == expected_result

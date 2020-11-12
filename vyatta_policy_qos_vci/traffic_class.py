@@ -11,6 +11,7 @@ A module to define the TrafficClass class
 
 from vyatta_policy_qos_vci.bandwidth import Bandwidth
 from vyatta_policy_qos_vci.wred import Wred
+from vyatta_policy_qos_vci.wred_map import get_limit_time
 
 class TrafficClass:
     """
@@ -23,10 +24,12 @@ class TrafficClass:
         """ Create a traffic-class object """
         self._id = tc_id
         self._wred = None
+        self._queue_limit_time = None
 
         if tc_dict is not None:
             self._queue_limit_bytes = tc_dict.get('queue-limit-bytes')
             self._queue_limit_packets = tc_dict.get('queue-limit')
+            self._queue_limit_time = get_limit_time(tc_dict.get('queue-limit-time'), 1)
 
             wred_dict = tc_dict.get('random-detect')
             if wred_dict is not None:
@@ -45,6 +48,9 @@ class TrafficClass:
         """ Return the traffic-class's queue-limit """
         if self._queue_limit_bytes is not None:
             return self._queue_limit_bytes
+
+        if self._queue_limit_time is not None:
+            return self._queue_limit_time
 
         if self._queue_limit_packets is not None:
             return self._queue_limit_packets
@@ -90,6 +96,9 @@ class TrafficClass:
         """ Generate this traffic-class's queue-limit commands """
         if self._queue_limit_bytes is not None:
             return f" limit bytes {self._queue_limit_bytes}"
+
+        if self._queue_limit_time is not None:
+            return f" limit usec {self._queue_limit_time}"
 
         if self._queue_limit_packets is not None:
             return f" limit packets {self._queue_limit_packets}"
