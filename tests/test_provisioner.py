@@ -591,8 +591,8 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos lo qos lo subport 0 auto msec 4 period 40',
-                'qos lo subport 0 auto msec 4 period 40',
+                'qos lo qos lo subport 0 auto msec 4 period 40000',
+                'qos lo subport 0 auto msec 4 period 40000',
                 'lo',
                 'SET'
             ),
@@ -651,8 +651,8 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos lo qos lo profile 0 rate 62500000 msec 4 period 10',
-                'qos lo profile 0 rate 62500000 msec 4 period 10',
+                'qos lo qos lo profile 0 rate 62500000 msec 4 period 10000',
+                'qos lo profile 0 rate 62500000 msec 4 period 10000',
                 'lo',
                 'SET'
             ),
@@ -681,8 +681,8 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos lo qos lo profile 1 percent 100 msec 4 period 10',
-                'qos lo profile 1 percent 100 msec 4 period 10',
+                'qos lo qos lo profile 1 percent 100 msec 4 period 10000',
+                'qos lo profile 1 percent 100 msec 4 period 10000',
                 'lo',
                 'SET'
             ),
@@ -717,8 +717,8 @@ TEST_DATA = [
                 'SET'
             ),
             (
-                'qos lo qos lo subport 1 auto msec 4 period 40',
-                'qos lo subport 1 auto msec 4 period 40',
+                'qos lo qos lo subport 1 auto msec 4 period 40000',
+                'qos lo subport 1 auto msec 4 period 40000',
                 'lo',
                 'SET'
             ),
