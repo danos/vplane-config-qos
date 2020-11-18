@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: Vyatta Package Maintainers <DL-vyatta-help@att.com>
 Build-Depends: debhelper (>= 9), autotools-dev,
 	       autoconf, automake, cpio, dh-yang, dh-vci, dh-python,
-	       python3, python3-all, python3-setuptools, python3-pytest,
+	       python3 (>= 3.6), python3-all, python3-setuptools, python3-pytest,
 	       ebtables
 Standards-Version: 3.9.6
 
@@ -80,7 +80,7 @@ Description: Vplane QoS tests
 Package: vyatta-policy-qos-vci
 Architecture: any
 Priority: extra
-Depends: python3, python3-vci, python3-systemd, ${misc:Depends},
+Depends: python3 (>= 3.6), python3-vci, python3-systemd, ${misc:Depends},
 	 vyatta-resources-group-v1-yang (>= 4.1.0), vyatta-res-grp-vci
 Description: Policy QoS VCI Service
  Service for policy qos commands using the Vyatta Component Infrastructure.
