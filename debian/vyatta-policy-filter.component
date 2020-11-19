@@ -1,0 +1,12 @@
+[Vyatta Component]
+Name=net.vyatta.vci.policy.filter
+Description=Policy Filter Classification VCI Component
+ExecName=/opt/vyatta/sbin/vyatta_policy_filter.py
+ConfigFile=/etc/vyatta/policy-filter.json
+After=net.vyatta.vci.resources.gpc
+
+[Model net.vyatta.vci.policy.filter.v1]
+Modules=vyatta-policy-filter-classification-v1
+
+ModelSets=vyatta-v1
+ImportsRequiredForCheck=vyatta-resources-packet-classifier-v1
