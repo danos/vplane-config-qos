@@ -97,6 +97,18 @@ class Config(vci.Config):
         LOG.debug(f"Config:check - {proposed_config}")
 
 
+def rules_updated(data):
+    gpc_groups = data.get('vyatta-resources-packet-classifier-v1:groups')
+
+    if gpc_groups is not None:
+        filter_config = FilterConfig(get_config())
+
+        for fgroup in filter_config.groups.values():
+            if fgroup.classifier in gpc_groups:
+                filter_config.build_protobuf()
+                return
+
+
 if __name__ == "__main__":
     try:
         PARSER = argparse.ArgumentParser(
@@ -117,6 +129,8 @@ if __name__ == "__main__":
         (vci.Component("net.vyatta.vci.policy.filter")
          .model(vci.Model("net.vyatta.vci.policy.filter.v1")
                 .config(Config()))
+         .subscribe("vyatta-resources-packet-classifier-v1", "rules-update",
+                    rules_updated)
          .run()
          .wait())
 
