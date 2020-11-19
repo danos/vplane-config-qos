@@ -27,6 +27,8 @@ POLFIL_CONFIG_FILE = '/etc/vyatta/policy-filter.json'
 
 POL_NAMESPACE = 'vyatta-policy-v1'
 POLFIL_NAMESPACE = 'vyatta-policy-filter-classification-v1'
+RES_NAMESPACE = 'vyatta-resources-v1'
+GPC_NAMESPACE = 'vyatta-resources-packet-classifier-v1'
 
 
 def get_config():
@@ -95,6 +97,22 @@ class Config(vci.Config):
     def check(self, proposed_config):
         """ Check anything not checked in yang """
         LOG.debug(f"Config:check - {proposed_config}")
+        filter_config = FilterConfig(proposed_config)
+
+        res_dict = proposed_config[f'{RES_NAMESPACE}:resources']
+        gpc_dict = res_dict[f'{GPC_NAMESPACE}:packet-classifier']
+        gpc_group_list = gpc_dict['group']
+
+        classifier_bindings = {}
+        for fg in filter_config.groups.values():
+            errmsg = fg.check(gpc_group_list, classifier_bindings)
+            if errmsg is not None:
+                LOG.info(f"Config:check failed for filter-group: "
+                         f"{fg.name} {errmsg}")
+                raise vci.Exception("vyatta-policy-qos-vci",
+                                    f"Config:check failed for filter-group "
+                                    f"{fg.name}: {errmsg}",
+                                    "policy/filter-classification")
 
 
 def rules_updated(data):

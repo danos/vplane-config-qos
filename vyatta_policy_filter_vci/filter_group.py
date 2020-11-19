@@ -149,3 +149,52 @@ class FilterGroup:
                     rule.counter.name = f"local/{self._name}/{cname}/{ifname}"
 
             tbl_message.ifname = ifname
+
+    def check(self, gpc_group_list, cg_bindings):
+        """
+        Validate this filter group against the Generic Packet Classifier config
+        by checking:
+        - That all the results it uses are in the GPC group it
+        references.
+        - That no more than one group of each traffic type is configured on
+        any interface.
+        """
+        errmsg = None
+
+        # Find the GPC group that this filter group references
+        for class_group in gpc_group_list:
+            cg_name = class_group['group-name']
+            if cg_name == self._classifier:
+                rules = class_group.get('rule')
+                if rules is None:
+                    errmsg = f"Packet classifier {cg_name} has no rules"
+                    return errmsg
+                # Now check our results are all used in a rule
+                for result in self._result_actions:
+                    found = False
+                    for rule in rules:
+                        rule_result = rule.get('result')
+                        if rule_result is None:
+                            continue
+                        if result == rule_result:
+                            found = True
+                            break
+                    if not found:
+                        errmsg = f"Result {result} is not in a rule in packet"\
+                            f" classifier {cg_name}"
+                        return errmsg
+
+                for ifname in self._bindings:
+                    traffic_type = class_group.get('ip-version')
+                    exist_traffic_type = cg_bindings.get((ifname,
+                                                          traffic_type))
+                    if exist_traffic_type is None:
+                        cg_bindings[(ifname, traffic_type)] = True
+                    else:
+                        errmsg = f"Only one group of type {traffic_type}"\
+                            f" is allowed on interface {ifname}"
+                        return errmsg
+
+                return errmsg
+
+        return errmsg
