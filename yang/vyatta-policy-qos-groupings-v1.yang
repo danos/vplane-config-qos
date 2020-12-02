@@ -66,12 +66,14 @@ module vyatta-policy-qos-groupings-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
-	revision 2020-10-29 {
+	revision 2020-12-02 {
 		description "Extend the 'period' keyword so that it can accept
 			     a decimal64 values allowing the user to specify
 			     periods in microseconds.
 			     Add new traffic-class-period-usec leaf node to
-			     op-mode state pipe-params grouping.";
+			     op-mode state pipe-params grouping.
+			     Prevent priority local queue being configured
+			     in profile map.";
 	}
 	revision 2020-09-27 {
 		description "Make sure the bandwidth parameter accepts
@@ -713,6 +715,11 @@ module vyatta-policy-qos-groupings-v1 {
 			refine map/dscp/to {
 				must "not(../../../queue[id = current()]/priority-local)" {
 					error-message "Priority local queue cannot be used in DSCP to queue mapping";
+				}
+			}
+			refine map/designation/to {
+				must "not(../../../queue[id = current()]/priority-local)" {
+					error-message "Priority local queue cannot be used in designation to queue mapping";
 				}
 			}
 			refine map/pcp {
