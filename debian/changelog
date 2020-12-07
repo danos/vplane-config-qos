@@ -1,3 +1,10 @@
+vplane-config-qos (5.0.5) unstable; urgency=medium
+
+  [ Brian Russell ]
+  * Prevent priority local queue being configured in profile map
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Mon, 07 Dec 2020 13:06:28 +0000
+
 vplane-config-qos (5.0.4) unstable; urgency=medium
 
   [ Alan Dewar ]
