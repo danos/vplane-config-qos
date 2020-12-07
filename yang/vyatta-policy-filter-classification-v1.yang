@@ -113,6 +113,57 @@ module vyatta-policy-filter-classification-v1 {
 		}
 	}
 
+	grouping policing-action {
+		container police {
+			description "Packet policer action";
+			configd:help "Packet policer action";
+			presence "Result maps to policer action; mandatory child nodes when configured";
+			leaf bandwidth {
+				type npf:bandwidth-suffix;
+				description "Bandwidth limit in bytes/second";
+				configd:help "Bandwidth limit in bytes/second";
+				mandatory true;
+			}
+
+			leaf excess-bandwidth {
+				type npf:bandwidth-suffix;
+				description "Excess bandwidth limit in bytes/second";
+				configd:help "Excess bandwidth limit in bytes/second";
+				must "../bandwidth" {
+					error-message "Excess bandwidth requires bandwidth configuration";
+				}
+			}
+			leaf burst {
+				type npf:burst-size;
+				description "Burst size in bytes";
+				configd:help "Burst size in bytes";
+			}
+			leaf excess-burst {
+				type npf:burst-size;
+				description "Excess burst size in bytes";
+				configd:help "Excess burst size in bytes";
+				must "../excess-bandwidth" {
+					error-message "Excess burst requires excess bandwidth configuration";
+				}
+			}
+			leaf colour-awareness {
+				description "Policer colour awareness";
+				configd:help "Policer colour awareness";
+				type enumeration {
+					enum "colour-aware" {
+						description "Packets entering policer cannot have drop-precedence decreased";
+						configd:help "Packets entering policer cannot have drop-precedence decreased";
+					}
+					enum "colour-unaware" {
+						description "Packets entering policer are treated as drop-precedence green";
+						configd:help "Packets entering policer are treated as drop-precedence green";
+					}
+				}
+				mandatory true;
+			}
+		}
+	}
+
 	grouping filter-classification-list {
 		list group {
 			description "Filter classification group";
@@ -195,6 +246,7 @@ module vyatta-policy-filter-classification-v1 {
 					configd:help "Actions";
 					presence "Actions applied to packet";
 					uses marking-action;
+					uses policing-action;
 				}
 			}
 		}
