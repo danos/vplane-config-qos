@@ -1,3 +1,11 @@
+vplane-config-qos (5.0.6) unstable; urgency=medium
+
+  [ Alan Dewar ]
+  * VCI: stop QoS VCI crashing when dataplane is down (Fixes: VRVDR-53805)
+  * VCI: fix pylint3 and flake8 errors
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Thu, 10 Dec 2020 12:49:35 +0000
+
 vplane-config-qos (5.0.5) unstable; urgency=medium
 
   [ Brian Russell ]
