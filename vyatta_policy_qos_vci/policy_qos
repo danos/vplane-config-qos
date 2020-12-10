@@ -48,6 +48,7 @@ def remove_deferred_ingress_maps(config, deferred_in_map_list):
                 del in_map_list[index]
                 break
 
+
 def remove_deferred_egress_maps(config, deferred_eg_map_list):
     """
     Delete any deferred egress-maps from the JSON config dictionary.
@@ -66,9 +67,11 @@ def remove_deferred_egress_maps(config, deferred_eg_map_list):
                 del eg_map_list[index]
                 break
 
+
 def send_qos_config_to_dataplane(new_config):
     """
-    We are now ready to send the QoS configuration down to the vyatta-dataplane.
+    We are now ready to send the QoS configuration down to the
+    vyatta-dataplane.
     """
     try:
         old_config = get_config()
@@ -110,6 +113,7 @@ class Config(vci.Config):
     The Configuration mode class for QoS VCI
     """
     config = {}
+
     def set(self, new_config):
         """
         Update the QoS config down in the dataplane from the VCI JSON
@@ -138,19 +142,24 @@ class Config(vci.Config):
         config = QosConfig(proposed_config)
         for ingress_map in config.ingress_maps.values():
             if not ingress_map.check(proposed_config):
-                LOG.info(f"Config:check failed for ingress-map: {ingress_map.name}")
+                LOG.info("Config:check failed for ingress-map: "
+                         f"{ingress_map.name}")
                 raise vci.Exception("vyatta-policy-qos-vci",
-                                    f"Incomplete ingress-map {ingress_map.name}",
+                                    "Incomplete ingress-map "
+                                    f"{ingress_map.name}",
                                     "policy/ingress-map")
 
         for egress_map in config.egress_maps.values():
             if not egress_map.check(proposed_config):
-                LOG.info(f"Config:check failed for egress-map: {egress_map.name}")
+                LOG.info("Config:check failed for egress-map: "
+                         f"{egress_map.name}")
                 raise vci.Exception("vyatta-policy-qos-vci",
-                                    f"Incomplete egress-map {egress_map.name}",
+                                    "Incomplete egress-map "
+                                    f"{egress_map.name}",
                                     "policy/egress-map")
 
         return
+
 
 class State(vci.State):
     """
@@ -166,7 +175,8 @@ class State(vci.State):
             with Controller() as ctrl:
                 for dataplane in ctrl.get_dataplanes():
                     with dataplane:
-                        op_mode_state = dataplane.json_command("qos optimised-show")
+                        cmd = "qos optimised-show"
+                        op_mode_state = dataplane.json_command(cmd)
 
         except ControllerException:
             LOG.error("Failed to connect to vplane-controller")
@@ -182,7 +192,8 @@ class State(vci.State):
             for line in tb_info:
                 tb_output += line
 
-            LOG.error(f"Unhandled exception: {tb_type}\n{tb_value}\n{tb_output}")
+            LOG.error(f"Unhandled exception: {tb_type}\n{tb_value}\n"
+                      f"{tb_output}")
 
         try:
             yang_state = {}
@@ -199,7 +210,8 @@ class State(vci.State):
             for line in tb_info:
                 tb_output += line
 
-            LOG.error(f"Unhandled exception: {tb_type}\n{tb_value}\n{tb_output}")
+            LOG.error(f"Unhandled exception: {tb_type}\n{tb_value}\n"
+                      f"{tb_output}")
 
         # We must include the namespace at the top level, and everywhere
         # that the namespace changes
@@ -213,25 +225,24 @@ class State(vci.State):
 if __name__ == "__main__":
     try:
         PARSER = argparse.ArgumentParser(description='Policy QoS VCI Service')
-        PARSER.add_argument('--debug', action='store_true', help='Enabled debugging')
+        PARSER.add_argument('--debug', action='store_true',
+                            help='Enabled debugging')
         ARGS = PARSER.parse_args()
 
-        logging.root.addHandler(JournalHandler(SYSLOG_IDENTIFIER='vyatta-policy-qos-vci'))
+        SYSLOG_ID = 'vyatta-policy-qos-vci'
+        logging.root.addHandler(JournalHandler(SYSLOG_IDENTIFIER=SYSLOG_ID))
         LOG = logging.getLogger('Policy QoS VCI')
 
         if ARGS.debug:
             LOG.setLevel(logging.DEBUG)
             LOG.debug("Debug enabled")
 
-        qos_config = None
-
         LOG.debug("About to register with VCI")
 
         (vci.Component("net.vyatta.vci.policy.qos")
          .model(vci.Model("net.vyatta.vci.policy.qos.v1")
                 .config(Config())
-                .state(State())
-               )
+                .state(State()))
          .run()
          .wait())
 
