@@ -19,6 +19,8 @@ from systemd.journal import JournalHandler
 
 import vci
 
+from zmq.error import Again
+
 from vplaned import Controller, ControllerException
 
 from vyatta_policy_qos_vci.provisioner import Provisioner
@@ -166,19 +168,11 @@ class State(vci.State):
                     with dataplane:
                         op_mode_state = dataplane.json_command("qos optimised-show")
 
-            yang_state = {}
-            if op_mode_state is not None:
-                if_list = convert_if_list("all", op_mode_state)
-                if if_list:
-                    yang_state["if-list"] = if_list
-
-            # We must include the namespace at the top level, and everywhere
-            # that the namespace changes
-            if not yang_state:
-                return {}
-
         except ControllerException:
             LOG.error("Failed to connect to vplane-controller")
+
+        except Again:
+            LOG.error("op-mode state temporarily unavailable")
 
         except Exception:
             tb_type = sys.exc_info()[0]
@@ -189,6 +183,28 @@ class State(vci.State):
                 tb_output += line
 
             LOG.error(f"Unhandled exception: {tb_type}\n{tb_value}\n{tb_output}")
+
+        try:
+            yang_state = {}
+            if op_mode_state is not None:
+                if_list = convert_if_list("all", op_mode_state)
+                if if_list:
+                    yang_state["if-list"] = if_list
+
+        except Exception:
+            tb_type = sys.exc_info()[0]
+            tb_value = sys.exc_info()[1]
+            tb_info = format_tb(sys.exc_info()[2])
+            tb_output = ""
+            for line in tb_info:
+                tb_output += line
+
+            LOG.error(f"Unhandled exception: {tb_type}\n{tb_value}\n{tb_output}")
+
+        # We must include the namespace at the top level, and everywhere
+        # that the namespace changes
+        if not yang_state:
+            return {}
 
         return {'vyatta-policy-v1:policy': {'vyatta-policy-qos-v1:qos':
                                             {'state': yang_state}}}
