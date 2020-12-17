@@ -38,6 +38,12 @@ module vyatta-policy-qos-v1 {
 	import vyatta-interfaces-switch-vif-policy-v1 {
 		prefix vif-pol;
 	}
+	import vyatta-interfaces-bonding-v1 {
+		prefix bonding;
+	}
+	import vyatta-interfaces-bonding-switch-v1 {
+		prefix bd-sw;
+	}
 
 	organization "AT&T Inc.";
 	contact
@@ -47,7 +53,7 @@ module vyatta-policy-qos-v1 {
 		 Web: www.att.com";
 
 	description
-		"Copyright (c) 2017-2020 AT&T Intellectual Property
+		"Copyright (c) 2017-2021 AT&T Intellectual Property
 		 All rights reserved.
 
 		 Copyright (c) 2014-2017 by Brocade Communications Systems, Inc.
@@ -83,6 +89,10 @@ module vyatta-policy-qos-v1 {
 		 SPDX-License-Identifier: BSD-3-Clause
 
 		 This module implements vyatta-policy-qos-v1.";
+
+	revision 2021-01-07 {
+		description "Added support for LAG QoS.";
+	}
 
 	revision 2020-11-05 {
 		description "Change egress maps to be based on DSCP group to
@@ -188,6 +198,10 @@ module vyatta-policy-qos-v1 {
 
 	feature egress-map {
 		description "Egress-map for DSCP or PCP marking of packets";
+	}
+
+	feature hardware-qos-bond {
+		description "Hardware-based QoS on bonding groups";
 	}
 
 	typedef name {
@@ -718,6 +732,16 @@ module vyatta-policy-qos-v1 {
 			must "(../../../../../sw-pol:policy/qos)" {
 				error-message "There must be a port-parameters level policy";
 			}
+			type leafref {
+				path "/policy:policy/qos/name/id";
+			}
+			configd:help "QoS policy name for interface";
+		}
+	}
+
+	augment /if:interfaces/bonding:bonding/bd-sw:switch-group/bd-sw:port-parameters/sw-pol:policy {
+		if-feature hardware-qos-bond;
+		leaf qos {
 			type leafref {
 				path "/policy:policy/qos/name/id";
 			}
