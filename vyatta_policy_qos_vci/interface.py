@@ -22,18 +22,48 @@ POLICY_KEY = {
     'dataplane': 'vyatta-policy-qos-v1',
     'vhost': 'vyatta-interfaces-vhost-qos-v1',
     'switch': 'vyatta-policy-qos-v1',
+    'bond_member': 'vyatta-policy-qos-v1',
 }
+
+def get_bonding_members(client, bonding_group):
+    """
+    Returns a list of interfaces that are members of the provided bonding group.
+    """
+    if client is None:
+        raise TypeError("configd client session was not provided")
+
+    members = []
+
+    config = client.tree_get_dict("interfaces dataplane", client.RUNNING)
+    dataplane = config.get("dataplane", [])
+    for interface in dataplane:
+        if_bond_grp = interface.get('bond-group')
+        if if_bond_grp is not None:
+            if if_bond_grp == bonding_group.get('tagnode'):
+                members.append(interface)
+
+    return members
+
+
+class MissingBondGroupError(Exception):
+    def __init__(self):
+        self.message = "bond_group not provided to interface of bond_member type"
+
 
 class Interface:
     """
     A class for interface objects.  We will have one Interface object for
     each physical port that has QoS configured on it.
     """
-    def __init__(self, if_type, if_dict, qos_policy_dict, ingress_map_dict, egress_map_dict):
+    def __init__(self, if_type, if_dict, qos_policy_dict, ingress_map_dict,
+                 egress_map_dict, bond_dict=None):
         """
         Create an interface object for a physical port
-        if_type is one of "dataplane", "bonding", "vhost" or "switch"
+        if_type is one of "dataplane", "bonding", "vhost", "switch" or
+        "bond_member"
         """
+        if if_type == 'bond_member' and bond_dict is None:
+            raise MissingBondGroupError
         self._if_dict = if_dict
         self._if_type = if_type
         if if_type == 'vhost':
@@ -64,9 +94,17 @@ class Interface:
         except KeyError:
             try:
                 # Try the hardware-switch platform style
-                if_policy_dict = if_dict['vyatta-interfaces-dataplane-switch-v1:switch-group']
+                if if_type == 'bond_member':
+                    # Interface is a LAG member: the policy is in the LAG
+                    # interface:
+                    if_policy_dict = bond_dict[
+                        'vyatta-interfaces-bonding-switch-v1:switch-group']
+                else:
+                    if_policy_dict = if_dict[
+                        'vyatta-interfaces-dataplane-switch-v1:switch-group']
                 port_params_dict = if_policy_dict['port-parameters']
-                if_policy_dict = port_params_dict['vyatta-interfaces-switch-policy-v1:policy']
+                if_policy_dict = port_params_dict[
+                    'vyatta-interfaces-switch-policy-v1:policy']
             except KeyError:
                 pass
 

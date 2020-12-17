@@ -9,15 +9,20 @@
 The module that defines the QosConfig class.
 """
 
+import logging
+
 from vyatta_policy_qos_vci.action import Action
 from vyatta_policy_qos_vci.ingress_map import IngressMap
 from vyatta_policy_qos_vci.egress_map import EgressMap
 from vyatta_policy_qos_vci.interface import Interface
+from vyatta_policy_qos_vci.interface import get_bonding_members
 from vyatta_policy_qos_vci.mark_map import MarkMap
 from vyatta_policy_qos_vci.policy import Policy
 from vyatta_policy_qos_vci.profile import Profile
 from vyatta_policy_qos_vci.platform import PlatformBufferThreshold
 from vyatta_policy_qos_vci.platform import PlatformLPDes
+
+LOG = logging.getLogger('Policy QoS VCI')
 
 
 class QosConfig:
@@ -26,7 +31,7 @@ class QosConfig:
     The JSON configuration is broken down into bits that are mapped onto the
     QoS object model.
     """
-    def __init__(self, config_dict):
+    def __init__(self, config_dict, client=None):
         """ Create a QosConfig object """
         self._action_groups = {}
         self._mark_maps = {}
@@ -55,7 +60,7 @@ class QosConfig:
         self._process_egress_map(eg_map_dict)
 
         if_dict = config_dict.get('vyatta-interfaces-v1:interfaces')
-        self._process_interfaces(if_dict)
+        self._process_interfaces(if_dict, client=client)
 
     def _process_action(self, action_dict):
         """ Process the action dictionary to create action objects """
@@ -108,15 +113,31 @@ class QosConfig:
                                 self._mark_maps)
                 self._policies[policy.name] = policy
 
-    def _process_interfaces(self, if_dict):
+    def _process_interfaces(self, if_dict, client=None):
         """ Process interfaces that have QoS policies attached to them """
         if if_dict is not None:
             for key, interfaces in if_dict.items():
                 if_type = key.split(':')[1]
-                for interface in interfaces:
-                    int_obj = Interface(if_type, interface, self._policies,
-                                        self._ingress_maps, self._egress_maps)
-                    self._interfaces[int_obj.ifname] = int_obj
+
+                if if_type != 'bonding':
+                    for interface in interfaces:
+                        int_obj = Interface(if_type, interface, self._policies,
+                                            self._ingress_maps,
+                                            self._egress_maps)
+                        self._interfaces[int_obj.ifname] = int_obj
+                else:
+                    for interface in interfaces:
+                        members = get_bonding_members(client, interface)
+                        for member in members:
+                            int_obj = Interface('bond_member', member,
+                                                self._policies,
+                                                self._ingress_maps,
+                                                self._egress_maps,
+                                                bond_dict=interface)
+                            LOG.debug('Created Interface obj for member {} of '
+                                      'LAG {}'.format(member.get('tagnode'),
+                                      interface.get('tagnode')))
+                            self._interfaces[int_obj.ifname] = int_obj
 
     def _process_ingress_map(self, ingress_map_list):
         """ Process the ingress-map list """

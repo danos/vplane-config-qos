@@ -66,7 +66,7 @@ class Provisioner:
     like global profiles, mark-maps or action-groups may affect multiple
     interfaces.
     """
-    def __init__(self, old, new):
+    def __init__(self, old, new, client=None):
         """ Create a provisioner object """
         self._if_deletes = []
         self._if_updates = []
@@ -79,8 +79,8 @@ class Provisioner:
         self._obj_create = []
 
         # Now process the QoS config
-        old_config = QosConfig(old)
-        new_config = QosConfig(new)
+        old_config = QosConfig(old, client=client)
+        new_config = QosConfig(new, client=client)
 
         self._check_platform_params(old_config, new_config)
         self._check_interfaces(old_config, new_config)

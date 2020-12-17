@@ -184,6 +184,12 @@ TEST_DATA = [
                 }
             }
         },
+        # Configd mock return: If the test input has bonding groups that
+        # contain dataplane interfaces (SIAD), QoS VCI component will look for
+        # the LAG members in configd. In such case, the dictionary that must be
+        # returned by the configd mock (containing the dataplane interfaces) can
+        # be provided here.
+        None,
         # expected_result
         [
             # Each tuple represents the arguments passed into ctrl.store
@@ -582,6 +588,8 @@ TEST_DATA = [
                 }
             }
         },
+        # Configd mock return
+        None,
         # expected results
         [
             (
@@ -807,11 +815,362 @@ TEST_DATA = [
                 'SET'
             )
         ]
+    ),
+    (
+        # test_input - SIAD: QoS policy attached to a bonding group
+        {
+            "vyatta-interfaces-v1:interfaces": {
+                'vyatta-interfaces-bonding-v1:bonding': [
+                    {
+                        'tagnode': 'dp0bond1',
+                        'vyatta-interfaces-bonding-switch-v1:switch-group': {
+                            'port-parameters': {
+                                'vyatta-interfaces-switch-policy-v1:policy': {
+                                    'vyatta-policy-qos-v1:qos': 'policy-1'
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            'vyatta-policy-v1:policy': {
+                'vyatta-policy-qos-v1:qos': {
+                    'name': [
+                        {
+                            'id': 'policy-1',
+                            'shaper': {
+                                'bandwidth': 'auto',
+                                'burst': 16000,
+                                'default': 'profile-1',
+                                'frame-overhead': '24'
+                            }
+                        }
+                    ],
+                    'profile': [
+                        {
+                            'bandwidth': '200Mbit',
+                            'burst': 16000,
+                            'id': 'profile-1'
+                        }
+                    ]
+                }
+            }
+        },
+        # Configd mock return: Dataplane interfaces in configd.
+        {
+            'dataplane': [
+                {
+                    'tagnode': 'dp0xe1',
+                    'admin-status': 'up',
+                    'duplex': 'auto',
+                    'ip': {
+                        'gratuitous-arp-count': 1,
+                        'rpf-check': 'disable'
+                    },
+                    'ipv6': {
+                        'dup-addr-detect-transmits': 1
+                    },
+                    'mtu': 1500,
+                    'oper-status': 'dormant',
+                    'speed': 'auto',
+                    'vlan-protocol': '0x8100',
+                    'vrrp': {
+                        'start-delay': 0
+                    }
+                },
+                {
+                    'tagnode': 'dp0xe2',
+                    'admin-status': 'up',
+                    'duplex': 'auto',
+                    'ip': {
+                        'gratuitous-arp-count': 1,
+                        'rpf-check': 'disable'
+                    },
+                    'ipv6': {
+                        'dup-addr-detect-transmits': 1
+                    },
+                    'mtu': 1500,
+                    'oper-status': 'dormant',
+                    'speed': 'auto',
+                    'vlan-protocol': '0x8100',
+                    'vrrp': {
+                        'start-delay': 0
+                    }
+                },
+                {
+                    'tagnode': 'dp0xe3',
+                    'admin-status': 'up',
+                    'bond-group': 'dp0bond1',
+                    'duplex': 'auto',
+                    'ip': {
+                        'gratuitous-arp-count': 1,
+                        'rpf-check': 'disable'
+                    },
+                    'ipv6': {
+                        'dup-addr-detect-transmits': 1
+                    },
+                    'mtu': 1500,
+                    'oper-status': 'dormant',
+                    'speed': 'auto',
+                    'vlan-protocol': '0x8100',
+                    'vrrp': {
+                        'start-delay': 0
+                    }
+                },
+                {
+                    'tagnode': 'dp0xe4',
+                    'admin-status': 'up',
+                    'bond-group': 'dp0bond1',
+                    'duplex': 'auto',
+                    'ip': {
+                        'gratuitous-arp-count': 1,
+                        'rpf-check': 'disable'
+                    },
+                    'ipv6': {
+                        'dup-addr-detect-transmits': 1
+                    },
+                    'mtu': 1500,
+                    'oper-status': 'dormant',
+                    'speed': 'auto',
+                    'vlan-protocol': '0x8100',
+                    'vrrp': {
+                        'start-delay': 0
+                    }
+                },
+            ]
+        },
+        # expected_result
+        [
+            # 1st LAG member:
+            (
+                'qos dp0xe3 qos dp0xe3 port subports 1 pipes 1 profiles 1 overhead 24 ql_packets',
+                'qos dp0xe3 port subports 1 pipes 1 profiles 1 overhead 24 ql_packets',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 subport 0 auto size 16000 period 40000',
+                'qos dp0xe3 subport 0 auto size 16000 period 40000',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 subport 0 queue 0 percent 100 msec 4',
+                'qos dp0xe3 subport 0 queue 0 percent 100 msec 4',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 param subport 0 0 limit packets 64',
+                'qos dp0xe3 param subport 0 0 limit packets 64',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 subport 0 queue 1 percent 100 msec 4',
+                'qos dp0xe3 subport 0 queue 1 percent 100 msec 4',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 param subport 0 1 limit packets 64',
+                'qos dp0xe3 param subport 0 1 limit packets 64',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 subport 0 queue 2 percent 100 msec 4',
+                'qos dp0xe3 subport 0 queue 2 percent 100 msec 4',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 param subport 0 2 limit packets 64',
+                'qos dp0xe3 param subport 0 2 limit packets 64',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 subport 0 queue 3 percent 100 msec 4',
+                'qos dp0xe3 subport 0 queue 3 percent 100 msec 4',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 param subport 0 3 limit packets 64',
+                'qos dp0xe3 param subport 0 3 limit packets 64',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 vlan 0 0',
+                'qos dp0xe3 vlan 0 0',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 profile 0 rate 25000000 size 16000 period 10000',
+                'qos dp0xe3 profile 0 rate 25000000 size 16000 period 10000',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 profile 0 queue 0 percent 100 msec 4',
+                'qos dp0xe3 profile 0 queue 0 percent 100 msec 4',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 profile 0 queue 1 percent 100 msec 4',
+                'qos dp0xe3 profile 0 queue 1 percent 100 msec 4',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 profile 0 queue 2 percent 100 msec 4',
+                'qos dp0xe3 profile 0 queue 2 percent 100 msec 4',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 profile 0 queue 3 percent 100 msec 4',
+                'qos dp0xe3 profile 0 queue 3 percent 100 msec 4',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 pipe 0 0 0',
+                'qos dp0xe3 pipe 0 0 0',
+                'dp0xe3',
+                'SET'
+            ),
+            (
+                'qos dp0xe3 qos dp0xe3 enable',
+                'qos dp0xe3 enable',
+                'dp0xe3',
+                'SET'
+            ),
+            # 2nd LAG member:
+            (
+                'qos dp0xe4 qos dp0xe4 port subports 1 pipes 1 profiles 1 overhead 24 ql_packets',
+                'qos dp0xe4 port subports 1 pipes 1 profiles 1 overhead 24 ql_packets',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 subport 0 auto size 16000 period 40000',
+                'qos dp0xe4 subport 0 auto size 16000 period 40000',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 subport 0 queue 0 percent 100 msec 4',
+                'qos dp0xe4 subport 0 queue 0 percent 100 msec 4',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 param subport 0 0 limit packets 64',
+                'qos dp0xe4 param subport 0 0 limit packets 64',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 subport 0 queue 1 percent 100 msec 4',
+                'qos dp0xe4 subport 0 queue 1 percent 100 msec 4',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 param subport 0 1 limit packets 64',
+                'qos dp0xe4 param subport 0 1 limit packets 64',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 subport 0 queue 2 percent 100 msec 4',
+                'qos dp0xe4 subport 0 queue 2 percent 100 msec 4',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 param subport 0 2 limit packets 64',
+                'qos dp0xe4 param subport 0 2 limit packets 64',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 subport 0 queue 3 percent 100 msec 4',
+                'qos dp0xe4 subport 0 queue 3 percent 100 msec 4',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 param subport 0 3 limit packets 64',
+                'qos dp0xe4 param subport 0 3 limit packets 64',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 vlan 0 0',
+                'qos dp0xe4 vlan 0 0',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 profile 0 rate 25000000 size 16000 period 10000',
+                'qos dp0xe4 profile 0 rate 25000000 size 16000 period 10000',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 profile 0 queue 0 percent 100 msec 4',
+                'qos dp0xe4 profile 0 queue 0 percent 100 msec 4',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 profile 0 queue 1 percent 100 msec 4',
+                'qos dp0xe4 profile 0 queue 1 percent 100 msec 4',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 profile 0 queue 2 percent 100 msec 4',
+                'qos dp0xe4 profile 0 queue 2 percent 100 msec 4',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 profile 0 queue 3 percent 100 msec 4',
+                'qos dp0xe4 profile 0 queue 3 percent 100 msec 4',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 pipe 0 0 0',
+                'qos dp0xe4 pipe 0 0 0',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos dp0xe4 qos dp0xe4 enable',
+                'qos dp0xe4 enable',
+                'dp0xe4',
+                'SET'
+            ),
+            (
+                'qos commit',
+                'qos commit',
+                'ALL',
+                'SET'
+            )
+        ]
     )
 ]
 
-@pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
-def test_provisioner(test_input, expected_result):
+@pytest.mark.parametrize("test_input, configd_mock_ret, expected_result", TEST_DATA)
+def test_provisioner(test_input, configd_mock_ret, expected_result):
     """ Simple unit-test for the provisioner class """
     # Mock up a dataplane context manager
     mock_dataplane = MagicMock()
@@ -824,7 +1183,19 @@ def test_provisioner(test_input, expected_result):
     }
     ctrl = Mock(**attrs)
 
-    prov = Provisioner({}, test_input)
+    # Mock up a configuration object from configd
+    attrs = {
+        'tree_get_dict.return_value': configd_mock_ret
+    }
+    # Mock up configd
+    mock_config = Mock(**attrs)
+    attrs = {
+        'Client.return_value': mock_config
+    }
+    configd = Mock(**attrs)
+    client = configd.Client()
+
+    prov = Provisioner({}, test_input, client=client)
     assert prov is not None
     # prov.commands writes the QoS config commands to the mocked controller
     prov.commands(ctrl)

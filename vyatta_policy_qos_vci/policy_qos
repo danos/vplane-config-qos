@@ -22,6 +22,7 @@ import vci
 from zmq.error import Again
 
 from vplaned import Controller, ControllerException
+from vyatta import configd
 
 from vyatta_policy_qos_vci.provisioner import Provisioner
 from vyatta_policy_qos_vci.provisioner import get_config
@@ -68,7 +69,7 @@ def remove_deferred_egress_maps(config, deferred_eg_map_list):
                 break
 
 
-def send_qos_config_to_dataplane(new_config):
+def send_qos_config_to_dataplane(new_config, client):
     """
     We are now ready to send the QoS configuration down to the
     vyatta-dataplane.
@@ -77,7 +78,7 @@ def send_qos_config_to_dataplane(new_config):
         old_config = get_config()
         LOG.debug(f'old-config: {old_config}')
         LOG.debug(f'new-config: {new_config}')
-        prov = Provisioner(old_config, new_config)
+        prov = Provisioner(old_config, new_config, client=client)
         with Controller() as ctrl:
             prov.commands(ctrl)
 
@@ -107,6 +108,13 @@ def send_qos_config_to_dataplane(new_config):
 
     return actioned_config
 
+def get_configd_client_session():
+    try:
+        return configd.Client()
+    except Exception as exc:
+        LOG.error(f"Cannot establish configd client session: "
+            f"'{str(exc).strip()}'")
+        raise
 
 class Config(vci.Config):
     """
@@ -120,9 +128,11 @@ class Config(vci.Config):
         """
         LOG.debug(f"Config:set - {new_config}")
 
+        client = get_configd_client_session()
+
         # Issue the required NPF and QoS commands, and save the actioned
         # configuration
-        self.config = send_qos_config_to_dataplane(new_config)
+        self.config = send_qos_config_to_dataplane(new_config, client)
         return
 
     def get(self):
@@ -139,7 +149,8 @@ class Config(vci.Config):
     def check(self, proposed_config):
         """ Move the validation checks from perl to here? """
         LOG.debug(f"Config:check - {proposed_config}")
-        config = QosConfig(proposed_config)
+        client = get_configd_client_session()
+        config = QosConfig(proposed_config, client=client)
         for ingress_map in config.ingress_maps.values():
             if not ingress_map.check(proposed_config):
                 LOG.info("Config:check failed for ingress-map: "

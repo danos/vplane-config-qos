@@ -11,10 +11,12 @@ Unit-tests for the interface.py module.
 """
 
 import pytest
+from unittest.mock import Mock
 
 from vyatta_policy_qos_vci.ingress_map import IngressMap
 from vyatta_policy_qos_vci.egress_map import EgressMap
-from vyatta_policy_qos_vci.interface import Interface
+from vyatta_policy_qos_vci.interface import (Interface, get_bonding_members,
+    MissingBondGroupError)
 from vyatta_policy_qos_vci.policy import Policy
 
 # The following tests are based upon the following Vyatta VM and SIAD
@@ -149,6 +151,24 @@ VM_BONDED_VLAN_DICT = {
     ]
 }
 
+SIAD_BONDED_IF_DICT = {
+    'tagnode': 'dp0bond1',
+    'vyatta-interfaces-bonding-switch-v1:switch-group': {
+        'port-parameters': {
+            'vyatta-interfaces-switch-policy-v1:policy': {
+                'vyatta-policy-qos-v1:qos': 'policy-3',
+                'vyatta-policy-qos-v1:ingress-map': 'in-map-1',
+                'vyatta-policy-qos-v1:egress-map': 'out-map-1'
+            }
+        }
+    }
+}
+
+SIAD_BONDED_IF_MEMBER_DICT = {
+    'tagnode': 'dp0xe3',
+    'bond-group': 'dp0bond1',
+}
+
 VNF_VHOST_IF_DICT = {
     'name': 'lo',
     'vyatta-interfaces-vhost-policy-v1:policy': {
@@ -233,7 +253,7 @@ for policy in QOS_POLICY_DICT.values():
 TEST_DATA = [
     (
         # test_input
-        ('dataplane', VM_IF_DICT),
+        ('dataplane', VM_IF_DICT, None),
         # expected_data
         [
             # Vyatta VM trunk commands
@@ -259,7 +279,7 @@ TEST_DATA = [
     ),
     (
         # test_input
-        ('dataplane', VM_VLAN_DICT),
+        ('dataplane', VM_VLAN_DICT, None),
         # expected_data
         [
             # Vyatta VM trunk and vlan commands
@@ -301,7 +321,7 @@ TEST_DATA = [
     ),
     (
         # test_input
-        ('dataplane', SIAD_IF_DICT),
+        ('dataplane', SIAD_IF_DICT, None),
         # expected_data
         [
             # SIAD commands
@@ -328,7 +348,7 @@ TEST_DATA = [
     ),
     (
         # test_input
-        ('dataplane', SIAD_VLAN_DICT),
+        ('dataplane', SIAD_VLAN_DICT, None),
         # expected_data
         [
             # SIAD trunk and vlan commands
@@ -387,7 +407,7 @@ TEST_DATA = [
     ),
     (
         # test_input
-        ('bonding', VM_BONDED_IF_DICT),
+        ('bonding', VM_BONDED_IF_DICT, None),
         # expected_data
         [
             # Bonded interface trunk commands
@@ -413,7 +433,7 @@ TEST_DATA = [
     ),
     (
         # test_input
-        ('bonding', VM_BONDED_VLAN_DICT),
+        ('bonding', VM_BONDED_VLAN_DICT, None),
         # expected_data
         [
             # Bonded interface trunk and vlan commands
@@ -455,7 +475,7 @@ TEST_DATA = [
     ),
     (
         # test_input
-        ('vhost', VNF_VHOST_IF_DICT),
+        ('vhost', VNF_VHOST_IF_DICT, None),
         # expected_data
         [
             # vhost interface trunk commands
@@ -481,7 +501,7 @@ TEST_DATA = [
     ),
     (
         # test_input
-        ('vhost', VNF_VHOST_VLAN_DICT),
+        ('vhost', VNF_VHOST_VLAN_DICT, None),
         # expected_data
         [
             # vhost interface trunk and vlan commands
@@ -519,6 +539,32 @@ TEST_DATA = [
             "qos lo profile 1 queue 3 percent 100 msec 4",
             "qos lo pipe 1 0 1",
             "qos lo enable"
+        ]
+    ),
+    (
+        # test_input
+        ('bond_member', SIAD_BONDED_IF_MEMBER_DICT, SIAD_BONDED_IF_DICT),
+        # expected_data
+        [
+            # SIAD commands
+            'qos dp0xe3 port subports 1 pipes 1 profiles 1 overhead 6 ql_packets',
+            'qos dp0xe3 subport 0 rate 375000000 size 16000 period 40000',
+            'qos dp0xe3 subport 0 queue 0 percent 100 msec 4',
+            'qos dp0xe3 param subport 0 0 limit packets 64',
+            'qos dp0xe3 subport 0 queue 1 percent 100 msec 4',
+            'qos dp0xe3 param subport 0 1 limit packets 64',
+            'qos dp0xe3 subport 0 queue 2 percent 100 msec 4',
+            'qos dp0xe3 param subport 0 2 limit packets 64',
+            'qos dp0xe3 subport 0 queue 3 percent 100 msec 4',
+            'qos dp0xe3 param subport 0 3 limit packets 64',
+            'qos dp0xe3 vlan 0 0',
+            'qos dp0xe3 profile 0 percent 100 size 16000 period 10000',
+            'qos dp0xe3 profile 0 queue 0 percent 100 msec 4',
+            'qos dp0xe3 profile 0 queue 1 percent 100 msec 4',
+            'qos dp0xe3 profile 0 queue 2 percent 100 msec 4',
+            'qos dp0xe3 profile 0 queue 3 percent 100 msec 4',
+            'qos dp0xe3 pipe 0 0 0',
+            'qos dp0xe3 enable'
         ]
     )
 ]
@@ -584,8 +630,141 @@ def test_interface(test_input, expected_result):
     egress_map_dict = {}
     egress_map_dict['out-map-1'] = EgressMap(OUT_MAP_1_DICT)
     egress_map_dict['out-map-2'] = EgressMap(OUT_MAP_2_DICT)
-    if_type, if_dict = test_input
-    interface = Interface(if_type, if_dict, QOS_POLICY_DICT, ingress_map_dict, egress_map_dict)
+    if_type, if_dict, bond_dict = test_input
+    interface = Interface(if_type, if_dict, QOS_POLICY_DICT, ingress_map_dict,
+                            egress_map_dict, bond_dict=bond_dict)
 
     assert interface is not None
     assert interface.commands() == expected_result
+
+def test_get_bonding_members():
+    # Bonding interface dict from QoS VCI JSON configuration file:
+    bonding_group = {
+        'tagnode': 'dp0bond1',
+        'vyatta-interfaces-bonding-switch-v1:switch-group': {
+            'port-parameters': {
+                'vyatta-interfaces-switch-policy-v1:policy': {
+                    'vyatta-policy-qos-v1:qos': 'trunk-egress1'
+                }
+            }
+        }
+    }
+
+    # Mock up a configuration object from configd
+    attrs = {
+        'tree_get_dict.return_value': {
+            'dataplane': [
+                {
+                    'tagnode': 'dp0xe1',
+                    'admin-status': 'up',
+                    'duplex': 'auto',
+                    'ip': {
+                        'gratuitous-arp-count': 1,
+                        'rpf-check': 'disable'
+                    },
+                    'ipv6': {
+                        'dup-addr-detect-transmits': 1
+                    },
+                    'mtu': 1500,
+                    'oper-status': 'dormant',
+                    'speed': 'auto',
+                    'vlan-protocol': '0x8100',
+                    'vrrp': {
+                        'start-delay': 0
+                    }
+                },
+                {
+                    'tagnode': 'dp0xe2',
+                    'admin-status': 'up',
+                    'duplex': 'auto',
+                    'ip': {
+                        'gratuitous-arp-count': 1,
+                        'rpf-check': 'disable'
+                    },
+                    'ipv6': {
+                        'dup-addr-detect-transmits': 1
+                    },
+                    'mtu': 1500,
+                    'oper-status': 'dormant',
+                    'speed': 'auto',
+                    'vlan-protocol': '0x8100',
+                    'vrrp': {
+                        'start-delay': 0
+                    }
+                },
+                {
+                    'tagnode': 'dp0xe3',
+                    'admin-status': 'up',
+                    'bond-group': 'dp0bond1',
+                    'duplex': 'auto',
+                    'ip': {
+                        'gratuitous-arp-count': 1,
+                        'rpf-check': 'disable'
+                    },
+                    'ipv6': {
+                        'dup-addr-detect-transmits': 1
+                    },
+                    'mtu': 1500,
+                    'oper-status': 'dormant',
+                    'speed': 'auto',
+                    'vlan-protocol': '0x8100',
+                    'vrrp': {
+                        'start-delay': 0
+                    }
+                },
+                {
+                    'tagnode': 'dp0xe4',
+                    'admin-status': 'up',
+                    'bond-group': 'dp0bond1',
+                    'duplex': 'auto',
+                    'ip': {
+                        'gratuitous-arp-count': 1,
+                        'rpf-check': 'disable'
+                    },
+                    'ipv6': {
+                        'dup-addr-detect-transmits': 1
+                    },
+                    'mtu': 1500,
+                    'oper-status': 'dormant',
+                    'speed': 'auto',
+                    'vlan-protocol': '0x8100',
+                    'vrrp': {
+                        'start-delay': 0
+                    }
+                },
+            ]
+        }
+    }
+    # Mock up configd
+    mock_config = Mock(**attrs)
+    attrs = {
+        'Client.return_value': mock_config
+    }
+    configd = Mock(**attrs)
+    client = configd.Client()
+
+    members = get_bonding_members(client, bonding_group)
+    assert len(members) == 2
+
+    if_names = []
+    for member in members:
+        if_names.append(member.get('tagnode'))
+    assert 'dp0xe3' in if_names
+    assert 'dp0xe4' in if_names
+
+def test_missing_bond_group():
+    """
+    Interface construction must raise exception if bond_member interface is
+    provided without bond_group
+    """
+    ingress_map_dict = {}
+    ingress_map_dict['in-map-1'] = IngressMap(IN_MAP_1_DICT)
+    ingress_map_dict['in-map-2'] = IngressMap(IN_MAP_2_DICT)
+    egress_map_dict = {}
+    egress_map_dict['out-map-1'] = EgressMap(OUT_MAP_1_DICT)
+    egress_map_dict['out-map-2'] = EgressMap(OUT_MAP_2_DICT)
+    if_type = 'bond_member'
+    if_dict = SIAD_BONDED_IF_MEMBER_DICT
+    with pytest.raises(MissingBondGroupError):
+        Interface(if_type, if_dict, QOS_POLICY_DICT, ingress_map_dict,
+                  egress_map_dict)
