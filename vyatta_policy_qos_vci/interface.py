@@ -44,6 +44,40 @@ def get_bonding_members(client, bonding_group):
 
     return members
 
+def get_bond_dict(config_dict, bond_name):
+    """
+    Gets the bonding group dictionary from the configuration. Returns 'None' if
+    not found.
+    """
+    bond_dict = None
+    if_dict = config_dict.get('vyatta-interfaces-v1:interfaces')
+    if if_dict is not None:
+        for key, interfaces in if_dict.items():
+            if_type = key.split(':')[1]
+            if if_type == 'bonding':
+                for interface in interfaces:
+                    if interface.get('tagnode') == bond_name:
+                        bond_dict = interface
+
+    return bond_dict
+
+def get_dataplane_if_dict(config_dict, if_name):
+    """
+    Gets a dataplane interface dictionary (if_name) from the QoS configuration
+    (config_dict). Returns 'None' if not found.
+    """
+    if_dict = None
+    ifs_dict = config_dict.get('vyatta-interfaces-v1:interfaces')
+    if ifs_dict is not None:
+        for key, interfaces in ifs_dict.items():
+            if_type = key.split(':')[1]
+            if if_type == 'dataplane':
+                for interface in interfaces:
+                    if interface.get('tagnode') == if_name:
+                        if_dict = interface
+
+    return if_dict
+
 
 class MissingBondGroupError(Exception):
     def __init__(self):

@@ -22,6 +22,7 @@ import json
 import sys
 
 from vyatta_policy_qos_vci.qos_config import QosConfig
+from vyatta_policy_qos_vci.interface import get_bond_dict, get_dataplane_if_dict
 
 LOG = logging.getLogger('Policy QoS VCI')
 
@@ -66,7 +67,7 @@ class Provisioner:
     like global profiles, mark-maps or action-groups may affect multiple
     interfaces.
     """
-    def __init__(self, old, new, client=None):
+    def __init__(self, old, new, bonding_ntfy=None, client=None):
         """ Create a provisioner object """
         self._if_deletes = []
         self._if_updates = []
@@ -79,17 +80,96 @@ class Provisioner:
         self._obj_create = []
 
         # Now process the QoS config
-        old_config = QosConfig(old, client=client)
-        new_config = QosConfig(new, client=client)
+        if bonding_ntfy is None:
+            old_config = QosConfig(old, client=client)
+            new_config = QosConfig(new, client=client)
 
-        self._check_platform_params(old_config, new_config)
-        self._check_interfaces(old_config, new_config)
-        self._check_policies(old_config, new_config)
-        self._check_global_profiles(old_config, new_config)
-        self._check_mark_maps(old_config, new_config)
-        self._check_action_groups(old_config, new_config)
-        self._check_ingress_maps(old_config, new_config)
-        self._check_egress_maps(old_config, new_config)
+            self._check_platform_params(old_config, new_config)
+            self._check_interfaces(old_config, new_config)
+            self._check_policies(old_config, new_config)
+            self._check_global_profiles(old_config, new_config)
+            self._check_mark_maps(old_config, new_config)
+            self._check_action_groups(old_config, new_config)
+            self._check_ingress_maps(old_config, new_config)
+            self._check_egress_maps(old_config, new_config)
+        else:
+            # Provisioner is being created due to a notification of a LAG
+            # membership change from the LAG component:
+
+            bond_group = bonding_ntfy.get('vyatta-interfaces-bonding-v1:bond-group')
+            member_interface = bonding_ntfy.get('vyatta-interfaces-bonding-v1:member-interface')
+            operation_add = bonding_ntfy.get('vyatta-interfaces-bonding-v1:operation-add')
+            LOG.debug(f"Received notification from bond-group: {bond_group}")
+            LOG.debug(f"member-interface: {member_interface}")
+            LOG.debug(f"operation-add: {operation_add}")
+
+            # Find the bonding group in the QoS configuration
+            bond_dict = get_bond_dict(old, bond_group)
+
+            # Notification for a LAG that does not exist in the QoS
+            # configuration. Ignore it.
+            if bond_dict is None:
+                return
+
+            if_dict = get_dataplane_if_dict(old, member_interface)
+
+            if if_dict is None:
+                # Attach the LAG policy on the interface reported in the
+                # notification, or detach the LAG policy from it.
+
+                # Create QoS configuration objects with no interfaces. Since there
+                # is not a new QoS configuration (this is a LAG membership change),
+                # both objects are created from the current configuration (old):
+                old.pop('vyatta-interfaces-v1:interfaces', None)
+                old_config = QosConfig(old)
+                new_config = QosConfig(old)
+
+                # Add the LAG member to the appropriate QoS configuration object
+                # so the difference between the objects reflect the LAG membership
+                # change:
+                if operation_add:
+                    new_config.add_bond_member(member_interface, bond_dict)
+                else:
+                    old_config.add_bond_member(member_interface, bond_dict)
+
+                self._check_interfaces(old_config, new_config)
+            else:
+                # The LAG membership notification is for a physical port that
+                # exists in the JSON configuration file. That means that a QoS
+                # policy was attached to a LAG (LAG policy), the physical port
+                # was removed from LAG and a QoS policy was attached to the
+                # physical port (port policy), all in the same CLI commit.
+                # In such case, configd will apply the LAG and QoS changes as
+                # follows:
+                #
+                # Since VCI components are always processed before legacy
+                # components, configd first applied the QoS configuration
+                # change: a QoS policy was attached to LAG (i.e. it was
+                # attached to all LAG members, including the one that is being
+                # removed). The QoS configuration on the physical port was
+                # ignored (since the port is still a LAG member),
+                # but its configuration was saved in the JSON file.
+                #
+                # Then, Configd applies the LAG configuration change (member
+                # removal). The LAG component has sent the notification to us
+                # removing the member. We have found the interface from the
+                # notification in the JSON configuration file and we must now
+                # detach the LAG policy from the interface and attach the
+                # port policy to it.
+
+                # Create a QoS configuration object with a single interface (the
+                # interface from the notification)
+                old.pop('vyatta-interfaces-v1:interfaces', None)
+                ifs_dict = {
+                    'vyatta-interfaces-v1:interfaces': {
+                        'vyatta-interfaces-dataplane-v1:dataplane': [if_dict]
+                    }
+                }
+                old.update(ifs_dict)
+                config = QosConfig(old)
+
+                interface = config.find_interface(member_interface)
+                self._if_updates.append(interface)
 
     def _check_interfaces(self, old_config, new_config):
         """ Check for any changes to interface config """

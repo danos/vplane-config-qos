@@ -108,6 +108,31 @@ def send_qos_config_to_dataplane(new_config, client):
 
     return actioned_config
 
+def bond_membership_update(data):
+    """
+    VCI notification handler for LAG membership changes reported by the LAG
+    component.
+    """
+    try:
+        config = get_config()
+        LOG.debug(f'config: {config}')
+        prov = Provisioner(config, config, bonding_ntfy=data)
+        with Controller() as ctrl:
+            prov.commands(ctrl)
+
+    except ControllerException:
+        LOG.error("Failed to connect to vplane-controller")
+
+    except Exception:
+        tb_type = sys.exc_info()[0]
+        tb_value = sys.exc_info()[1]
+        tb_info = format_tb(sys.exc_info()[2])
+        tb_output = ""
+        for line in tb_info:
+            tb_output += line
+
+        LOG.error(f"Unhandled exception: {tb_type}\n{tb_value}\n{tb_output}")
+
 def get_configd_client_session():
     try:
         return configd.Client()
@@ -253,7 +278,11 @@ if __name__ == "__main__":
         (vci.Component("net.vyatta.vci.policy.qos")
          .model(vci.Model("net.vyatta.vci.policy.qos.v1")
                 .config(Config())
-                .state(State()))
+                .state(State())
+               )
+         .subscribe("vyatta-interfaces-bonding-v1",
+                    "bond-membership-update",
+                    bond_membership_update)
          .run()
          .wait())
 

@@ -116,28 +116,54 @@ class QosConfig:
     def _process_interfaces(self, if_dict, client=None):
         """ Process interfaces that have QoS policies attached to them """
         if if_dict is not None:
+            # Process bonding groups first. We have to know all the physical
+            # interfaces that are bonding members before processing the other
+            # interface types.
+            bond_groups = if_dict.get('vyatta-interfaces-bonding-v1:bonding')
+            if bond_groups is not None:
+                for interface in bond_groups:
+                    members = get_bonding_members(client, interface)
+                    for member in members:
+                        int_obj = Interface('bond_member', member,
+                                            self._policies,
+                                            self._ingress_maps,
+                                            self._egress_maps,
+                                            bond_dict=interface)
+                        LOG.debug(f"Created Interface obj for member "
+                                f"{member.get('tagnode')} of "
+                                f"LAG {member.get('tagnode')}")
+                        self._interfaces[int_obj.ifname] = int_obj
+
+            # Process all the other interface types
             for key, interfaces in if_dict.items():
                 if_type = key.split(':')[1]
+                if if_type == 'bonding':
+                    # Bonding groups have been already processed
+                    continue
+                for interface in interfaces:
+                    # Check if the interface has been already processed as a
+                    # bonding member. If so, ignore it.
+                    # The QoS config contains a physical port as a bonding
+                    # member and as a dataplane port. This case will happen when
+                    # a CLI commit is attaching a QoS policy to a bonding group,
+                    # removing a bonding member and attaching another policy to
+                    # the dataplane port (former bonding member).
+                    # Configd will first apply the QoS config and at this moment
+                    # we must favour the QoS policy on the bonding group (i.e.
+                    # all its members), ignoring the policy on the dataplane
+                    # port.
+                    # Once the QoS config has been applied, configd will apply
+                    # the bonding configuration, The bonding component will
+                    # send a VCI notification to us and it is only then that
+                    # the policy on the dataplane port will be processed.
+                    ifname = interface.get('tagnode')
+                    if self.find_interface(ifname) is not None:
+                        continue
 
-                if if_type != 'bonding':
-                    for interface in interfaces:
-                        int_obj = Interface(if_type, interface, self._policies,
-                                            self._ingress_maps,
-                                            self._egress_maps)
-                        self._interfaces[int_obj.ifname] = int_obj
-                else:
-                    for interface in interfaces:
-                        members = get_bonding_members(client, interface)
-                        for member in members:
-                            int_obj = Interface('bond_member', member,
-                                                self._policies,
-                                                self._ingress_maps,
-                                                self._egress_maps,
-                                                bond_dict=interface)
-                            LOG.debug('Created Interface obj for member {} of '
-                                      'LAG {}'.format(member.get('tagnode'),
-                                      interface.get('tagnode')))
-                            self._interfaces[int_obj.ifname] = int_obj
+                    int_obj = Interface(if_type, interface, self._policies,
+                                        self._ingress_maps,
+                                        self._egress_maps)
+                    self._interfaces[int_obj.ifname] = int_obj
 
     def _process_ingress_map(self, ingress_map_list):
         """ Process the ingress-map list """
@@ -161,6 +187,22 @@ class QosConfig:
     def find_interface(self, name):
         """ Return the named interface object """
         return self._interfaces.get(name)
+
+    def add_bond_member(self, if_name, bond_dict):
+        """
+        Creates an Interface of type 'bond_member' with the provided name
+        and bonding group.
+        """
+        member_dict = {
+            'tagnode': if_name,
+            'bond-group': bond_dict.get('tagnode')
+        }
+        interface = Interface('bond_member', member_dict, self._policies,
+                              self._ingress_maps, self._egress_maps,
+                              bond_dict=bond_dict)
+        LOG.debug(f"Created Interface obj for member {if_name} of "
+                f"LAG {bond_dict.get('tagnode')}")
+        self._interfaces[interface.ifname] = interface
 
     @property
     def global_profiles(self):
