@@ -43,7 +43,7 @@ class EgressMapBinding:
         Return the path, command, ifname tuple necessary to bind this egress-map
         to the interface/vlan.
         """
-        if self._interface.if_type == 'switch' or self._interface.if_type == 'dataplane':
+        if self._interface.if_type == 'switch' or self._interface.if_type == 'dataplane' and self._vlan_id != 0:
             self._ifname = self._interface.ifname + '.' + str(self._vlan_id)
         else:
             self._ifname = self._interface.ifname
@@ -54,7 +54,7 @@ class EgressMapBinding:
         Return the path, command, ifname tuple necessary to unbind this egress-map
         from the interface/vlan.
         """
-        if self._interface.if_type == 'switch' or self._interface.if_type == 'dataplane':
+        if self._interface.if_type == 'switch' or self._interface.if_type == 'dataplane' and self._vlan_id != 0:
             self._ifname = self._interface.ifname + '.' + str(self._vlan_id)
         else:
             self._ifname = self._interface.ifname
