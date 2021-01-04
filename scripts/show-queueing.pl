@@ -18,6 +18,7 @@ use JSON qw( decode_json );
 use lib "/opt/vyatta/share/perl5/";
 use Vyatta::Dataplane;
 use Vyatta::Interface;
+use Vyatta::Bonding;
 use Vyatta::Config;
 use Vyatta::QoS::Profile;
 use Math::BigInt;
@@ -452,14 +453,47 @@ sub show_summary_header64 {
     print $l, '-' x length($l), "\n";
 }
 
+# Check if it is bonding interface and construct list
+sub check_if_bonding_member_and_construct_list {
+    my $if_name = shift;
+    my $bonding_interfaces_ref = shift;
+
+    my $config = new Vyatta::Config();
+    my $intf   = new Vyatta::Interface($if_name);
+
+    #check if bond-group command is present of the interface
+    $config->setLevel( $intf->path . " bond-group" );
+    my $bond_group = $config->returnOrigValue();
+
+    if (defined($bond_group)) {
+       my @members;
+       if (exists($bonding_interfaces_ref->{$bond_group})) {
+           @members = @{$bonding_interfaces_ref->{$bond_group}};
+       }
+       push(@members, $if_name);
+       $bonding_interfaces_ref->{$bond_group} = [@members];
+       return 1;
+    }
+
+    return 0;
+}
+
 # Walk through each interface
 sub walk_interfaces {
     my $func       = shift;
     my $interfaces = shift;
 
+    #
+    # The following hash stores key represent bond-group
+    # and value represent members of the bond-group
+    #
+    my %bonding_interfaces =();
+
     # Sort the interfaces alphabetically by name
     foreach my $ifname ( sort( keys %{$interfaces} ) ) {
         next if ( $ifname eq 'sysdef-map' );
+        next if (check_if_bonding_member_and_construct_list($ifname,
+                 \%bonding_interfaces));
 
         my $data = %{$interfaces}{$ifname};
 
@@ -471,6 +505,26 @@ sub walk_interfaces {
                 next;
             }
             $func->( @_, $ifname, $value );
+        }
+    }
+
+    # Sort the bonding_groups alphabetically by name
+    foreach my $key (sort keys %bonding_interfaces) {
+        print "Bonding group: $key\n";
+        # Sort the member interfaces alphabetically by name
+        for my $ifname (sort @{$bonding_interfaces{$key}} ) {
+            my $data = %{$interfaces}{$ifname};
+
+            # For now only have 'shaper' => ...
+            while ( my ( $policy, $value ) = each %{$data} ) {
+                if ( $policy ne 'shaper' ) {
+                    warn "$ifname: unknown policy $policy\n"
+                    if ( $policy ne 'ingress-maps' );
+                     next;
+                }
+                $func->( @_, $ifname, $value );
+            }
+
         }
     }
 }
