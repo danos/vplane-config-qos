@@ -104,6 +104,8 @@ class FilterGroup:
         tbl_message.location = GPCConfig_pb2.GPCTable.INGRESS
         tbl_message.table_names.append(f"{self._name}")
 
+        # Promote the rules' traffic-type into the GPC table
+        tbl_message.traffic_type = rules_message.traffic_type
         tbl_message.rules.traffic_type = rules_message.traffic_type
         for gpc_rule in rules_message.rules:
             action = self._result_actions.get(gpc_rule.result)
