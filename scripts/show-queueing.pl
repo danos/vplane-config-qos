@@ -183,20 +183,60 @@ sub subport_vlan {
 
 sub show {
     my $name = shift;
-    my ( $port, $vif ) = split_ifname($name);
-    my $data = get_interface( $port, "qos show " );
+    my @members =();
+    my $fmt;
+    my $l;
 
-    # Skip interfaces with no QoS
-    return unless defined($data);
+    if ($bits64) {
+        $fmt = "%-5s %2s %3s %8s %8s %-7s %3s %20s %-9s\n";
+        $l = sprintf $fmt, 'Class', 'TC', 'WRR', 'Pipe-QID', 'Qlength', '',
+            'PLQ',
+            'Counters', '';
+    } else {
+        $fmt = "%-8s %4s %4s %7s %10s %16s %9s %9s %3s\n";
+        $l = sprintf $fmt, 'Class', 'Prio', 'WRR', 'Qlength',
+            'Packets', 'Bytes', 'Tail-drop', 'RED-drop', 'PLQ';
+    }
+    print $l, '-' x length($l), "\n";
+    if ($name =~ "bond") {
+        @members = get_members($name);
+        @members = sort @members;
 
-    # Only know about shaper
-    my $shaper = $data->{shaper};
-    return unless defined($shaper);
+        my $vif = "";
 
-    my $policy_name = get_if_subport_policy_name($name);
-    return unless defined($policy_name);
+        foreach my $port (@members) {
 
-    show_shaper( $shaper, $vif, $policy_name, 0 );
+            my $data = get_interface( $port, "qos show " );
+
+            # Skip interfaces with no QoS
+            next unless defined($data);
+
+            # Only know about shaper
+            my $shaper = $data->{shaper};
+            next unless defined($shaper);
+
+            my $policy_name = get_if_subport_policy_name($name);
+            next unless defined($policy_name);
+
+            print "Member port: $port\n";
+            show_shaper( $shaper, $vif, $policy_name, 0 );
+        }
+    } else {
+        my ( $port, $vif ) = split_ifname($name);
+        my $data = get_interface( $port, "qos show " );
+
+        # Skip interfaces with no QoS
+        return unless defined($data);
+
+        # Only know about shaper
+        my $shaper = $data->{shaper};
+        return unless defined($shaper);
+
+        my $policy_name = get_if_subport_policy_name($name);
+        return unless defined($policy_name);
+
+        show_shaper( $shaper, $vif, $policy_name, 0 );
+    }
 }
 
 sub show_shaper {
@@ -313,19 +353,11 @@ sub show_subport {
     return unless defined($pipes);
 
     my $fmt;
-    my $l;
-
     if ($bits64) {
         $fmt = "%-5s %2s %3s %8s %8s %-7s %3s %20s %-9s\n";
-        $l   = sprintf $fmt, 'Class', 'TC', 'WRR', 'Pipe-QID', 'Qlength', '',
-          'PLQ',
-          'Counters', '';
     } else {
         $fmt = "%-8s %4s %4s %7s %10s %16s %9s %9s %3s\n";
-        $l   = sprintf $fmt, 'Class', 'Prio', 'WRR', 'Qlength',
-          'Packets', 'Bytes', 'Tail-drop', 'RED-drop', 'PLQ';
     }
-    print $l, '-' x length($l), "\n";
 
     for my $class ( 0 .. $#$pipes ) {
         my $policy_config = new Vyatta::Config("policy qos name $policy_name");
@@ -1172,20 +1204,63 @@ sub show_dscp {
 # show queueing brief for an interface
 sub show_brief {
     my $ifname = shift;
-    my ( $port, $vif ) = split_ifname($ifname);
-    my $data = get_interface( $port, "qos optimised-show " );
+    my @members =();
+    my $fmt;
+    my $l;
 
-    # Skip interfaces with no QoS
-    return unless defined($data);
+    if ($bits64) {
+        $fmt = "%-5s %2s %3s %8s %8s %-7s %3s %20s %-9s\n";
+        $l = sprintf $fmt, 'Class', 'TC', 'WRR', 'Pipe-QID', 'Qlength', '',
+            'PLQ',
+            'Counters', '';
+    } else {
+        $fmt = "%-8s %4s %4s %7s %10s %16s %9s %9s %3s\n";
+        $l = sprintf $fmt, 'Class', 'Prio', 'WRR', 'Qlength',
+            'Packets', 'Bytes', 'Tail-drop', 'RED-drop', 'PLQ';
+    }
+    print $l, '-' x length($l), "\n";
 
-    # Only know about shaper
-    my $shaper = $data->{shaper};
-    return unless defined($shaper);
+    if ($ifname =~ "bond") {
+        @members = get_members($ifname);
+        @members = sort @members;
 
-    my $policy_name = get_if_subport_policy_name($ifname);
-    return unless defined($policy_name);
+        my $vif = "";
 
-    show_shaper( $shaper, $vif, $policy_name, 1 );
+        foreach my $port (@members) {
+
+            my $data = get_interface( $port, "qos optimised-show " );
+
+            # Skip interfaces with no QoS
+            next unless defined($data);
+
+            # Only know about shaper
+            my $shaper = $data->{shaper};
+            next unless defined($shaper);
+
+            my $policy_name = get_if_subport_policy_name($ifname);
+            next unless defined($policy_name);
+
+            print "Member port: $port\n";
+            show_shaper( $shaper, $vif, $policy_name, 1 );
+        }
+    } else {
+        my ( $port, $vif ) = split_ifname($ifname);
+        my $data = get_interface( $port, "qos optimised-show " );
+
+        # Skip interfaces with no QoS
+        return unless defined($data);
+
+        # Only know about shaper
+        my $shaper = $data->{shaper};
+        return unless defined($shaper);
+
+        my $policy_name = get_if_subport_policy_name($ifname);
+        return unless defined($policy_name);
+
+        print "sharper $shaper vif $vif policy_name $policy_name\n";
+
+        show_shaper( $shaper, $vif, $policy_name, 1 );
+    }
 }
 
 sub show_shaper_dscp {
