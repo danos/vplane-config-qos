@@ -26,7 +26,7 @@ module vyatta-op-policy-qos-v1 {
 		 Web: www.att.com";
 
 	description
-		"Copyright (c) 2017-2020, AT&T Intellectual Property.
+		"Copyright (c) 2017-2021, AT&T Intellectual Property.
 		 All rights reserved.
 
 		 Redistribution and use in source and binary forms, with or without
@@ -60,6 +60,9 @@ module vyatta-op-policy-qos-v1 {
 
 		 YANG module for policy QoS operational mode commands.";
 
+	revision 2021-01-11 {
+		description "Removed egress-map CLI command";
+	}
 	revision 2020-06-07 {
 		description "Update the show commands to support the
 			    egress map commands";
@@ -99,10 +102,6 @@ module vyatta-op-policy-qos-v1 {
 
 	feature ingress-map {
 		description "QoS ingress-map show command support";
-	}
-
-	feature egress-map {
-		description "QoS egress-map show command support";
 	}
 
 	opd:augment /clear:clear {
@@ -185,10 +184,6 @@ module vyatta-op-policy-qos-v1 {
 			opd:command platform {
 				if-feature show-platform;
 				opd:help "Show platform map information";
-				opd:command egress {
-					opd:help "Show platform egress remark map information";
-					opd:on-enter "show-queueing.pl --platmapegr $4";
-				}
 				opd:command ingress {
 					opd:help "Show platform ingress classification map information";
 					opd:on-enter "show-queueing.pl --platmaping $4";
@@ -211,11 +206,6 @@ module vyatta-op-policy-qos-v1 {
 			if-feature ingress-map;
 			opd:help "Show the ingress-map used in the dataplane";
 			opd:on-enter "show-queueing.pl --ingress-maps $4";
-		}
-		opd:command egress-map {
-			if-feature egress-map;
-			opd:help "Show the egress-map used in the dataplane";
-			opd:on-enter "show-queueing.pl --egress-maps $4";
 		}
 	}
 
@@ -296,11 +286,6 @@ module vyatta-op-policy-qos-v1 {
 				opd:on-enter "show-queueing.pl --ingress-maps";
 			}
 
-			opd:command egress-maps {
-				if-feature egress-map;
-				opd:help "Show all egress-maps downloaded to the dataplane";
-				opd:on-enter "show-queueing.pl --egress-maps";
-			}
 		}
 	}
 
