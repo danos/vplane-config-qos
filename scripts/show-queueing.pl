@@ -957,7 +957,10 @@ sub show_monitor {
             next unless defined($response);
 
             my $decoded = decode_json($response);
+            my %bonding_interfaces =();
             foreach my $ifname ( sort( keys %{$decoded} ) ) {
+                next if (check_if_bonding_member_and_construct_list($ifname,
+                                            \%bonding_interfaces));
                 my $data = %{$decoded}{$ifname};
 
                 # For now only have 'shaper' => ...
@@ -966,6 +969,20 @@ sub show_monitor {
 
                 show_shaper_queues( $fmt, $ifname, $stats, $prev{$ifname} );
                 $prev{$ifname} = $stats;
+            }
+
+            foreach my $bond_group (sort keys %bonding_interfaces) {
+                print "Bonding group: $bond_group\n";
+                for my $ifname (sort @{$bonding_interfaces{$bond_group}} ) {
+                    my $data = %{$decoded}{$ifname};
+
+                    # For now only have 'shaper' => ...
+                    my $stats = $data->{shaper};
+                    next unless $stats;
+
+                    show_shaper_queues( $fmt, $ifname, $stats, $prev{$ifname} );
+                    $prev{$ifname} = $stats;
+                }
             }
         }
 
