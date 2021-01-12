@@ -15,12 +15,14 @@ use lib "/opt/vyatta/share/perl5/";
 use Vyatta::Dataplane;
 use Vyatta::Interface;
 use Vyatta::Config;
+use Vyatta::Bonding;
 use Vyatta::Configd qw($AUTO $RUNNING);
 use Vyatta::Misc qw(getInterfaces);
 
 # Walk through all fabrics issuing "qos clear" requests
 sub clear_counters {
     my $if_name = shift;
+    my @members =();
     my ( $dpids, $dpsocks ) = Vyatta::Dataplane::setup_fabric_conns();
 
     for my $fid ( @{$dpids} ) {
@@ -33,7 +35,14 @@ sub clear_counters {
         if ( !defined($if_name) ) {
             $sock->execute("qos clear");
         } else {
-            $sock->execute("qos clear $if_name");
+            if ($if_name =~ "bond") {
+                @members = get_members($if_name);
+                foreach my $port (@members) {
+                    $sock->execute("qos clear $port");
+                }
+            } else {
+                $sock->execute("qos clear $if_name");
+            }
         }
     }
 
