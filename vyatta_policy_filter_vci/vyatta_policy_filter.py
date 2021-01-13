@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2020, AT&T Intellectual Property.
+# Copyright (c) 2020-2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -97,22 +97,27 @@ class Config(vci.Config):
     def check(self, proposed_config):
         """ Check anything not checked in yang """
         LOG.debug(f"Config:check - {proposed_config}")
-        filter_config = FilterConfig(proposed_config)
 
-        res_dict = proposed_config[f'{RES_NAMESPACE}:resources']
-        gpc_dict = res_dict[f'{GPC_NAMESPACE}:packet-classifier']
-        gpc_group_list = gpc_dict['group']
+        # When the 'resources packet-classifier' config is completely deleted,
+        # proposed_config is an empty dictionary and nothing needs to be
+        # checked
+        if proposed_config:
+            filter_config = FilterConfig(proposed_config)
 
-        classifier_bindings = {}
-        for fg in filter_config.groups.values():
-            errmsg = fg.check(gpc_group_list, classifier_bindings)
-            if errmsg is not None:
-                LOG.info(f"Config:check failed for filter-group: "
-                         f"{fg.name} {errmsg}")
-                raise vci.Exception("vyatta-policy-qos-vci",
-                                    f"Config:check failed for filter-group "
-                                    f"{fg.name}: {errmsg}",
-                                    "policy/filter-classification")
+            res_dict = proposed_config[f'{RES_NAMESPACE}:resources']
+            gpc_dict = res_dict[f'{GPC_NAMESPACE}:packet-classifier']
+            gpc_group_list = gpc_dict['group']
+
+            classifier_bindings = {}
+            for fg in filter_config.groups.values():
+                errmsg = fg.check(gpc_group_list, classifier_bindings)
+                if errmsg is not None:
+                    LOG.info(f"Config:check failed for filter-group: "
+                             f"{fg.name} {errmsg}")
+                    raise vci.Exception("vyatta-policy-qos-vci",
+                                        f"Config:check failed for "
+                                        f"filter-group {fg.name}: {errmsg}",
+                                        "policy/filter-classification")
 
 
 def rules_updated(data):
