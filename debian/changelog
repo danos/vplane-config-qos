@@ -1,3 +1,10 @@
+vplane-config-qos (5.0.7) unstable; urgency=medium
+
+  [ Ramkumar Ganapathysubramanian ]
+  * Removed egress-map CLI command in Halifax
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Thu, 14 Jan 2021 12:53:44 +0000
+
 vplane-config-qos (5.0.6) unstable; urgency=medium
 
   [ Alan Dewar ]
