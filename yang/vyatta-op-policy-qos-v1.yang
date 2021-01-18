@@ -26,7 +26,7 @@ module vyatta-op-policy-qos-v1 {
 		 Web: www.att.com";
 
 	description
-		"Copyright (c) 2017-2020, AT&T Intellectual Property.
+		"Copyright (c) 2017-2021, AT&T Intellectual Property.
 		 All rights reserved.
 
 		 Redistribution and use in source and binary forms, with or without
@@ -60,6 +60,11 @@ module vyatta-op-policy-qos-v1 {
 
 		 YANG module for policy QoS operational mode commands.";
 
+	revision 2021-01-26 {
+		description "Add the filter-classification option to the
+			     op-mode commands.";
+	}
+
 	revision 2020-06-07 {
 		description "Update the show commands to support the
 			    egress map commands";
@@ -91,6 +96,10 @@ module vyatta-op-policy-qos-v1 {
 	}
 	revision 2017-12-09 {
 		description "Initial support for clear queuing command.";
+	}
+
+	feature gpc {
+		description "General Packet Classifier command support";
 	}
 
 	feature show-platform {
@@ -168,6 +177,11 @@ module vyatta-op-policy-qos-v1 {
 			opd:help "Show brief queuing summary";
 			opd:on-enter "show-queueing.pl --brief $3";
 		}
+		opd:command filter-classification {
+			if-feature gpc;
+			opd:help "Show the filter-classification used in the dataplane for an interface";
+			opd:on-enter "show-queueing.pl --filter-classification $4";
+		}
 	}
 
 	grouping qos-interface-64 {
@@ -216,6 +230,11 @@ module vyatta-op-policy-qos-v1 {
 			if-feature egress-map;
 			opd:help "Show the egress-map used in the dataplane";
 			opd:on-enter "show-queueing.pl --egress-maps $4";
+		}
+		opd:command filter-classification {
+			if-feature gpc;
+			opd:help "Show the filter-classification used in the dataplane for an interface";
+			opd:on-enter "show-queueing.pl --filter-classification $4";
 		}
 	}
 
@@ -300,6 +319,12 @@ module vyatta-op-policy-qos-v1 {
 				if-feature egress-map;
 				opd:help "Show all egress-maps downloaded to the dataplane";
 				opd:on-enter "show-queueing.pl --egress-maps";
+			}
+
+			opd:command filter-classification {
+				if-feature gpc;
+				opd:help "Show the filter-classification used in the dataplane";
+				opd:on-enter "show-queueing.pl --filter-classification";
 			}
 		}
 	}

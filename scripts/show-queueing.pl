@@ -22,6 +22,7 @@ use Vyatta::Config;
 use Vyatta::QoS::Profile;
 use Math::BigInt;
 use Data::Dumper;
+use Scalar::Util qw(reftype);
 
 use constant MAX_DSCP => Vyatta::QoS::Profile::MAX_DSCP;
 use constant TC_SHIFT => 2;
@@ -738,6 +739,69 @@ sub show_ingress_maps {
     }
 }
 
+sub show_table_rules {
+    my ( $fmt, $table, $intf, $table_names ) = @_;
+    my $rules = $table->{rules};
+    my $group = $table_names->[0]->{name};
+    my $afmt  = "%-27s action: %s       %20s %s\n";
+    foreach my $rule ( @{$rules} ) {
+        my $res_rul = sprintf "%s[%s] ", $rule->{result},
+          $rule->{'orig-number'};
+        printf $fmt, $group, $intf, $res_rul, $rule->{packets};
+        $group = '';
+        $intf  = '';
+        my $actions = $rule->{actions};
+        foreach my $action ( @{$actions} ) {
+            my $act;
+            my $val;
+            while ( ( $act, $val ) = each %{$action} ) {
+                if ( $act eq 'designation' ) {
+                    printf $afmt, ' ', "designation $val", '', '';
+                }
+                if ( $act eq 'drop-precedence' ) {
+                    printf $afmt, ' ', "drop-prec $val", '', '';
+                }
+                if ( $act eq 'flags' ) {
+                    printf $afmt, ' ', "policer: ", $action->{packets},
+                      "Packets";
+                    printf "%-51s %20s %s\n", ' ', $action->{drops}, "Drops";
+                }
+            }
+        }
+    }
+}
+
+sub show_intf_filter {
+    my ( $decoded, $intf ) = @_;
+    return unless defined($decoded);
+    my @groups = @{ $decoded->{'gpc'} };
+    my $fmt    = "%-16s %-10s %-23s %20s Packets\n";
+    my $l      = sprintf $fmt, 'Group', 'Interface', 'Result[rule]', 'Counters';
+
+    print $l, '-' x ( length($l) - 1 ), "\n";
+    for my $group (@groups) {
+        if ( $group->{type} eq 'qos' ) {
+            my $tables = $group->{tables};
+            foreach my $table ( @{$tables} ) {
+                if ( $table->{interface} eq $intf ) {
+                    show_table_rules( $fmt, $table, $intf,
+                        $table->{'table-names'} );
+                }
+                if ( $intf eq "" ) {
+                    show_table_rules( $fmt, $table, $table->{'interface'},
+                        $table->{'table-names'} );
+                }
+            }
+        }
+    }
+}
+
+sub show_filter_class {
+    my $interface = shift;
+
+    walk_fabrics( "gpc show qos ", \&show_intf_filter, $interface );
+}
+
 # Show shapers on all interfaces
 sub show_interface_queues {
     walk_interfaces( \&show_shaper_queues, @_ );
@@ -1442,26 +1506,27 @@ sub usage {
 }
 
 my (
-    $brief,    $dscp,         $mark,       $pcp,        $monitor,
-    $class,    $summary,      $platmapegr, $platmaping, $platinfo,
-    $buf_errs, $ingress_maps, $egress_maps
+    $brief,    $dscp,         $mark,        $pcp,        $monitor,
+    $class,    $summary,      $platmapegr,  $platmaping, $platinfo,
+    $buf_errs, $ingress_maps, $egress_maps, $filter_class
 );
 
 GetOptions(
-    '64'             => \$bits64,
-    'brief=s'        => \$brief,
-    'monitor'        => \$monitor,
-    'dscp=s'         => \$dscp,
-    'platmapegr=s'   => \$platmapegr,
-    'platmaping=s'   => \$platmaping,
-    'platinfo'       => \$platinfo,
-    'buffer-errors'  => \$buf_errs,
-    'mark=s'         => \$mark,
-    'cos=s'          => \$pcp,
-    'class:s'        => \$class,
-    'summary'        => \$summary,
-    'ingress-maps:s' => \$ingress_maps,
-    'egress-maps:s'  => \$egress_maps,
+    '64'                      => \$bits64,
+    'brief=s'                 => \$brief,
+    'monitor'                 => \$monitor,
+    'dscp=s'                  => \$dscp,
+    'platmapegr=s'            => \$platmapegr,
+    'platmaping=s'            => \$platmaping,
+    'platinfo'                => \$platinfo,
+    'buffer-errors'           => \$buf_errs,
+    'mark=s'                  => \$mark,
+    'cos=s'                   => \$pcp,
+    'class:s'                 => \$class,
+    'summary'                 => \$summary,
+    'ingress-maps:s'          => \$ingress_maps,
+    'egress-maps:s'           => \$egress_maps,
+    'filter-classification:s' => \$filter_class,
 ) or usage();
 
 show_brief($brief) if $brief;
@@ -1477,6 +1542,7 @@ show_platform_info()             if $platinfo;
 show_buffer_errors()             if $buf_errs;
 show_ingress_maps($ingress_maps) if defined($ingress_maps);
 show_egress_maps($egress_maps)   if defined($egress_maps);
+show_filter_class($filter_class) if defined($filter_class);
 
 foreach my $ifname (@ARGV) {
     show($ifname);
