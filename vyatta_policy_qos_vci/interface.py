@@ -33,9 +33,24 @@ def get_bonding_members(client, bonding_group):
         raise TypeError("configd client session was not provided")
 
     members = []
+    dataplane = []
 
-    config = client.tree_get_dict("interfaces dataplane", client.RUNNING)
-    dataplane = config.get("dataplane", [])
+    try:
+        # Try to get the LAG membership information from the running
+        # configuration. Any LAG membership information that might
+        # exist in the candidate configuration will be received via VCI
+        # notifications from the LAG component.
+        config = client.tree_get_dict("interfaces dataplane", client.RUNNING)
+        dataplane = config.get("dataplane", [])
+    except Exception as exc:
+        # This could mean that the device is booting and the running
+        # configuration does not exist yet. In such case, consider that LAG
+        # has no members. The members will be provided via VCI notifications
+        # from the LAG component.
+        LOG.info(f"Could not get interfaces from configd ('{str(exc).strip()}')"
+                f". Device is booting")
+        return members
+
     for interface in dataplane:
         if_bond_grp = interface.get('bond-group')
         if if_bond_grp is not None:
