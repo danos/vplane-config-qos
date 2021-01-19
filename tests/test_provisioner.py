@@ -21,7 +21,9 @@ null = None
 
 TEST_DATA = [
     (
-        # test_input
+        # old_config
+        {},
+        # new_config
         {
             "vyatta-interfaces-v1:interfaces": {
                 "vyatta-interfaces-dataplane-v1:dataplane": [
@@ -525,7 +527,9 @@ TEST_DATA = [
         ]
     ),
     (
-        # test_input - a couple of policies that only use global profiles
+        # old_config
+        {},
+        # new_config - a couple of policies that only use global profiles
         {
             'vyatta-interfaces-v1:interfaces': {
                 'vyatta-interfaces-dataplane-v1:dataplane': [
@@ -817,7 +821,9 @@ TEST_DATA = [
         ]
     ),
     (
-        # test_input - SIAD: QoS policy attached to a bonding group
+        # old_config
+        {},
+        # new_config - SIAD: QoS policy attached to a bonding group
         {
             "vyatta-interfaces-v1:interfaces": {
                 'vyatta-interfaces-bonding-v1:bonding': [
@@ -1168,7 +1174,9 @@ TEST_DATA = [
         ]
     ),
     (
-        # test_input - SIAD: Attach QoS to LAG + Delete LAG member + Attach QoS to front-panel port
+        # old_config
+        {},
+        # new_config - SIAD: Attach QoS to LAG + Delete LAG member + Attach QoS to front-panel port
         {
             'vyatta-interfaces-v1:interfaces': {
                 'vyatta-interfaces-dataplane-v1:dataplane': [
@@ -1606,8 +1614,8 @@ TEST_DATA = [
     )
 ]
 
-@pytest.mark.parametrize("test_input, configd_mock_ret, expected_result", TEST_DATA)
-def test_provisioner(test_input, configd_mock_ret, expected_result):
+@pytest.mark.parametrize("old_config, new_config, configd_mock_ret, expected_result", TEST_DATA)
+def test_provisioner(old_config, new_config, configd_mock_ret, expected_result):
     """ Simple unit-test for the provisioner class """
     # Mock up a dataplane context manager
     mock_dataplane = MagicMock()
@@ -1632,7 +1640,7 @@ def test_provisioner(test_input, configd_mock_ret, expected_result):
     configd = Mock(**attrs)
     client = configd.Client()
 
-    prov = Provisioner({}, test_input, client=client)
+    prov = Provisioner(old_config, new_config, client=client)
     assert prov is not None
     # prov.commands writes the QoS config commands to the mocked controller
     prov.commands(ctrl)
