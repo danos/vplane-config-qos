@@ -768,3 +768,38 @@ def test_missing_bond_group():
     with pytest.raises(MissingBondGroupError):
         Interface(if_type, if_dict, QOS_POLICY_DICT, ingress_map_dict,
                   egress_map_dict)
+
+def test_compare_bond_member_interface():
+    """
+    Test the comparison between two Interface objects of 'bond_member' type.
+    Two 'bond_member' Interface objects with distinct policies in the
+    bonding group are not equal.
+    """
+
+    bond_pol_1 = {
+        'tagnode': 'dp0bond1',
+        'vyatta-interfaces-bonding-switch-v1:switch-group': {
+            'port-parameters': {
+                'vyatta-interfaces-switch-policy-v1:policy': {
+                    'vyatta-policy-qos-v1:qos': 'policy-1'
+                }
+            }
+        }
+    }
+
+    bond_pol_2 = {
+        'tagnode': 'dp0bond1',
+        'vyatta-interfaces-bonding-switch-v1:switch-group': {
+            'port-parameters': {
+                'vyatta-interfaces-switch-policy-v1:policy': {
+                    'vyatta-policy-qos-v1:qos': 'policy-2'
+                }
+            }
+        }
+    }
+
+    if1 = Interface('bond_member', SIAD_BONDED_IF_MEMBER_DICT, QOS_POLICY_DICT,
+                    {}, {}, bond_dict=bond_pol_1)
+    if2 = Interface('bond_member', SIAD_BONDED_IF_MEMBER_DICT, QOS_POLICY_DICT,
+                    {}, {}, bond_dict=bond_pol_2)
+    assert if1 != if2

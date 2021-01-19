@@ -115,6 +115,7 @@ class Interface:
             raise MissingBondGroupError
         self._if_dict = if_dict
         self._if_type = if_type
+        self._bond_dict = bond_dict
         if if_type == 'vhost':
             self._name = if_dict.get('name')
             policy_namespace = 'vyatta-interfaces-vhost-policy-v1'
@@ -314,7 +315,16 @@ class Interface:
 
     def __eq__(self, interface):
         """ Compare the original JSON dictionaires of two interfaces """
-        if self._if_dict == interface.if_dict:
+        if self._if_type != 'bond_member':
+            if self._if_dict == interface.if_dict:
+                return True
+        else:
+            if self._if_dict.get('tagnode') != interface.if_dict.get('tagnode'):
+                return False
+            if self._if_dict.get('bond-group') != interface.if_dict.get('bond-group'):
+                return False
+            if self._bond_dict != interface.bond_dict:
+                return False
             return True
 
         return False
@@ -323,6 +333,13 @@ class Interface:
     def if_dict(self):
         """ Return the original JSON for this interface """
         return self._if_dict
+
+    @property
+    def bond_dict(self):
+        """ Return the original JSON for the bonding group to which this
+        interface belongs to
+        """
+        return self._bond_dict
 
     @property
     def if_type(self):
