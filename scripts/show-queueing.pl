@@ -14,6 +14,7 @@ use Getopt::Long;
 use Config::Tiny;
 use Term::Cap;
 use JSON qw( decode_json );
+use Sort::Versions;
 
 use lib "/opt/vyatta/share/perl5/";
 use Vyatta::Dataplane;
@@ -200,7 +201,7 @@ sub show {
     print $l, '-' x length($l), "\n";
     if ($name =~ "bond") {
         @members = get_members($name);
-        @members = sort @members;
+        @members = sort {versioncmp($a, $b)} @members;
 
         my $vif = "";
 
@@ -541,10 +542,10 @@ sub walk_interfaces {
     }
 
     # Sort the bonding_groups alphabetically by name
-    foreach my $key (sort keys %bonding_interfaces) {
+    foreach my $key (sort {versioncmp($a, $b)} keys %bonding_interfaces) {
         print "Bonding group: $key\n";
         # Sort the member interfaces alphabetically by name
-        for my $ifname (sort @{$bonding_interfaces{$key}} ) {
+        for my $ifname (sort {versioncmp($a, $b)} @{$bonding_interfaces{$key}} ) {
             my $data = %{$interfaces}{$ifname};
 
             # For now only have 'shaper' => ...
@@ -971,9 +972,9 @@ sub show_monitor {
                 $prev{$ifname} = $stats;
             }
 
-            foreach my $bond_group (sort keys %bonding_interfaces) {
+            foreach my $bond_group (sort {versioncmp($a, $b)} keys %bonding_interfaces) {
                 print "Bonding group: $bond_group\n";
-                for my $ifname (sort @{$bonding_interfaces{$bond_group}} ) {
+                for my $ifname (sort {versioncmp($a, $b)} @{$bonding_interfaces{$bond_group}} ) {
                     my $data = %{$decoded}{$ifname};
 
                     # For now only have 'shaper' => ...
@@ -1239,7 +1240,7 @@ sub show_brief {
 
     if ($ifname =~ "bond") {
         @members = get_members($ifname);
-        @members = sort @members;
+        @members = sort {versioncmp($a, $b)} @members;
 
         my $vif = "";
 
