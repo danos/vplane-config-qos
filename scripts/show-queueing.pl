@@ -30,6 +30,14 @@ use constant MAX_DSCP => Vyatta::QoS::Profile::MAX_DSCP;
 use constant TC_SHIFT => 2;
 use constant TC_MASK  => 0x3;
 
+sub is_hardware_qos_bond_enabled {
+    my $feature_marker =
+       "/run/vyatta-platform/features/vyatta-policy-qos-v1/hardware-qos-bond";
+
+    return -e $feature_marker;
+}
+
+
 #
 # The following global variable controls whether we're accessing and displaying
 # 32-bit or 64-bit counters
@@ -199,7 +207,7 @@ sub show {
             'Packets', 'Bytes', 'Tail-drop', 'RED-drop', 'PLQ';
     }
     print $l, '-' x length($l), "\n";
-    if ($name =~ "bond") {
+    if (($name =~ "bond") && is_hardware_qos_bond_enabled) {
         @members = get_members($name);
         @members = sort {versioncmp($a, $b)} @members;
 
@@ -525,8 +533,9 @@ sub walk_interfaces {
     # Sort the interfaces alphabetically by name
     foreach my $ifname ( sort( keys %{$interfaces} ) ) {
         next if ( $ifname eq 'sysdef-map' );
-        next if (check_if_bonding_member_and_construct_list($ifname,
-                 \%bonding_interfaces));
+        next if (is_hardware_qos_bond_enabled &&
+                 check_if_bonding_member_and_construct_list($ifname,
+                                             \%bonding_interfaces));
 
         my $data = %{$interfaces}{$ifname};
 
@@ -960,7 +969,8 @@ sub show_monitor {
             my $decoded = decode_json($response);
             my %bonding_interfaces =();
             foreach my $ifname ( sort( keys %{$decoded} ) ) {
-                next if (check_if_bonding_member_and_construct_list($ifname,
+                next if (is_hardware_qos_bond_enabled &&
+                         check_if_bonding_member_and_construct_list($ifname,
                                             \%bonding_interfaces));
                 my $data = %{$decoded}{$ifname};
 
@@ -1238,7 +1248,7 @@ sub show_brief {
     }
     print $l, '-' x length($l), "\n";
 
-    if ($ifname =~ "bond") {
+    if (($ifname =~ "bond") && is_hardware_qos_bond_enabled) {
         @members = get_members($ifname);
         @members = sort {versioncmp($a, $b)} @members;
 
@@ -1274,8 +1284,6 @@ sub show_brief {
 
         my $policy_name = get_if_subport_policy_name($ifname);
         return unless defined($policy_name);
-
-        print "sharper $shaper vif $vif policy_name $policy_name\n";
 
         show_shaper( $shaper, $vif, $policy_name, 1 );
     }
