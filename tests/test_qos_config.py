@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2019-2020, AT&T Intellectual Property.
+# Copyright (c) 2019-2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -11,6 +11,7 @@ Unit-tests for the qos_config.py module.
 """
 
 from vyatta_policy_qos_vci.qos_config import QosConfig
+from vyatta_policy_qos_vci.qos_config_bond_members import QosConfigBondMembers
 
 TEST_DATA = {
     "vyatta-interfaces-v1:interfaces": {
@@ -163,17 +164,28 @@ TEST_DATA = {
     }
 }
 
+def simple_qos_config_test(qos_config):
+    assert qos_config is not None
+    assert len(qos_config.interfaces) == 2
+    assert qos_config.find_interface("lo") is not None
+    assert len(qos_config.global_profiles) == 1
+    assert qos_config.find_global_profile("global-profile-1") is not None
+    assert qos_config.get_policy("policy-1") is not None
+    assert qos_config.get_mark_map("test123") is not None
+    assert qos_config.get_action_group("action-group-1") is not None
+    assert qos_config.get_action_group("action-group-2") is not None
+    assert qos_config.get_ingress_map("in-map-1") is not None
+    assert qos_config.get_ingress_map("in-map-2") is not None
+
 def test_qosconfig():
     """ Simple Unit Test for the QoSConfig class """
     config = QosConfig(TEST_DATA)
-    assert config is not None
-    assert len(config.interfaces) == 2
-    assert config.find_interface("lo") is not None
-    assert len(config.global_profiles) == 1
-    assert config.find_global_profile("global-profile-1") is not None
-    assert config.get_policy("policy-1") is not None
-    assert config.get_mark_map("test123") is not None
-    assert config.get_action_group("action-group-1") is not None
-    assert config.get_action_group("action-group-2") is not None
-    assert config.get_ingress_map("in-map-1") is not None
-    assert config.get_ingress_map("in-map-2") is not None
+    simple_qos_config_test(config)
+
+def test_qosconfig_bond_members_no_bonding():
+    """ Simple Unit Test for the QoSConfigBondMembers class. This test
+    ensures that QosConfigBondMembers class has the same behavior of QosConfig
+    when there are not bonding groups in the configuration.
+    """
+    config = QosConfigBondMembers(TEST_DATA)
+    simple_qos_config_test(config)
