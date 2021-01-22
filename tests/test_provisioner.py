@@ -2119,17 +2119,19 @@ def test_provisioner(old_config, new_config, configd_mock_ret, expected_result):
     }
     ctrl = Mock(**attrs)
 
-    # Mock up a configuration object from configd
-    attrs = {
-        'tree_get_dict.return_value': configd_mock_ret
-    }
-    # Mock up configd
-    mock_config = Mock(**attrs)
-    attrs = {
-        'Client.return_value': mock_config
-    }
-    configd = Mock(**attrs)
-    client = configd.Client()
+    client = None
+    if configd_mock_ret is not None:
+        # Mock up a configuration object from configd
+        attrs = {
+            'tree_get_dict.return_value': configd_mock_ret
+        }
+        # Mock up configd
+        mock_config = Mock(**attrs)
+        attrs = {
+            'Client.return_value': mock_config
+        }
+        configd = Mock(**attrs)
+        client = configd.Client()
 
     prov = Provisioner(old_config, new_config, client=client)
     assert prov is not None

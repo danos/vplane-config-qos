@@ -15,6 +15,7 @@ import sys
 
 from copy import deepcopy
 from traceback import format_tb
+from vyatta_policy_qos_vci.qos_config_bond_members import QosConfigBondMembers
 from systemd.journal import JournalHandler
 
 import vci
@@ -29,6 +30,7 @@ from vyatta_policy_qos_vci.provisioner import get_config
 from vyatta_policy_qos_vci.provisioner import save_config
 from vyatta_policy_qos_vci.qos_config import QosConfig
 from vyatta_policy_qos_vci.qos_op_mode import convert_if_list
+from vyatta_policy_qos_vci.platform import is_hardware_qos_bond_enabled
 
 
 def remove_deferred_ingress_maps(config, deferred_in_map_list):
@@ -69,7 +71,7 @@ def remove_deferred_egress_maps(config, deferred_eg_map_list):
                 break
 
 
-def send_qos_config_to_dataplane(new_config, client):
+def send_qos_config_to_dataplane(new_config, client=None):
     """
     We are now ready to send the QoS configuration down to the
     vyatta-dataplane.
@@ -153,7 +155,9 @@ class Config(vci.Config):
         """
         LOG.debug(f"Config:set - {new_config}")
 
-        client = get_configd_client_session()
+        client = None
+        if is_hardware_qos_bond_enabled():
+            client = get_configd_client_session()
 
         # Issue the required NPF and QoS commands, and save the actioned
         # configuration
@@ -174,8 +178,12 @@ class Config(vci.Config):
     def check(self, proposed_config):
         """ Move the validation checks from perl to here? """
         LOG.debug(f"Config:check - {proposed_config}")
-        client = get_configd_client_session()
-        config = QosConfig(proposed_config, client=client)
+        client = None
+        if is_hardware_qos_bond_enabled():
+            client = get_configd_client_session()
+            config = QosConfigBondMembers(proposed_config, client=client)
+        else:
+            config = QosConfig(proposed_config)
         for ingress_map in config.ingress_maps.values():
             if not ingress_map.check(proposed_config):
                 LOG.info("Config:check failed for ingress-map: "

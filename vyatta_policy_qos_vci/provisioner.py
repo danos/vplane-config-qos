@@ -22,6 +22,7 @@ import json
 import sys
 
 from vyatta_policy_qos_vci.qos_config import QosConfig
+from vyatta_policy_qos_vci.qos_config_bond_members import QosConfigBondMembers
 from vyatta_policy_qos_vci.interface import get_bond_dict, get_dataplane_if_dict
 
 LOG = logging.getLogger('Policy QoS VCI')
@@ -69,6 +70,8 @@ class Provisioner:
     """
     def __init__(self, old, new, bonding_ntfy=None, client=None):
         """ Create a provisioner object """
+        self._is_hardware_qos_bond_enabled = bonding_ntfy is not None or \
+                                             client is not None
         self._if_deletes = []
         self._if_updates = []
         self._if_creates = []
@@ -81,8 +84,12 @@ class Provisioner:
 
         # Now process the QoS config
         if bonding_ntfy is None:
-            old_config = QosConfig(old, client=client)
-            new_config = QosConfig(new, client=client)
+            if self._is_hardware_qos_bond_enabled:
+                old_config = QosConfigBondMembers(old, client=client)
+                new_config = QosConfigBondMembers(new, client=client)
+            else:
+                old_config = QosConfig(old)
+                new_config = QosConfig(new)
 
             self._check_platform_params(old_config, new_config)
             self._check_interfaces(old_config, new_config)
@@ -121,8 +128,8 @@ class Provisioner:
                 # is not a new QoS configuration (this is a LAG membership change),
                 # both objects are created from the current configuration (old):
                 old.pop('vyatta-interfaces-v1:interfaces', None)
-                old_config = QosConfig(old)
-                new_config = QosConfig(old)
+                old_config = QosConfigBondMembers(old)
+                new_config = QosConfigBondMembers(old)
 
                 # Add the LAG member to the appropriate QoS configuration object
                 # so the difference between the objects reflect the LAG membership
@@ -166,7 +173,7 @@ class Provisioner:
                     }
                 }
                 old.update(ifs_dict)
-                config = QosConfig(old)
+                config = QosConfigBondMembers(old)
 
                 interface = config.find_interface(member_interface)
                 self._if_updates.append(interface)

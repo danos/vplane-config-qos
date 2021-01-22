@@ -9,6 +9,15 @@
 The module that defines objects to hold platform wide params.
 """
 
+from pathlib import Path
+
+def is_hardware_qos_bond_enabled():
+    """ Check the feature file to see if hardware-qos-bond is enabled """
+    hardware_qos_bond_feature = Path(
+        "/run/vyatta-platform/features/vyatta-policy-qos-v1/hardware-qos-bond")
+    return hardware_qos_bond_feature.is_file()
+
+
 class PlatformBufferThreshold:
     """
     Platform wide buffer threshold parameter
