@@ -90,7 +90,7 @@ module vyatta-policy-qos-v1 {
 
 		 This module implements vyatta-policy-qos-v1.";
 
-	revision 2021-01-07 {
+	revision 2021-02-22 {
 		description "Added support for LAG QoS.";
 	}
 
