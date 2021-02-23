@@ -1,3 +1,82 @@
+vplane-config-qos (6.0.x) unstable; urgency=medium
+
+  [ aroberts ]
+  * Update the revision date so NCS/NSO upgrades correctly.
+  * Update the revision date so NCS/NSO upgrades correctly.
+
+  [ Alan Dewar ]
+  * VCI: allow a class profile to be a global profile (Fixes: VRVDR-53599)
+  * Allow "period" to be specified in microseconds (Fixes: VRVDR-53324)
+  * UT: fix broken test_provisioner.py (Fixes: VRVDR-53656)
+
+  [ Nicholas Brown ]
+  * Python 3.6 is needed to use f-strings
+
+  [ Ramkumar Ganapathysubramanian ]
+  * vplane-cfg-qos changes to support DSCP remarking
+
+  [ Brian Russell ]
+  * Prevent priority local queue being configured in profile map
+
+  [ Alan Dewar ]
+  * VCI: stop QoS VCI crashing when dataplane is down (Fixes: VRVDR-53805)
+  * VCI: fix pylint3 and flake8 errors
+
+  [ Brian Russell ]
+  * Add yang for filter classification
+  * Add yang for filter group policer action
+  * Add VCI code for filter classification
+  * Add VCI code for filter group policer action
+  * Update filter commands when GPC changes
+  * Add config checks for GPC consistency
+
+  [ Alan Dewar ]
+  * Copy the traffic_type from Rules into GPCTable
+
+  [ Karthik Murugesan ]
+  * Queue depth and WRED threshold configuration enhancement
+
+  [ Alan Dewar ]
+  * GPC: stop Config.check accessing empty dictionary
+
+  [ Ramkumar Ganapathysubramanian ]
+  * Fixed issue in DSCP remarking policy removal on routed interface
+
+  [ aroberts ]
+  * Show the GPC stats via an op-mode command
+
+  [ Vinicius Soares ]
+  * QoS: Added support to hw-based QoS on bonding groups (SIAD) - data model
+  * QoS: QoS policy on bonding groups, on SIAD, switch mode
+  * QoS: Handle LAG membership change notifications
+
+  [ Manohar Rapeti ]
+  * QoS: Support for bonding interface in show
+  * QoS: Support bonding interface specific show
+  * QoS: Support for bonding interfaces to monitor
+  * Qos: Support clear qos for bond group
+
+  [ Vinicius Soares ]
+  * QoS: Fixed SIAD boot with QoS on LAG configuration (Bugfix: VRVDR-49815)
+  * QoS: Added old_config option to Provisioner unit tests
+  * QoS: Fixed policy update on LAG (Fixes: VRVDR-49815)
+
+  [ Manohar Rapeti ]
+  * Qos: Correcting show policy qos output (Fixes: VRVDR-49815)
+  * QoS: Addded feature based support (Fixes: VRVDR-49815)
+
+  [ Vinicius Soares ]
+  * QoS: Reverting the changes in QosConfig (Fixes: VRVDR-49815)
+  * QoS: Moved QoS on LAG s9500's logic to a separate module
+    (Fixes: VRVDR-49815)
+  * QoS: QoS on LAG code must be executed only when the feature is enabled
+    (Fixes: VRVDR-49815)
+
+  [ aroberts ]
+  * Update latest revision data to be post 2012 (Halifax)
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Tue, 23 Feb 2021 12:30:06 +0000
+
 vplane-config-qos (5.0.1) unstable; urgency=medium
 
   [ aroberts ]
