@@ -15,6 +15,7 @@ from unittest.mock import Mock, MagicMock, call
 import pytest
 
 from vyatta_policy_qos_vci.provisioner import Provisioner
+from vyatta_policy_qos_vci.bond_membership import BondMembership
 
 # python doesn't define null, but it is valid JSON
 null = None
@@ -61,11 +62,23 @@ TEST_DATA = [
                 }
             }
         },
-        # test input - notification message contents
+        # test input - current LAG membership state
         {
-            'vyatta-interfaces-bonding-v1:bond-group': 'dp0bond1',
-            'vyatta-interfaces-bonding-v1:member-interface': 'dp0xe3',
-            'vyatta-interfaces-bonding-v1:operation-add': True
+            'vyatta-interfaces-bonding-v1:bond-groups': [
+                {
+                    'bond-group': 'dp0bond1',
+                    'bond-members': ['dp0xe4']
+                }
+            ]
+        },
+        # test input - new LAG membership state from notification
+        {
+            'vyatta-interfaces-bonding-v1:bond-groups': [
+                {
+                    'bond-group': 'dp0bond1',
+                    'bond-members': ['dp0xe3', 'dp0xe4']
+                }
+            ]
         },
         # expected_result
         [
@@ -227,11 +240,23 @@ TEST_DATA = [
                 }
             }
         },
-        # test input - notification message contents
+        # test input - current LAG membership state
         {
-            'vyatta-interfaces-bonding-v1:bond-group': 'dp0bond1',
-            'vyatta-interfaces-bonding-v1:member-interface': 'dp0xe3',
-            'vyatta-interfaces-bonding-v1:operation-add': False
+            'vyatta-interfaces-bonding-v1:bond-groups': [
+                {
+                    'bond-group': 'dp0bond1',
+                    'bond-members': ['dp0xe3', 'dp0xe4']
+                }
+            ]
+        },
+        # test input - new LAG membership state from notification
+        {
+            'vyatta-interfaces-bonding-v1:bond-groups': [
+                {
+                    'bond-group': 'dp0bond1',
+                    'bond-members': ['dp0xe4']
+                }
+            ]
         },
         # expected_result
         [
@@ -317,11 +342,23 @@ TEST_DATA = [
                 }
             }
         },
-        # test input - notification message contents
+        # test input - current LAG membership state
         {
-            'vyatta-interfaces-bonding-v1:bond-group': 'dp0bond1',
-            'vyatta-interfaces-bonding-v1:member-interface': 'dp0xe3',
-            'vyatta-interfaces-bonding-v1:operation-add': False
+            'vyatta-interfaces-bonding-v1:bond-groups': [
+                {
+                    'bond-group': 'dp0bond1',
+                    'bond-members': ['dp0xe3', 'dp0xe4']
+                }
+            ]
+        },
+        # test input - new LAG membership state from notification
+        {
+            'vyatta-interfaces-bonding-v1:bond-groups': [
+                {
+                    'bond-group': 'dp0bond1',
+                    'bond-members': ['dp0xe4']
+                }
+            ]
         },
         # expected_result
         [
@@ -481,8 +518,10 @@ TEST_DATA = [
     )
 ]
 
-@pytest.mark.parametrize("config, notification, expected_result", TEST_DATA)
-def test_lag_membership_ntfy(config, notification, expected_result):
+@pytest.mark.parametrize("config, cur_membership, notification,\
+    expected_result", TEST_DATA)
+def test_lag_membership_ntfy(config, cur_membership, notification,
+                            expected_result):
     # Mock up a dataplane context manager
     mock_dataplane = MagicMock()
     mock_dataplane.__enter__.return_value = mock_dataplane
@@ -494,8 +533,14 @@ def test_lag_membership_ntfy(config, notification, expected_result):
     }
     ctrl = Mock(**attrs)
 
+    # Create BondMembership objects with the current membership state and the
+    # new state received from a VCI notification
+    cur_membership_obj = BondMembership(notification=cur_membership)
+    ntfy_membership_obj = BondMembership(notification=notification)
+
     # prov.commands writes the QoS config commands to the mocked controller
-    prov = Provisioner(config, config, bonding_ntfy=notification)
+    prov = Provisioner(config, config, cur_bond_membership=cur_membership_obj,
+        bonding_ntfy=ntfy_membership_obj)
     prov.commands(ctrl)
 
     # The tests for QoS on LAG contain a few corner cases where the number
