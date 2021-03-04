@@ -11,6 +11,7 @@ Unit-tests for the qos_config.py module.
 """
 
 from vyatta_policy_qos_vci.qos_config_bond_members import QosConfigBondMembers
+from vyatta_policy_qos_vci.bond_membership import BondMembership
 
 from unittest.mock import Mock
 
@@ -57,100 +58,18 @@ def test_qosconfig_bond_members():
     """ Simple Unit Test for the QoSConfigBondMembers class with bonding group
     in s9500 platform
     """
-    # Mock up a configuration object from configd
-    attrs = {
-        'tree_get_dict.return_value': {
-            'dataplane': [
-                {
-                    'tagnode': 'dp0xe1',
-                    'admin-status': 'up',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-                {
-                    'tagnode': 'dp0xe2',
-                    'admin-status': 'up',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-                {
-                    'tagnode': 'dp0xe3',
-                    'admin-status': 'up',
-                    'bond-group': 'dp0bond1',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-                {
-                    'tagnode': 'dp0xe4',
-                    'admin-status': 'up',
-                    'bond-group': 'dp0bond1',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-            ]
-        }
+    # Create a BondMembership object with the desired membership state
+    membership = {
+        'vyatta-interfaces-bonding-v1:bond-groups': [
+            {
+                'bond-group': 'dp0bond1',
+                'bond-members': ['dp0xe3', 'dp0xe4']
+            }
+        ]
     }
-    # Mock up configd
-    mock_config = Mock(**attrs)
-    attrs = {
-        'Client.return_value': mock_config
-    }
-    configd = Mock(**attrs)
-    client = configd.Client()
+    bond_membership = BondMembership(notification=membership)
 
-    config = QosConfigBondMembers(TEST_DATA, client=client)
+    config = QosConfigBondMembers(TEST_DATA, bond_membership=bond_membership)
     assert config is not None
     assert len(config.interfaces) == 2
     assert config.find_interface('dp0xe3') is not None
