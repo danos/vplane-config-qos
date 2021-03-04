@@ -84,6 +84,10 @@ module vyatta-policy-qos-v1 {
 
 		 This module implements vyatta-policy-qos-v1.";
 
+	revision 2021-03-04 {
+		description "Added back egress-map CLI command";
+	}
+
 	revision 2021-01-11 {
 		description "Removed egress-map CLI command";
 	}
@@ -183,6 +187,10 @@ module vyatta-policy-qos-v1 {
 
 	feature ingress-map {
 		description "Ingress-map for DSCP or PCP classifying packets";
+	}
+
+	feature egress-map {
+		description "Egress-map for DSCP or PCP marking of packets";
 	}
 
 	typedef name {
@@ -648,6 +656,30 @@ module vyatta-policy-qos-v1 {
 				configd:help "Default for unconfigured ports";
 			}
 		}
+		list egress-map {
+			if-feature egress-map;
+			description "Egress mark map";
+			configd:help "Egress mark map";
+			must "(not(/policy:policy/qos/mark-map))" {
+				error-message "Only mark-map or egress-map allowed not both";
+			}
+			key "id";
+			leaf id {
+				type name;
+				description "Egress-map name";
+				configd:help "Egress-map name";
+			}
+			list designation {
+				description "Designation value marked at ingress";
+				configd:help "Designation value marked at ingress";
+				key "id";
+				leaf id {
+					type qos-groupings:designation-type;
+				}
+				uses dscp;
+				uses pcp;
+			}
+		}
 	}
 
 	augment /if:interfaces/interfaces-dataplane:dataplane/interfaces-policy:policy {
@@ -714,6 +746,13 @@ module vyatta-policy-qos-v1 {
 			}
 			configd:help "QoS policy ingress-map for interface";
 		}
+		leaf egress-map {
+			if-feature egress-map;
+			type leafref {
+				path "/policy:policy/egress-map/id";
+			}
+			configd:help "QoS policy egress-map for interface";
+		}
 	}
 
 	augment /if:interfaces/interfaces-dataplane:dataplane/interfaces-dataplane:vif/interfaces-policy:policy {
@@ -723,6 +762,13 @@ module vyatta-policy-qos-v1 {
 				path "/policy:policy/ingress-map/id";
 			}
 			configd:help "QoS policy ingress-map for virtual interface";
+		}
+		leaf egress-map {
+			if-feature egress-map;
+			type leafref {
+				path "/policy:policy/egress-map/id";
+			}
+			configd:help "QoS policy egress-map for virtual interface";
 		}
 	}
 
@@ -734,6 +780,16 @@ module vyatta-policy-qos-v1 {
 			}
 			configd:help "QoS policy ingress-map for interface";
 		}
+		leaf egress-map {
+			if-feature egress-map;
+			type leafref {
+				path "/policy:policy/egress-map/id";
+			}
+			configd:help "QoS policy egress-map for interface";
+			must "(not(/policy:policy/egress-map[id = current()]/designation/dscp))" {
+				error-message "Egress-map with DSCP configuration not supported on switch-group interface";
+			}
+		}
 	}
 
 	augment /if:interfaces/interfaces-dataplane:dataplane/dp-sw:switch-group/dp-sw:port-parameters/dp-sw:vlan-parameters/dp-sw:qos-parameters/dp-sw:vlan/sw-pol:policy {
@@ -744,6 +800,28 @@ module vyatta-policy-qos-v1 {
 			}
 			configd:help "QoS policy ingress-map for vlan";
 		}
+		leaf egress-map {
+			if-feature egress-map;
+			type leafref {
+				path "/policy:policy/egress-map/id";
+			}
+			configd:help "QoS policy egress-map for vlan";
+			must "(not(/policy:policy/egress-map[id = current()]/designation/dscp))" {
+				error-message "Egress-map with DSCP configuration not supported on switch-group interface";
+			}
+		}
 	}
 
+	augment /if:interfaces/sw:switch/sw:vif/vif-pol:policy {
+		leaf egress-map {
+			if-feature egress-map;
+			type leafref {
+				path "/policy:policy/egress-map/id";
+			}
+			configd:help "QoS policy egress-map for virtual interface";
+			must "(not(/policy:policy/egress-map[id = current()]/designation/pcp))" {
+				error-message "Egress-map with PCP configuration not supported on virtual interface";
+			}
+		}
+	}
 }
