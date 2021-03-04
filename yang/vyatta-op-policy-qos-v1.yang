@@ -60,7 +60,7 @@ module vyatta-op-policy-qos-v1 {
 
 		 YANG module for policy QoS operational mode commands.";
 
-	revision 2021-03-04 {
+	revision 2021-01-14 {
 		description "Added back egress-map CLI command";
 	}
 	revision 2021-01-11 {
