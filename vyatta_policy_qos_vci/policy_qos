@@ -123,10 +123,21 @@ def bond_membership_update(data):
     VCI notification handler for LAG membership changes reported by the LAG
     component.
     """
+    global _bond_membership
     try:
+        LOG.debug(f"Received LAG membership change notification: {data}")
         config = get_config()
         LOG.debug(f'config: {config}')
-        prov = Provisioner(config, config, bonding_ntfy=data)
+
+        # Create LAG membership object from the notification contents
+        ntfy_bond_membership = BondMembership(notification=data)
+
+        prov = Provisioner(config, config, cur_bond_membership=_bond_membership,
+            bonding_ntfy=ntfy_bond_membership)
+
+        # Update the LAG membership cache
+        _bond_membership = ntfy_bond_membership
+
         with Controller() as ctrl:
             prov.commands(ctrl)
 
