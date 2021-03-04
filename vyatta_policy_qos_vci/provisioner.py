@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2019-2020, AT&T Intellectual Property.
+# Copyright (c) 2019-2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -68,10 +68,10 @@ class Provisioner:
     like global profiles, mark-maps or action-groups may affect multiple
     interfaces.
     """
-    def __init__(self, old, new, bonding_ntfy=None, client=None):
+    def __init__(self, old, new, cur_bond_membership=None, bonding_ntfy=None):
         """ Create a provisioner object """
         self._is_hardware_qos_bond_enabled = bonding_ntfy is not None or \
-                                             client is not None
+                                             cur_bond_membership is not None
         self._if_deletes = []
         self._if_updates = []
         self._if_creates = []
@@ -85,8 +85,10 @@ class Provisioner:
         # Now process the QoS config
         if bonding_ntfy is None:
             if self._is_hardware_qos_bond_enabled:
-                old_config = QosConfigBondMembers(old, client=client)
-                new_config = QosConfigBondMembers(new, client=client)
+                old_config = QosConfigBondMembers(old,
+                    bond_membership=cur_bond_membership)
+                new_config = QosConfigBondMembers(new,
+                    bond_membership=cur_bond_membership)
             else:
                 old_config = QosConfig(old)
                 new_config = QosConfig(new)

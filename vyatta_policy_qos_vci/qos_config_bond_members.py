@@ -26,11 +26,11 @@ class QosConfigBondMembers(QosConfig):
     The JSON configuration is broken down into bits that are mapped onto the
     QoS object model.
     This is a specialization of the QosConfig class. The QoS configuration of
-    a bonding groups is split into each bonding member (i.e. cstore commands
+    a bonding group is split into each bonding member (i.e. cstore commands
     for each bonding member are sent to the dataplane, instead of the
     bonding interface).
     """
-    def __init__(self, config_dict, client=None):
+    def __init__(self, config_dict, bond_membership=None):
         """ Create a QosConfigBondMembers object """
         self._action_groups = {}
         self._mark_maps = {}
@@ -59,9 +59,9 @@ class QosConfigBondMembers(QosConfig):
         self._process_egress_map(eg_map_dict)
 
         if_dict = config_dict.get('vyatta-interfaces-v1:interfaces')
-        self._process_interfaces(if_dict, client=client)
+        self._process_interfaces(if_dict, bond_membership=bond_membership)
 
-    def _process_interfaces(self, if_dict, client=None):
+    def _process_interfaces(self, if_dict, bond_membership=None):
         """
         Process interfaces that have QoS policies attached to them, in
         platforms that support the hardware-qos-bond feature
@@ -71,9 +71,13 @@ class QosConfigBondMembers(QosConfig):
             # interfaces that are bonding members before processing the other
             # interface types.
             bond_groups = if_dict.get('vyatta-interfaces-bonding-v1:bonding')
-            if bond_groups is not None:
+            if bond_groups is not None and bond_membership is not None:
                 for interface in bond_groups:
-                    members = get_bonding_members(client, interface)
+                    members = bond_membership.get_members(interface['tagnode'])
+                    if members is None:
+                        # Bonding group not found. That means the LAG
+                        # configuration was not applied yet: Skip it!
+                        continue
                     for member in members:
                         int_obj = Interface('bond_member', member,
                                             self._policies,

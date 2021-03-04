@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2019-2020, AT&T Intellectual Property.
+# Copyright (c) 2019-2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -15,9 +15,19 @@ from unittest.mock import Mock, MagicMock, call
 import pytest
 
 from vyatta_policy_qos_vci.provisioner import Provisioner
+from vyatta_policy_qos_vci.bond_membership import BondMembership
 
 # python doesn't define null, but it is valid JSON
 null = None
+
+BOND_MEMBERSHIP = {
+    'vyatta-interfaces-bonding-v1:bond-groups': [
+        {
+            'bond-group': 'dp0bond1',
+            'bond-members': ['dp0xe3', 'dp0xe4']
+        }
+    ]
+}
 
 TEST_DATA = [
     (
@@ -186,11 +196,7 @@ TEST_DATA = [
                 }
             }
         },
-        # Configd mock return: If the test input has bonding groups that
-        # contain dataplane interfaces (SIAD), QoS VCI component will look for
-        # the LAG members in configd. In such case, the dictionary that must be
-        # returned by the configd mock (containing the dataplane interfaces) can
-        # be provided here.
+        # LAG membership state
         None,
         # expected_result
         [
@@ -592,7 +598,7 @@ TEST_DATA = [
                 }
             }
         },
-        # Configd mock return
+        # LAG membership state
         None,
         # expected results
         [
@@ -862,89 +868,8 @@ TEST_DATA = [
                 }
             }
         },
-        # Configd mock return: Dataplane interfaces in configd.
-        {
-            'dataplane': [
-                {
-                    'tagnode': 'dp0xe1',
-                    'admin-status': 'up',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-                {
-                    'tagnode': 'dp0xe2',
-                    'admin-status': 'up',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-                {
-                    'tagnode': 'dp0xe3',
-                    'admin-status': 'up',
-                    'bond-group': 'dp0bond1',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-                {
-                    'tagnode': 'dp0xe4',
-                    'admin-status': 'up',
-                    'bond-group': 'dp0bond1',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-            ]
-        },
+        # LAG membership state
+        BOND_MEMBERSHIP,
         # expected_result
         [
             # 1st LAG member:
@@ -1241,89 +1166,8 @@ TEST_DATA = [
                 }
             }
         },
-        # Configd mock return: Dataplane interfaces in configd.
-        {
-            'dataplane': [
-                {
-                    'tagnode': 'dp0xe1',
-                    'admin-status': 'up',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-                {
-                    'tagnode': 'dp0xe2',
-                    'admin-status': 'up',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-                {
-                    'tagnode': 'dp0xe3',
-                    'admin-status': 'up',
-                    'bond-group': 'dp0bond1',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-                {
-                    'tagnode': 'dp0xe4',
-                    'admin-status': 'up',
-                    'bond-group': 'dp0bond1',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-            ]
-        },
+        # LAG membership state
+        BOND_MEMBERSHIP,
         # expected_result
         [
             # 1st LAG member:
@@ -1719,89 +1563,8 @@ TEST_DATA = [
                 }
             }
         },
-        # Configd mock return: Dataplane interfaces in configd.
-        {
-            'dataplane': [
-                {
-                    'tagnode': 'dp0xe1',
-                    'admin-status': 'up',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-                {
-                    'tagnode': 'dp0xe2',
-                    'admin-status': 'up',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-                {
-                    'tagnode': 'dp0xe3',
-                    'admin-status': 'up',
-                    'bond-group': 'dp0bond1',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-                {
-                    'tagnode': 'dp0xe4',
-                    'admin-status': 'up',
-                    'bond-group': 'dp0bond1',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-            ]
-        },
+        # LAG membership state
+        BOND_MEMBERSHIP,
         # expected_result
         [
             # Detach old policy:
@@ -2105,8 +1868,8 @@ TEST_DATA = [
     )
 ]
 
-@pytest.mark.parametrize("old_config, new_config, configd_mock_ret, expected_result", TEST_DATA)
-def test_provisioner(old_config, new_config, configd_mock_ret, expected_result):
+@pytest.mark.parametrize("old_config, new_config, bond_membership, expected_result", TEST_DATA)
+def test_provisioner(old_config, new_config, bond_membership, expected_result):
     """ Simple unit-test for the provisioner class """
     # Mock up a dataplane context manager
     mock_dataplane = MagicMock()
@@ -2119,26 +1882,18 @@ def test_provisioner(old_config, new_config, configd_mock_ret, expected_result):
     }
     ctrl = Mock(**attrs)
 
-    client = None
-    if configd_mock_ret is not None:
-        # Mock up a configuration object from configd
-        attrs = {
-            'tree_get_dict.return_value': configd_mock_ret
-        }
-        # Mock up configd
-        mock_config = Mock(**attrs)
-        attrs = {
-            'Client.return_value': mock_config
-        }
-        configd = Mock(**attrs)
-        client = configd.Client()
+    # LAG membership state required for the test
+    bond_membership_obj = None
+    if bond_membership is not None:
+        bond_membership_obj = BondMembership(notification=bond_membership)
 
-    prov = Provisioner(old_config, new_config, client=client)
+    prov = Provisioner(old_config, new_config,
+        cur_bond_membership=bond_membership_obj)
     assert prov is not None
     # prov.commands writes the QoS config commands to the mocked controller
     prov.commands(ctrl)
 
-    if configd_mock_ret is None:
+    if bond_membership is None:
         for call_args in expected_result:
             ctrl.store.assert_any_call(*call_args)
     else:

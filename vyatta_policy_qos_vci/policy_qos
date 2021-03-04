@@ -2,7 +2,7 @@
 """
 The Policy QoS VCI entrypoint module
 """
-# Copyright (c) 2019-2020, AT&T Intellectual Property.
+# Copyright (c) 2019-2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -31,7 +31,13 @@ from vyatta_policy_qos_vci.provisioner import save_config
 from vyatta_policy_qos_vci.qos_config import QosConfig
 from vyatta_policy_qos_vci.qos_op_mode import convert_if_list
 from vyatta_policy_qos_vci.platform import is_hardware_qos_bond_enabled
+from vyatta_policy_qos_vci.bond_membership import BondMembership
 
+# Local cache of the system's LAG membership state. It is updated during the
+# QoS VCI component start up (the state is fetched from the kernel) or whenever
+# the LAG membership state changes (the state is obtained from VCI notifications
+# from the LAG component).
+_bond_membership = None
 
 def remove_deferred_ingress_maps(config, deferred_in_map_list):
     """
@@ -71,16 +77,18 @@ def remove_deferred_egress_maps(config, deferred_eg_map_list):
                 break
 
 
-def send_qos_config_to_dataplane(new_config, client=None):
+def send_qos_config_to_dataplane(new_config):
     """
     We are now ready to send the QoS configuration down to the
     vyatta-dataplane.
     """
+    global _bond_membership
     try:
         old_config = get_config()
         LOG.debug(f'old-config: {old_config}')
         LOG.debug(f'new-config: {new_config}')
-        prov = Provisioner(old_config, new_config, client=client)
+        prov = Provisioner(old_config, new_config,
+            cur_bond_membership=_bond_membership)
         with Controller() as ctrl:
             prov.commands(ctrl)
 
@@ -155,13 +163,9 @@ class Config(vci.Config):
         """
         LOG.debug(f"Config:set - {new_config}")
 
-        client = None
-        if is_hardware_qos_bond_enabled():
-            client = get_configd_client_session()
-
         # Issue the required NPF and QoS commands, and save the actioned
         # configuration
-        self.config = send_qos_config_to_dataplane(new_config, client)
+        self.config = send_qos_config_to_dataplane(new_config)
         return
 
     def get(self):
@@ -177,11 +181,11 @@ class Config(vci.Config):
 
     def check(self, proposed_config):
         """ Move the validation checks from perl to here? """
+        global _bond_membership
         LOG.debug(f"Config:check - {proposed_config}")
-        client = None
         if is_hardware_qos_bond_enabled():
-            client = get_configd_client_session()
-            config = QosConfigBondMembers(proposed_config, client=client)
+            config = QosConfigBondMembers(proposed_config,
+                bond_membership=_bond_membership)
         else:
             config = QosConfig(proposed_config)
         for ingress_map in config.ingress_maps.values():
@@ -280,6 +284,10 @@ if __name__ == "__main__":
         if ARGS.debug:
             LOG.setLevel(logging.DEBUG)
             LOG.debug("Debug enabled")
+
+        if is_hardware_qos_bond_enabled():
+            LOG.debug("Fetching LAG membership state from the kernel")
+            _bond_membership = BondMembership()
 
         LOG.debug("About to register with VCI")
 
