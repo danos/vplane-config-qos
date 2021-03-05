@@ -23,7 +23,6 @@ import sys
 
 from vyatta_policy_qos_vci.qos_config import QosConfig
 from vyatta_policy_qos_vci.qos_config_bond_members import QosConfigBondMembers
-from vyatta_policy_qos_vci.interface import get_bond_dict, get_dataplane_if_dict
 
 LOG = logging.getLogger('Policy QoS VCI')
 

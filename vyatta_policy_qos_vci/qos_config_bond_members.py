@@ -15,7 +15,6 @@ import logging
 
 from vyatta_policy_qos_vci.qos_config import QosConfig
 from vyatta_policy_qos_vci.interface import Interface
-from vyatta_policy_qos_vci.interface import get_bonding_members
 
 LOG = logging.getLogger('Policy QoS VCI')
 
@@ -119,19 +118,3 @@ class QosConfigBondMembers(QosConfig):
                                         self._ingress_maps,
                                         self._egress_maps)
                     self._interfaces[int_obj.ifname] = int_obj
-
-    def add_bond_member(self, if_name, bond_dict):
-        """
-        Creates an Interface of type 'bond_member' with the provided name
-        and bonding group.
-        """
-        member_dict = {
-            'tagnode': if_name,
-            'bond-group': bond_dict.get('tagnode')
-        }
-        interface = Interface('bond_member', member_dict, self._policies,
-                              self._ingress_maps, self._egress_maps,
-                              bond_dict=bond_dict)
-        LOG.debug(f"Created Interface obj for member {if_name} of "
-                f"LAG {bond_dict.get('tagnode')}")
-        self._interfaces[interface.ifname] = interface

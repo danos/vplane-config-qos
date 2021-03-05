@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2019-2020, AT&T Intellectual Property.
+# Copyright (c) 2019-2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -15,8 +15,7 @@ from unittest.mock import Mock
 
 from vyatta_policy_qos_vci.ingress_map import IngressMap
 from vyatta_policy_qos_vci.egress_map import EgressMap
-from vyatta_policy_qos_vci.interface import (Interface, get_bonding_members,
-    MissingBondGroupError)
+from vyatta_policy_qos_vci.interface import (Interface, MissingBondGroupError)
 from vyatta_policy_qos_vci.policy import Policy
 
 # The following tests are based upon the following Vyatta VM and SIAD
@@ -636,121 +635,6 @@ def test_interface(test_input, expected_result):
 
     assert interface is not None
     assert interface.commands() == expected_result
-
-def test_get_bonding_members():
-    # Bonding interface dict from QoS VCI JSON configuration file:
-    bonding_group = {
-        'tagnode': 'dp0bond1',
-        'vyatta-interfaces-bonding-switch-v1:switch-group': {
-            'port-parameters': {
-                'vyatta-interfaces-switch-policy-v1:policy': {
-                    'vyatta-policy-qos-v1:qos': 'trunk-egress1'
-                }
-            }
-        }
-    }
-
-    # Mock up a configuration object from configd
-    attrs = {
-        'tree_get_dict.return_value': {
-            'dataplane': [
-                {
-                    'tagnode': 'dp0xe1',
-                    'admin-status': 'up',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-                {
-                    'tagnode': 'dp0xe2',
-                    'admin-status': 'up',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-                {
-                    'tagnode': 'dp0xe3',
-                    'admin-status': 'up',
-                    'bond-group': 'dp0bond1',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-                {
-                    'tagnode': 'dp0xe4',
-                    'admin-status': 'up',
-                    'bond-group': 'dp0bond1',
-                    'duplex': 'auto',
-                    'ip': {
-                        'gratuitous-arp-count': 1,
-                        'rpf-check': 'disable'
-                    },
-                    'ipv6': {
-                        'dup-addr-detect-transmits': 1
-                    },
-                    'mtu': 1500,
-                    'oper-status': 'dormant',
-                    'speed': 'auto',
-                    'vlan-protocol': '0x8100',
-                    'vrrp': {
-                        'start-delay': 0
-                    }
-                },
-            ]
-        }
-    }
-    # Mock up configd
-    mock_config = Mock(**attrs)
-    attrs = {
-        'Client.return_value': mock_config
-    }
-    configd = Mock(**attrs)
-    client = configd.Client()
-
-    members = get_bonding_members(client, bonding_group)
-    assert len(members) == 2
-
-    if_names = []
-    for member in members:
-        if_names.append(member.get('tagnode'))
-    assert 'dp0xe3' in if_names
-    assert 'dp0xe4' in if_names
 
 def test_missing_bond_group():
     """
