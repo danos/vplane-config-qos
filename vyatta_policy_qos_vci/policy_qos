@@ -154,13 +154,6 @@ def bond_membership_update(data):
 
         LOG.error(f"Unhandled exception: {tb_type}\n{tb_value}\n{tb_output}")
 
-def get_configd_client_session():
-    try:
-        return configd.Client()
-    except Exception as exc:
-        LOG.error(f"Cannot establish configd client session: "
-            f"'{str(exc).strip()}'")
-        raise
 
 class Config(vci.Config):
     """

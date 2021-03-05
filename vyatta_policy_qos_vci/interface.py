@@ -2,7 +2,7 @@
 """
 A module to define the Interface class of objects
 """
-# Copyright (c) 2019-2020, AT&T Intellectual Property.
+# Copyright (c) 2019-2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -25,74 +25,6 @@ POLICY_KEY = {
     'switch': ('name', 'vyatta-interfaces-switch-vif-policy-v1', '', 'vyatta-policy-qos-v1'),
     'bond_member': ('tagnode', 'vyatta-interfaces-policy-v1','', 'vyatta-interfaces-bonding-qos-v1'),
 }
-
-def get_bonding_members(client, bonding_group):
-    """
-    Returns a list of interfaces that are members of the provided bonding group.
-    """
-    if client is None:
-        raise TypeError("configd client session was not provided")
-
-    members = []
-    dataplane = []
-
-    try:
-        # Try to get the LAG membership information from the running
-        # configuration. Any LAG membership information that might
-        # exist in the candidate configuration will be received via VCI
-        # notifications from the LAG component.
-        config = client.tree_get_dict("interfaces dataplane", client.RUNNING)
-        dataplane = config.get("dataplane", [])
-    except Exception as exc:
-        # This could mean that the device is booting and the running
-        # configuration does not exist yet. In such case, consider that LAG
-        # has no members. The members will be provided via VCI notifications
-        # from the LAG component.
-        LOG.info(f"Could not get interfaces from configd ('{str(exc).strip()}')"
-                f". Device is booting")
-        return members
-
-    for interface in dataplane:
-        if_bond_grp = interface.get('bond-group')
-        if if_bond_grp is not None:
-            if if_bond_grp == bonding_group.get('tagnode'):
-                members.append(interface)
-
-    return members
-
-def get_bond_dict(config_dict, bond_name):
-    """
-    Gets the bonding group dictionary from the configuration. Returns 'None' if
-    not found.
-    """
-    bond_dict = None
-    if_dict = config_dict.get('vyatta-interfaces-v1:interfaces')
-    if if_dict is not None:
-        for key, interfaces in if_dict.items():
-            if_type = key.split(':')[1]
-            if if_type == 'bonding':
-                for interface in interfaces:
-                    if interface.get('tagnode') == bond_name:
-                        bond_dict = interface
-
-    return bond_dict
-
-def get_dataplane_if_dict(config_dict, if_name):
-    """
-    Gets a dataplane interface dictionary (if_name) from the QoS configuration
-    (config_dict). Returns 'None' if not found.
-    """
-    if_dict = None
-    ifs_dict = config_dict.get('vyatta-interfaces-v1:interfaces')
-    if ifs_dict is not None:
-        for key, interfaces in ifs_dict.items():
-            if_type = key.split(':')[1]
-            if if_type == 'dataplane':
-                for interface in interfaces:
-                    if interface.get('tagnode') == if_name:
-                        if_dict = interface
-
-    return if_dict
 
 
 class MissingBondGroupError(Exception):
