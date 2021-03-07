@@ -18,11 +18,12 @@ from vyatta_policy_qos_vci.wred_map import byte_limits
 LOG = logging.getLogger('Policy QoS VCI')
 
 POLICY_KEY = {
-    'bonding': 'vyatta-interfaces-bonding-qos-v1',
-    'dataplane': 'vyatta-policy-qos-v1',
-    'vhost': 'vyatta-interfaces-vhost-qos-v1',
-    'switch': 'vyatta-policy-qos-v1',
-    'bond_member': 'vyatta-policy-qos-v1',
+    # if_type:[name, policy_namespace, vif_namespace, qos_namespace]
+    'bonding': ('tagnode', 'vyatta-interfaces-policy-v1','', 'vyatta-interfaces-bonding-qos-v1',),
+    'dataplane': ('tagnode', 'vyatta-interfaces-policy-v1','', 'vyatta-policy-qos-v1'),
+    'vhost': ('name', 'vyatta-interfaces-vhost-policy-v1', 'vyatta-interfaces-vhost-vif-v1:', 'vyatta-interfaces-vhost-qos-v1'),
+    'switch': ('name', 'vyatta-interfaces-switch-vif-policy-v1', '', 'vyatta-policy-qos-v1'),
+    'bond_member': ('tagnode', 'vyatta-interfaces-policy-v1','', 'vyatta-interfaces-bonding-qos-v1'),
 }
 
 def get_bonding_members(client, bonding_group):
@@ -116,23 +117,22 @@ class Interface:
         self._if_dict = if_dict
         self._if_type = if_type
         self._bond_dict = bond_dict
-        if if_type == 'vhost':
-            self._name = if_dict.get('name')
-            policy_namespace = 'vyatta-interfaces-vhost-policy-v1'
-            vif_namespace = 'vyatta-interfaces-vhost-vif-v1:'
-        elif if_type == 'switch':
-            self._name = if_dict.get('name')
-            policy_namespace = 'vyatta-interfaces-switch-vif-policy-v1'
-            vif_namespace = ''
-        else:
-            self._name = if_dict.get('tagnode')
-            policy_namespace = 'vyatta-interfaces-policy-v1'
-            vif_namespace = ''
         self._subports = []
         self._ingress_map_bindings = []
         self._egress_map_bindings = []
         self._policies = []
         self._profile_index = {}
+
+        if if_type in  POLICY_KEY:
+            self._name = if_dict.get(POLICY_KEY[if_type][0])
+            policy_namespace = POLICY_KEY[if_type][1]
+            vif_namespace = POLICY_KEY[if_type][2]
+            qos_namespace = POLICY_KEY[if_type][3]
+        else:
+            self._name = if_dict.get('tagnode')
+            policy_namespace = 'vyatta-interfaces-policy-v1'
+            vif_namespace = ''
+            qos_namespace = ''
 
         if_policy_dict = None
         port_params_dict = None
@@ -158,17 +158,12 @@ class Interface:
             except KeyError:
                 pass
 
-        # We have three different namespaces choices to deal with:
-        # vyatta-policy-qos-v1 - the standard and switch qos namespace
-        # vyatta-interfaces-bonding-qos-v1 - for bonded interfaces
-        # vyatta-interfaces-vhost-qos-v1 - for vhost interfaces
-        namespace = POLICY_KEY[if_type]
 
         # If there is just an ingress map attached at the vif/vlan
         # level then there might be nothing on the interface itself.
         if if_policy_dict is not None:
             try:
-                if_policy_name = if_policy_dict.get(f'{namespace}:qos')
+                if_policy_name = if_policy_dict.get(f'{qos_namespace}:qos')
                 policy = None
                 if if_policy_name is not None:
                     policy = qos_policy_dict[if_policy_name]
@@ -216,7 +211,7 @@ class Interface:
                 vlan_id = vif['tagnode']
                 if_policy_dict = vif[f"{policy_namespace}:policy"]
                 try:
-                    if_policy_name = if_policy_dict[f'{namespace}:qos']
+                    if_policy_name = if_policy_dict[f'{qos_namespace}:qos']
                     policy = None
                     if if_policy_name is not None:
                         policy = qos_policy_dict[if_policy_name]
@@ -273,7 +268,7 @@ class Interface:
             for vlan in vlan_list:
                 vlan_id = vlan['vlan-id']
                 if_policy_dict = vlan['vyatta-interfaces-switch-policy-v1:policy']
-                if_policy_name = if_policy_dict.get(f'{namespace}:qos')
+                if_policy_name = if_policy_dict.get(f'{qos_namespace}:qos')
                 policy = None
                 if if_policy_name is not None:
                     policy = qos_policy_dict[if_policy_name]
