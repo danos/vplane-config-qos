@@ -90,6 +90,11 @@ module vyatta-policy-qos-v1 {
 
 		 This module implements vyatta-policy-qos-v1.";
 
+	revision 2021-03-16 {
+		description "Add check to prevent bonding interface from having
+			     both L2 and L3 policies applied at the same time.";
+	}
+
 	revision 2021-02-22 {
 		description "Added support for LAG QoS.";
 	}
@@ -742,6 +747,9 @@ module vyatta-policy-qos-v1 {
 	augment /if:interfaces/bonding:bonding/bd-sw:switch-group/bd-sw:port-parameters/sw-pol:policy {
 		if-feature hardware-qos-bond;
 		leaf qos {
+			must "(not(../../../../interfaces-policy:policy))" {
+				error-message "Policies are not permitted under both interface and switch-group CLI tree";
+			}
 			type leafref {
 				path "/policy:policy/qos/name/id";
 			}
