@@ -808,6 +808,11 @@ sub show_buffer_errors {
 sub show_egress_maps {
     my $interface = shift;
 
+    if ($interface =~ /dp\dbond\d/) {
+        print "Feature not supported on bonding interfaces \n";
+        return;
+    }
+
     if ( $interface eq '' ) {
         walk_fabrics( "qos show egress-maps", \&show_egress_map );
         return;
@@ -819,6 +824,11 @@ sub show_egress_maps {
 
 sub show_ingress_maps {
     my $interface = shift;
+
+    if ($interface =~ /dp\dbond\d/) {
+        print "Feature not supported on bonding interfaces \n";
+        return;
+    }
 
     if ( $interface eq '' ) {
         walk_fabrics( "qos show ingress-maps", \&show_ingress_map );
@@ -894,6 +904,11 @@ sub show_intf_filter {
 
 sub show_filter_class {
     my $interface = shift;
+
+    if ($interface =~ /dp\dbond\d/) {
+        print "Feature not supported on bonding interfaces \n";
+        return;
+    }
 
     walk_fabrics( "gpc show qos ", \&show_intf_filter, $interface );
 }
@@ -1597,6 +1612,11 @@ sub show_class {
     my $interfaces = shift;
     my $fmt;
     my $hdr;
+
+    if ($interfaces =~ /dp\dbond\d/) {
+        print "Feature not supported on bonding interfaces \n";
+        return;
+    }
 
     if ($bits64) {
         $fmt = "%-16s %5s %20s %20s %8s\n";

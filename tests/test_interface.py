@@ -151,6 +151,13 @@ VM_BONDED_VLAN_DICT = {
     ]
 }
 
+DCSG_BONDED_IF_DICT = {
+    'tagnode': 'dp0bond1',
+    'vyatta-interfaces-policy-v1:policy': {
+        'vyatta-interfaces-bonding-qos-v1:qos': 'policy-3'
+    }
+}
+
 SIAD_BONDED_IF_DICT = {
     'tagnode': 'dp0bond1',
     'vyatta-interfaces-bonding-switch-v1:switch-group': {
@@ -544,6 +551,32 @@ TEST_DATA = [
     (
         # test_input
         ('bond_member', SIAD_BONDED_IF_MEMBER_DICT, SIAD_BONDED_IF_DICT),
+        # expected_data
+        [
+            # SIAD commands
+            'qos dp0xe3 port subports 1 pipes 1 profiles 1 overhead 6 ql_packets',
+            'qos dp0xe3 subport 0 rate 375000000 size 16000 period 40000',
+            'qos dp0xe3 subport 0 queue 0 percent 100 msec 4',
+            'qos dp0xe3 param subport 0 0 limit packets 64',
+            'qos dp0xe3 subport 0 queue 1 percent 100 msec 4',
+            'qos dp0xe3 param subport 0 1 limit packets 64',
+            'qos dp0xe3 subport 0 queue 2 percent 100 msec 4',
+            'qos dp0xe3 param subport 0 2 limit packets 64',
+            'qos dp0xe3 subport 0 queue 3 percent 100 msec 4',
+            'qos dp0xe3 param subport 0 3 limit packets 64',
+            'qos dp0xe3 vlan 0 0',
+            'qos dp0xe3 profile 0 percent 100 size 16000 period 10000',
+            'qos dp0xe3 profile 0 queue 0 percent 100 msec 4',
+            'qos dp0xe3 profile 0 queue 1 percent 100 msec 4',
+            'qos dp0xe3 profile 0 queue 2 percent 100 msec 4',
+            'qos dp0xe3 profile 0 queue 3 percent 100 msec 4',
+            'qos dp0xe3 pipe 0 0 0',
+            'qos dp0xe3 enable'
+        ]
+    ),
+    (
+        # test_input
+        ('bond_member', SIAD_BONDED_IF_MEMBER_DICT, DCSG_BONDED_IF_DICT),
         # expected_data
         [
             # SIAD commands

@@ -138,15 +138,21 @@ class Interface:
         port_params_dict = None
         # Get the trunk's QoS policy name
         try:
-            # Try the normal vyatta VM style
-            if_policy_dict = if_dict[f"{policy_namespace}:policy"]
+            if if_type == 'bond_member':
+                # Check if policy is on L3 bonding interface
+                if_policy_dict = bond_dict[f"{policy_namespace}:policy"]
+            else:
+                # Try the normal vyatta VM style
+                if_policy_dict = if_dict[f"{policy_namespace}:policy"]
 
         except KeyError:
             try:
                 # Try the hardware-switch platform style
                 if if_type == 'bond_member':
-                    # Interface is a LAG member: the policy is in the LAG
-                    # interface:
+                    # No policy on L3 bonding interface,
+                    # check if policy is on L2 LAG interface
+                    # L2 and L3 LAG QoS policies are in different namespaces
+                    qos_namespace = 'vyatta-policy-qos-v1'
                     if_policy_dict = bond_dict[
                         'vyatta-interfaces-bonding-switch-v1:switch-group']
                 else:
