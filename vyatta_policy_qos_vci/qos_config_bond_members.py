@@ -85,7 +85,7 @@ class QosConfigBondMembers(QosConfig):
                                             bond_dict=interface)
                         LOG.debug(f"Created Interface obj for member "
                                 f"{member.get('tagnode')} of "
-                                f"LAG {member.get('tagnode')}")
+                                f"LAG {interface.get('tagnode')}")
                         self._interfaces[int_obj.ifname] = int_obj
 
             # Process all the other interface types
