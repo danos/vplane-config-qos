@@ -126,6 +126,9 @@ def bond_membership_update(data):
     global _bond_membership
     try:
         LOG.debug(f"Received LAG membership change notification: {data}")
+        if not is_hardware_qos_bond_enabled():
+            LOG.debug("Hardware QoS on LAG feature not supported. Ignore!")
+            return
         config = get_config()
         LOG.debug(f'config: {config}')
 
