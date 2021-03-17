@@ -38,7 +38,7 @@ module vyatta-policy-filter-classification-v1 {
 		 Web: www.att.com";
 
 	description
-		"Copyright (c) 2020 AT&T Intellectual Property
+		"Copyright (c) 2020-2021 AT&T Intellectual Property
 		 All rights reserved.
 
 		 Redistribution and use in source and binary forms, with or without
@@ -72,7 +72,7 @@ module vyatta-policy-filter-classification-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
-	revision 2020-12-01 {
+	revision 2021-03-18 {
 		description "Initial revision for version 1.";
 	}
 
@@ -175,6 +175,7 @@ module vyatta-policy-filter-classification-v1 {
 				configd:help "Group name";
 				type vy-types:alpha-numeric {
 					configd:help "Group name";
+					length 1..32;
 				}
 			}
 			leaf description {
@@ -195,10 +196,6 @@ module vyatta-policy-filter-classification-v1 {
 							description  "Unique counter applied to each interface";
 							configd:help "Unique counter applied to each interface";
 						}
-						enum "per-group" {
-							description  "Shared counter applied to multiple interfaces";
-							configd:help "Shared counter applied to multiple interfaces";
-						}
 					}
 				}
 				leaf type {
@@ -208,10 +205,6 @@ module vyatta-policy-filter-classification-v1 {
 						enum auto-per-rule {
 							description  "Auto per rule";
 							configd:help "Auto per rule";
-						}
-						enum auto-per-result {
-							description  "Auto per result";
-							configd:help "Auto per result";
 						}
 					}
 					default "auto-per-rule";
