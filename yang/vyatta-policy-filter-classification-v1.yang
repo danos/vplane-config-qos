@@ -201,7 +201,7 @@ module vyatta-policy-filter-classification-v1 {
 				configd:help "Group name";
 				type vy-types:alpha-numeric {
 					configd:help "Group name";
-					length 1..32;
+					length 1..16;
 				}
 			}
 			leaf description {
