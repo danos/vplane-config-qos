@@ -38,7 +38,7 @@ module vyatta-policy-filter-classification-v1 {
 		 Web: www.att.com";
 
 	description
-		"Copyright (c) 2020-2021 AT&T Intellectual Property
+		"Copyright (c) 2021 AT&T Intellectual Property
 		 All rights reserved.
 
 		 Redistribution and use in source and binary forms, with or without
@@ -72,7 +72,7 @@ module vyatta-policy-filter-classification-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
-	revision 2021-03-18 {
+	revision 2021-03-24 {
 		description "Initial revision for version 1.";
 	}
 
@@ -164,6 +164,32 @@ module vyatta-policy-filter-classification-v1 {
 		}
 	}
 
+	grouping res-actions {
+		list result {
+			key "result";
+			description "Mapping of result to actions";
+			configd:help "Mapping of result to actions";
+			min-elements 1;
+			leaf result {
+				description  "Classifier result";
+				configd:help "Classifier result";
+				must "/resources:resources/res-gpc:packet-classifier/res-gpc:group/res-gpc:rule[res-gpc:result = current()]" {
+					error-message "Result must be used in a classifier rule";
+				}
+				type leafref {
+					path "/resources:resources/res-gpc:packet-classifier/res-gpc:group/res-gpc:results/res-gpc:result";
+				}
+			}
+			container action {
+				description "Actions";
+				configd:help "Actions";
+				presence "Actions applied to packet";
+				uses marking-action;
+				uses policing-action;
+			}
+		}
+	}
+
 	grouping filter-classification-list {
 		list group {
 			description "Filter classification group";
@@ -218,29 +244,8 @@ module vyatta-policy-filter-classification-v1 {
 					path "/resources:resources/res-gpc:packet-classifier/res-gpc:group/res-gpc:group-name";
 				}
 			}
-			list map {
-				description "Mapping of result to actions";
-				configd:help "Mapping of result to actions";
-				key "result";
-				min-elements 1;
-				leaf result {
-					description  "Classifier result";
-					configd:help "Classifier result";
-					must "/resources:resources/res-gpc:packet-classifier/res-gpc:group/res-gpc:rule[res-gpc:result = current()]" {
-						error-message "Result must be used in a classifier rule";
-					}
-					mandatory true;
-					type leafref {
-						path "/resources:resources/res-gpc:packet-classifier/res-gpc:group/res-gpc:results/res-gpc:result";
-					}
-				}
-				container action {
-					description "Actions";
-					configd:help "Actions";
-					presence "Actions applied to packet";
-					uses marking-action;
-					uses policing-action;
-				}
+			container map {
+				uses res-actions;
 			}
 		}
 	}

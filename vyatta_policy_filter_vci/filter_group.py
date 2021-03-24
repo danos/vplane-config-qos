@@ -28,12 +28,13 @@ class FilterGroup:
         self._classifier = fg_dict.get('packet-classifier-group')
         self._counters_enabled = False
 
-        map_list = fg_dict.get('map')
-        if map_list is not None:
-            for map in map_list:
-                result = map.get('result')
-                action = FilterAction(map.get('action'))
-                self._result_actions[result] = action
+        map = fg_dict.get('map')
+        res_list = map.get('result')
+        if res_list is not None:
+            for result in res_list:
+                res_name = result.get('result')
+                action = FilterAction(result.get('action'))
+                self._result_actions[res_name] = action
 
         counters = fg_dict.get('counters')
         if counters is not None:
