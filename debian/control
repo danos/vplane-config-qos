@@ -89,7 +89,8 @@ Architecture: any
 Priority: extra
 Depends: python3 (>= 3.6), python3-vci, python3-systemd, ${misc:Depends},
 	 vyatta-resources-group-v1-yang (>= 4.1.0), vyatta-res-grp-vci,
-	 python3-vyatta-cfgclient
+	 python3-vyatta-cfgclient, vyatta-interfaces-bonding (>= 0.52),
+	 vyatta-interfaces (>= 2.1)
 Description: Policy QoS VCI Service
  Service for policy qos commands using the Vyatta Component Infrastructure.
 
