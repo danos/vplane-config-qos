@@ -1,3 +1,13 @@
+vplane-config-qos (5.0.8) unstable; urgency=medium
+
+  [ Ramkumar Ganapathysubramanian ]
+  * Added back egress map CLI The egress map CLI is added back since the feature support is included in the branch
+  * Added back egress map CLI
+  * vplane-cfg-qos changes to support DSCP remarking
+  * Fixed issue in DSCP remarking policy removal on routed interface
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Tue, 30 Mar 2021 15:54:19 +0100
+
 vplane-config-qos (5.0.7) unstable; urgency=medium
 
   [ Ramkumar Ganapathysubramanian ]
