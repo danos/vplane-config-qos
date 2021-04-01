@@ -1,4 +1,14 @@
-vplane-config-qos (6.0.x) unstable; urgency=medium
+vplane-config-qos (6.0.1) unstable; urgency=medium
+
+  [ Alan Dewar ]
+  * GPC: remove auto-per-result and per-group keywords (Fixes: VRVDR-54744)
+
+  [ aroberts ]
+  * Add the result keyword filter-class groups
+
+ -- Colin Docherty <colin.docherty@att.com>  Thu, 01 Apr 2021 10:51:08 +0100
+
+vplane-config-qos (6.0.0) unstable; urgency=medium
 
   [ aroberts ]
   * Update the revision date so NCS/NSO upgrades correctly.
