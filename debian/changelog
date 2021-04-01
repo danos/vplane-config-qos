@@ -1,3 +1,33 @@
+vplane-config-qos (6.1.0) unstable; urgency=medium
+
+  [ Alan Dewar ]
+  * GPC: remove auto-per-result and per-group keywords (Fixes: VRVDR-54744)
+
+  [ Karthik Murugesan ]
+  * QoS on LAG in router L3 mode (DCSG-BSW)
+  * QoS on LAG in router L3 mode (DCSG-BSW)
+  * QoS on LAG in router L3 mode (DCSG-BSW)
+
+  [ Vinicius Soares ]
+  * QoS on LAG: New class to represent the LAG membership state
+  * QoS on LAG: Update QoS config logic to use the new LAG membership class
+  * QoS on LAG: Update the LAG notification handling logic
+  * QoS on LAG: Removed obsoleted code from the original design
+  * QoS on LAG: Ignore VCI notifications if feature is not enabled
+    (Fixes: VRVDR-49815)
+  * QoS on LAG: Fixed debug message (Fixes: VRVDR-49815)
+
+  [ Alan Dewar ]
+  * GPC: restrict group names to 16 characters (Fixes: VRVDR-54757)
+
+  [ Vinicius Soares ]
+  * QoS LAG: Updated dependencies with vyatta-interfaces and vyatta-cfg-bonding
+
+  [ aroberts ]
+  * Add the result ketword filter-class groups
+
+ -- Colin Docherty <colin.docherty@att.com>  Thu, 01 Apr 2021 11:11:32 +0100
+
 vplane-config-qos (6.0.x) unstable; urgency=medium
 
   [ aroberts ]
