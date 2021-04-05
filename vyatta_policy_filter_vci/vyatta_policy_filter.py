@@ -20,7 +20,6 @@ from traceback import format_tb
 from systemd.journal import JournalHandler
 
 from vyatta_policy_filter_vci.filter_config import FilterConfig
-from vyatta_policy_filter_vci.filter_rpc import send_gpc
 
 LOG = logging.getLogger('POLFIL VCI')
 
@@ -152,9 +151,7 @@ if __name__ == "__main__":
 
         (vci.Component("net.vyatta.vci.policy.filter")
          .model(vci.Model("net.vyatta.vci.policy.filter.v1")
-                .config(Config())
-                .rpc("vyatta-policy-filter-classification-v1",
-		     "get-filter-classification-information", send_gpc))
+                .config(Config()))
          .subscribe("vyatta-resources-packet-classifier-v1", "rules-update",
                     rules_updated)
          .run()

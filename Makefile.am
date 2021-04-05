@@ -12,7 +12,6 @@ bin_SCRIPTS = scripts/show-ext-buf.pl
 bin_SCRIPTS += scripts/show-queueing.pl
 bin_SCRIPTS += scripts/qos-op-mode.pl
 bin_SCRIPTS += scripts/qos-clear-counters.pl
-bin_SCRIPTS += scripts/show_gpc_rpc.py
 
 share_perl5_DATA = lib/Vyatta/QoS/Shaper.pm
 share_perl5_DATA += lib/Vyatta/QoS/Subport.pm

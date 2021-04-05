@@ -34,7 +34,6 @@ sub clear_counters {
 
         if ( !defined($if_name) ) {
             $sock->execute("qos clear");
-            $sock->execute("gpc clear qos");
         } else {
             if ($if_name =~ "bond") {
                 @members = get_members($if_name);
@@ -43,7 +42,6 @@ sub clear_counters {
                 }
             } else {
                 $sock->execute("qos clear $if_name");
-                $sock->execute("gpc clear qos $if_name");
             }
         }
     }

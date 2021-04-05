@@ -60,7 +60,7 @@ module vyatta-op-policy-qos-v1 {
 
 		 YANG module for policy QoS operational mode commands.";
 
-	revision 2021-03-29 {
+	revision 2021-01-26 {
 		description "Add the filter-classification option to the
 			     op-mode commands.";
 	}
@@ -180,7 +180,7 @@ module vyatta-op-policy-qos-v1 {
 		opd:command filter-classification {
 			if-feature gpc;
 			opd:help "Show the filter-classification used in the dataplane for an interface";
-			opd:on-enter "show_gpc_rpc.py $4";
+			opd:on-enter "show-queueing.pl --filter-classification $4";
 		}
 	}
 
@@ -234,7 +234,7 @@ module vyatta-op-policy-qos-v1 {
 		opd:command filter-classification {
 			if-feature gpc;
 			opd:help "Show the filter-classification used in the dataplane for an interface";
-			opd:on-enter "show_gpc_rpc.py $4";
+			opd:on-enter "show-queueing.pl --filter-classification $4";
 		}
 	}
 
@@ -324,7 +324,7 @@ module vyatta-op-policy-qos-v1 {
 			opd:command filter-classification {
 				if-feature gpc;
 				opd:help "Show the filter-classification used in the dataplane";
-				opd:on-enter "show_gpc_rpc.py";
+				opd:on-enter "show-queueing.pl --filter-classification";
 			}
 		}
 	}

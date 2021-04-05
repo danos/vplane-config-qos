@@ -2,4 +2,3 @@ vyatta_policy_filter_vci/vyatta_policy_filter.py opt/vyatta/sbin
 vyatta_policy_filter_vci/filter_action.py usr/lib/python3/dist-packages/vyatta_policy_filter_vci
 vyatta_policy_filter_vci/filter_config.py usr/lib/python3/dist-packages/vyatta_policy_filter_vci
 vyatta_policy_filter_vci/filter_group.py usr/lib/python3/dist-packages/vyatta_policy_filter_vci
-vyatta_policy_filter_vci/filter_rpc.py usr/lib/python3/dist-packages/vyatta_policy_filter_vci
