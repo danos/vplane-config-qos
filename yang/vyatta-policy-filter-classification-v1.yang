@@ -29,6 +29,9 @@ module vyatta-policy-filter-classification-v1 {
 	import vyatta-npf-v1 {
 		prefix npf;
 	}
+	import vyatta-fw-types-v1 {
+		prefix fw-types;
+	}
 
 	organization "AT&T Inc.";
 	contact
@@ -38,7 +41,7 @@ module vyatta-policy-filter-classification-v1 {
 		 Web: www.att.com";
 
 	description
-		"Copyright (c) 2020-2021 AT&T Intellectual Property
+		"Copyright (c) 2021 AT&T Intellectual Property
 		 All rights reserved.
 
 		 Redistribution and use in source and binary forms, with or without
@@ -72,7 +75,7 @@ module vyatta-policy-filter-classification-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
-	revision 2021-03-24 {
+	revision 2021-03-29 {
 		description "Initial revision for version 1.";
 	}
 
@@ -109,6 +112,175 @@ module vyatta-policy-filter-classification-v1 {
 						configd:help "Mark packets with drop precedence red";
 					}
 				}
+			}
+		}
+	}
+
+	grouping gpc-rules {
+		list rules {
+			description "Qos GPC rules";
+			key "rule-number";
+			leaf rule-number {
+				description "The rule number generated internally";
+				type fw-types:rule-number;
+			}
+			list matches {
+				description "Classification criteria";
+				key "match";
+				leaf match {
+					description "The match type";
+					type string;
+				}
+				leaf value {
+					description "The match value";
+					type union {
+						type string;
+						type uint32;
+					}
+				}
+			}
+			leaf table-index {
+				description "The table id incase of multiple instances";
+				type uint16;
+			}
+			leaf orig-number {
+				description "The rule number in the CLI";
+				type uint16;
+			}
+			leaf result {
+				description "The key matching classifier to actions";
+				type string;
+			}
+			leaf designation {
+				description "The queue designation";
+				type uint8;
+			}
+			leaf colour {
+				description "The packet priority on the queue";
+				type string;
+			}
+			leaf decision {
+				description "The pass or drop, pass is default";
+				type string;
+			}
+			container police {
+				description "The policer action";
+				leaf bandwidth {
+					description "The policer CIR bandwidth";
+					type uint64;
+				}
+				leaf burst {
+					description "The policer CIR burst";
+					type uint64;
+				}
+				leaf excess-bandwidth {
+					description "The policer EIR bandwidth";
+					type uint64;
+				}
+				leaf excess-burst {
+					description "The policer EIR burst";
+					type uint64;
+				}
+				leaf packets {
+					description "The packets passed by policer";
+					type uint64;
+				}
+				leaf drops {
+					description "The packets dropped by policer";
+					type uint64;
+				}
+				leaf awareness {
+					description "The policer colour awareness";
+					type string;
+				}
+			}
+			container counter {
+				description "The counter for this rule";
+				leaf counter-type {
+					description "The counter type";
+					type uint8;
+				}
+				leaf packets {
+					description "The packet count";
+					type uint64;
+				}
+				leaf bytes {
+					description "The byte count";
+					type uint64;
+				}
+			}
+		}
+	}
+
+	grouping gpc-feature {
+		list tables {
+			description "GPC tables";
+			key "table-id";
+			leaf table-id {
+				description "The key ifname/dir/AF";
+				type string;
+			}
+			list table-names {
+				description "List of GPC tables";
+				key "name";
+				leaf name {
+					description "The table name";
+					type string;
+				}
+				leaf table-index {
+					description "The table identifier";
+					type uint16;
+				}
+			}
+			uses gpc-rules;
+		}
+		list counters {
+			description "List of named counters";
+			key "name";
+			leaf name {
+				description "The name of the counter";
+				type string;
+			}
+			leaf packets {
+				description "The packet count";
+				type uint64;
+			}
+			leaf bytes {
+				description "The byte count";
+				type uint64;
+			}
+		}
+	}
+
+	grouping gpc-tables {
+		list features {
+			description "GPC features";
+			key "type";
+			leaf type {
+				description "GPC feature type";
+				type string;
+			}
+			uses gpc-feature;
+		}
+	}
+
+	rpc get-filter-classification-information {
+		description "Get information on Qos GPC.";
+		input {
+			leaf feature {
+				description "Name of the feature, qos in this case.";
+				type string;
+			}
+			leaf interface {
+				description "The name of the interface we want state from";
+				type string;
+			}
+		}
+		output {
+			container gpc {
+				description "QOS GPC state and statistical information";
+
+				uses gpc-tables;
 			}
 		}
 	}
