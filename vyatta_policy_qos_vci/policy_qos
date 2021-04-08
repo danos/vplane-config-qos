@@ -253,7 +253,8 @@ class State(vci.State):
         try:
             yang_state = {}
             if op_mode_state is not None:
-                if_list = convert_if_list("all", op_mode_state)
+                if_list = convert_if_list("all", op_mode_state,
+                                          bond_membership=_bond_membership)
                 if if_list:
                     yang_state["if-list"] = if_list
 

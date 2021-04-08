@@ -31,7 +31,7 @@ class BondMembership:
         """
         if notification is None:
             self._membership = self._translate_membership(
-                    self._fetch_membership())
+                self._fetch_membership())
         else:
             self._membership = self._translate_notification(notification)
 
@@ -68,6 +68,14 @@ class BondMembership:
                 bond_groups.append(interface)
         return bond_groups
 
+    def get_bond_name(self, if_name):
+        """ Returns bond name for the member port """
+        for bond, members in self._membership.items():
+            for member in members:
+                if member['tagnode'] == if_name:
+                    return bond
+        return None
+
     def _fetch_membership(self):
         """ Fetches from the kernel the LAG membership state """
         membership = {}
@@ -76,7 +84,7 @@ class BondMembership:
             members = []
             membership[bond] = members
             shell_output = subprocess.check_output(['teamdctl', bond, 'config',
-                'dump', 'actual'])
+                                                    'dump', 'actual'])
             shell_dict = json.loads(shell_output.decode('ascii'))
             LOG.debug(f"bond group {bond} state from kernel: {shell_dict}")
             ports = shell_dict.get('ports', {})
