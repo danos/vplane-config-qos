@@ -55,6 +55,7 @@ sub get_if_subport_policy_name {
     my $if_name = shift;
     my $config  = new Vyatta::Config();
     my $policy_name;
+    my $bond_name;
 
     if ( $if_name =~ /(\w+) vif (\d+)/ ) {
 
@@ -82,6 +83,22 @@ sub get_if_subport_policy_name {
         return $policy_name if defined($policy_name);
 
         $config->setLevel( $intf->path . " policy qos" );
+        $policy_name = $config->returnOrigValue();
+        return $policy_name if defined($policy_name);
+
+        # Deal with bonding interface
+        $config->setLevel( $intf->path . " bond-group" );
+        $bond_name = $config->returnOrigValue();
+        return $policy_name if !defined($bond_name);
+
+        # bonding interface L2 mode
+        $config->setLevel( " interfaces bonding $bond_name switch-group
+            . port-parameters policy qos" );
+        $policy_name = $config->returnOrigValue();
+        return $policy_name if defined($policy_name);
+
+        # bonding interface L3 mode
+        $config->setLevel( " interfaces bonding $bond_name policy qos" );
         $policy_name = $config->returnOrigValue();
     }
     return $policy_name;

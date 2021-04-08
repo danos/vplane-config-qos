@@ -62,7 +62,7 @@ def test_fetch_membership(mock_check_output):
     # Configure the return value of the mocked _fetch_bond_groups() method.
     bond_groups = ['dp0bond1']
     membership._fetch_bond_groups = MagicMock(name='_fetch_bond_groups',
-        return_value=bond_groups)
+                                              return_value=bond_groups)
     # Configure the output of the mocked kernel. This is the mocked output for
     # 'teamdctl <bond_group> config dump actual'.
     mock_check_output.return_value = b'{\n    "device": "dp0bond1",\n    \
@@ -82,7 +82,7 @@ def test_fetch_membership(mock_check_output):
 
     bond_groups = ['dp0bond1']
     membership._fetch_bond_groups = MagicMock(name='_fetch_bond_groups',
-        return_value=bond_groups)
+                                              return_value=bond_groups)
     mock_check_output.return_value = b'{\n    "device": "dp0bond1",\n    \
         "link_watch": {\n        "name": "ethtool"\n    },\n    \
         "runner": {\n        "name": "loadbalance",\n        \
@@ -98,7 +98,7 @@ def test_fetch_membership(mock_check_output):
 
     bond_groups = ['dp0bond1']
     membership._fetch_bond_groups = MagicMock(name='_fetch_bond_groups',
-        return_value=bond_groups)
+                                              return_value=bond_groups)
     mock_check_output.return_value = b'{\n    "device": "dp0bond1",\n    \
         "link_watch": {\n        "name": "ethtool"\n    },\n    \
         "ports": {},\n\
@@ -216,3 +216,27 @@ def test_init_state_from_notification():
 
     assert membership is not None
     assert membership.get_membership() == expected
+
+def test_get_member_port_bond_name():
+    """
+    Test get_bond_name() by passing member port as an input
+    and it returns the bond name.
+    """
+    notification = {
+        'vyatta-interfaces-bonding-v1:bond-groups': [
+            {
+                'bond-group': 'dp0bond1',
+                'bond-members': ['dp0xe1', 'dp0xe2']
+            },
+            {
+                'bond-group': 'dp0bond2',
+                'bond-members': ['dp0xe3', 'dp0xe4', 'dp0xe5']
+            }
+        ]
+    }
+    membership = BondMembership(notification=notification)
+
+    expected = 'dp0bond2'
+
+    assert membership is not None
+    assert membership.get_bond_name('dp0xe3') == expected
