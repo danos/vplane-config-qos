@@ -1,3 +1,13 @@
+vplane-config-qos (6.0.3) unstable; urgency=medium
+
+  [ Alan Dewar ]
+  * GPC: restrict group names to 16 characters (Fixes: VRVDR-54757)
+
+  [ aroberts ]
+  * Register for VCI RPC for netconf and op-mode commands
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Mon, 12 Apr 2021 10:15:38 +0100
+
 vplane-config-qos (6.0.2) unstable; urgency=medium
 
   [ Vinicius Soares ]
