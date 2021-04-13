@@ -24,9 +24,24 @@ def get_limit_time(limit_value, is_time):
         else:
             return limit_value
 
+def check_threshold(is_time, max_th, is_ql_time, qlimit):
+    """ Validate threshold values """
+    if qlimit and max_th and (is_time == is_ql_time):
+        if (int(max_th) > qlimit):
+            if is_time:
+                limits = "usec"
+            else:
+                limits = "bytes" if byte_limits() else "packets"
+            raise ThresholdError(f"max-threshold {max_th}{limits} must be less than queue-limit {qlimit}{limits}")
+
+class ThresholdError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
 class WredMap():
     """ Define the wred-map class """
-    def __init__(self, wred_map_dict, is_dscp, is_time):
+    def __init__(self, wred_map_dict, is_dscp, is_time, tc_qlimit, is_ql_time):
         """ Create a wred-map object """
         self._is_dscp = is_dscp
         self._is_time = is_time
@@ -37,6 +52,7 @@ class WredMap():
         self._mark_prob = wred_map_dict['mark-probability']
         self._min_th = get_limit_time(wred_map_dict['min-threshold'], is_time)
         self._max_th = get_limit_time(wred_map_dict['max-threshold'], is_time)
+        check_threshold(is_time, self._max_th, is_ql_time, tc_qlimit)
 
     def commands(self, cmd_prefix):
         """ Generate the necessary command for this wred-map object """

@@ -62,6 +62,12 @@ class TrafficClass:
         """ Return the traffic-class's wred object if is exists """
         return self._wred
 
+    def is_qlimit_time(self):
+        """ Check if queue-limit unit is time """
+        if self._queue_limit_time is not None:
+            return 1
+        return 0
+
     def add_pipe_queue(self, pipe_queue_id, priority_local):
         """
         Add a new pipe queue to this traffic-class and return it's wrr-id

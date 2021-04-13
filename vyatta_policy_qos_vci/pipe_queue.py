@@ -18,7 +18,7 @@ class PipeQueues:
     Define the PipeQueues class.  A PipeQueue object describes a group of queue
     objects, which are identified by their pipe-queue-id (0 to 31).
     """
-    def __init__(self, pipe_queue_list, tc_block):
+    def __init__(self, pipe_queue_list, tc_block, shaper_tc_block):
         """ Create a PipeQueue object """
         self._pipe_queue = {}
         self._wred_group = {}
@@ -41,7 +41,7 @@ class PipeQueues:
 
             self._pipe_queue[pipe_queue_id] = Queue(tc_id, wrr_id, wrr_weight,
                                                     priority_local,
-                                                    wred_map_dict, is_time)
+                                                    wred_map_dict, is_time, shaper_tc_block)
 
     def pipe_queue(self, pipe_queue_id):
         """ Return the specified pipe_queue tuple """

@@ -111,6 +111,6 @@ def test_queue(test_input, expected_result):
     if wred_map_dict is None:
         wred_map_dict = test_input.get('wred-map-time')
         is_time = 1
-    queue = Queue(tc_id, wrr_id, wrr_weight, priority_local, wred_map_dict, is_time)
+    queue = Queue(tc_id, wrr_id, wrr_weight, priority_local, wred_map_dict, is_time, None)
     assert queue is not None
     assert queue.commands("", queue.wrr_id) == expected_result

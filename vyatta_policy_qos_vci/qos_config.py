@@ -96,7 +96,7 @@ class QosConfig:
         if global_profiles_list is not None:
             profile_id = 0
             for profile_dict in global_profiles_list:
-                profile = Profile(profile_id, profile_dict, None)
+                profile = Profile(profile_id, profile_dict, None, None)
                 self._global_profiles[profile.name] = profile
                 profile_id += 1
 
