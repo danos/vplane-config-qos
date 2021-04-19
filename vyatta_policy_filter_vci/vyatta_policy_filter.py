@@ -25,6 +25,7 @@ from vyatta_policy_filter_vci.filter_rpc import send_gpc
 LOG = logging.getLogger('POLFIL VCI')
 
 POLFIL_CONFIG_FILE = '/etc/vyatta/policy-filter.json'
+PLATFORM_ID_FILE = '/var/lib/vyatta-platform/platform-id.conf'
 
 POL_NAMESPACE = 'vyatta-policy-v1'
 POLFIL_NAMESPACE = 'vyatta-policy-filter-classification-v1'
@@ -55,6 +56,28 @@ def save_config(config):
     filename = POLFIL_CONFIG_FILE
     with open(filename, "w") as write_file:
         write_file.write(json.dumps(config, indent=4, sort_keys=True))
+
+
+def get_platform_id():
+    """ Return the platform identifier. """
+    filename = PLATFORM_ID_FILE
+    default_platform_id = 'unknown'
+    plat_config = {}
+    try:
+        with open(filename) as json_data:
+            plat_config = json.load(json_data)
+
+    except OSError:
+        return default_platform_id
+
+    except json.JSONDecodeError:
+        return default_platform_id
+
+    platform_id = plat_config.get('platform-id')
+    if platform_id is None:
+        return default_platform_id
+
+    return platform_id
 
 
 class Config(vci.Config):
@@ -104,6 +127,7 @@ class Config(vci.Config):
         # checked
         if proposed_config:
             filter_config = FilterConfig(proposed_config)
+            stat_count = 0
 
             res_dict = proposed_config[f'{RES_NAMESPACE}:resources']
             gpc_dict = res_dict[f'{GPC_NAMESPACE}:packet-classifier']
@@ -118,6 +142,25 @@ class Config(vci.Config):
                     raise vci.Exception("vyatta-policy-qos-vci",
                                         f"Config:check failed for "
                                         f"filter-group {fg.name}: {errmsg}",
+                                        "policy/filter-classification")
+
+                stat_count += fg.stats_needed(gpc_group_list)
+
+            platform_id = get_platform_id()
+            LOG.debug(f"Platform id: {platform_id}")
+
+            if platform_id == 'ufi.s9700-53dx':
+                # The maximum number of statistics that can be allocated on
+                # an ufi.s9700-53dx (J2) platform is 4096 due to the size of
+                # the allocated statistics engine.
+                stat_max = 4096
+
+                if stat_count > stat_max:
+                    errmsg = (f"The {stat_count} statistics required is more "
+                              f"than maximum supported ({stat_max})")
+                    LOG.info(f"Config:stat check failed: {errmsg}")
+                    raise vci.Exception("vyatta-policy-qos-vci",
+                                        f"Config:check failed: {errmsg}",
                                         "policy/filter-classification")
 
 

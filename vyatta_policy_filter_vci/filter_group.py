@@ -201,3 +201,45 @@ class FilterGroup:
                 return errmsg
 
         return errmsg
+
+    def _rule_count(self, gpc_group_list):
+        """
+        Calculates the number of rules in the GPC group.
+        """
+
+        # Find the GPC group that this filter group references
+        for class_group in gpc_group_list:
+            cg_name = class_group['group-name']
+            if cg_name == self._classifier:
+                rules = class_group.get('rule')
+                if rules is None:
+                    return 0
+
+                stat_count = 0
+                for rule in rules:
+                    # Don't count disabled rules
+                    if 'disable' not in rule.keys():
+                        stat_count += 1
+                return stat_count
+
+        return 0
+
+    def stats_needed(self, gpc_group_list):
+        """
+        Calculates the number of statistics needed for a given GPC group.
+        """
+
+        stat_count = 0
+
+        if self._counters_enabled:
+
+            if self._counters_per_result:
+                stat_count = len(self._result_actions)
+            elif self._counters_auto:
+                stat_count = self._rule_count(gpc_group_list)
+
+            # If counters not shared, need to count them for each interface.
+            if not self._counters_shared:
+                stat_count *= len(self._bindings)
+
+        return stat_count
