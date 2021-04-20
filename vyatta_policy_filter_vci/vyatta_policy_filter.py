@@ -197,7 +197,7 @@ if __name__ == "__main__":
          .model(vci.Model("net.vyatta.vci.policy.filter.v1")
                 .config(Config())
                 .rpc("vyatta-policy-filter-classification-v1",
-		     "get-filter-classification-information", send_gpc))
+                     "get-filter-classification-information", send_gpc))
          .subscribe("vyatta-resources-packet-classifier-v1", "rules-update",
                     rules_updated)
          .run()
