@@ -1,3 +1,11 @@
+vplane-config-qos (6.0.4) unstable; urgency=medium
+
+  [ Gavin Shearer ]
+  * J2/GPC: Update validation to check not running out of statistics resources
+  * GPC: fix flake8 warning due to using a tab in existing code
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Wed, 21 Apr 2021 09:04:41 +0100
+
 vplane-config-qos (6.0.3) unstable; urgency=medium
 
   [ Alan Dewar ]
