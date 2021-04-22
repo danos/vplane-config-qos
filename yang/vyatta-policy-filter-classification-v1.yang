@@ -408,13 +408,10 @@ module vyatta-policy-filter-classification-v1 {
 					default "auto-per-rule";
 				}
 			}
-			leaf packet-classifier-group {
-				description  "Generic packet classifier group name";
-				configd:help "Generic packet classifier group name";
-				mandatory true;
-				type leafref {
-					path "/resources:resources/res-gpc:packet-classifier/res-gpc:classifier/res-gpc:classifier-name";
-				}
+			uses res-gpc:gpc-import-classifiers;
+			uses res-gpc:gpc-classify;
+			must "count(classify) < 2" {
+				error-message "Only one classifier may be used";
 			}
 			container map {
 				uses res-actions;

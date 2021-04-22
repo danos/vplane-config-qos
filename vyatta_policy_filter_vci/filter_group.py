@@ -25,8 +25,21 @@ class FilterGroup:
         self._name = fg_dict.get('group-name')
         self._bindings = []
         self._result_actions = {}
-        self._classifier = fg_dict.get('packet-classifier-group')
+        self._classifier = ""
         self._counters_enabled = False
+
+        # QoS only allows one element in this (non empty) list
+        class_list = fg_dict.get('classify')
+        if class_list is not None:
+            lcl_classifier = class_list[0]
+        # This list will only have one currently in use
+        lcl_class_list = fg_dict.get('classifier')
+        if lcl_class_list is not None:
+            for lcl_class in lcl_class_list:
+                lcl_class_name = lcl_class['classifier-name']
+                if lcl_class_name == lcl_classifier:
+                    self._classifier = lcl_class['import']
+                    break
 
         map = fg_dict.get('map')
         res_list = map.get('result')
