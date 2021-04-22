@@ -37,7 +37,7 @@ module vyatta-policy-filter-classification-v1 {
 	contact
 		"AT&T
 		 Postal: 208 S. Akard Street
-		 Dallas, TX 75202
+		 Dallas, TX 75202, USA
 		 Web: www.att.com";
 
 	description
@@ -75,7 +75,7 @@ module vyatta-policy-filter-classification-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
-	revision 2021-03-29 {
+	revision 2021-04-16 {
 		description "Initial revision for version 1.";
 	}
 
@@ -345,11 +345,11 @@ module vyatta-policy-filter-classification-v1 {
 			leaf result {
 				description  "Classifier result";
 				configd:help "Classifier result";
-				must "/resources:resources/res-gpc:packet-classifier/res-gpc:group/res-gpc:rule[res-gpc:result = current()]" {
+				must "/resources:resources/res-gpc:packet-classifier/res-gpc:classifier/res-gpc:rule[res-gpc:result = current()]" {
 					error-message "Result must be used in a classifier rule";
 				}
 				type leafref {
-					path "/resources:resources/res-gpc:packet-classifier/res-gpc:group/res-gpc:results/res-gpc:result";
+					path "/resources:resources/res-gpc:packet-classifier/res-gpc:classifier/res-gpc:results/res-gpc:result";
 				}
 			}
 			container action {
@@ -413,7 +413,7 @@ module vyatta-policy-filter-classification-v1 {
 				configd:help "Generic packet classifier group name";
 				mandatory true;
 				type leafref {
-					path "/resources:resources/res-gpc:packet-classifier/res-gpc:group/res-gpc:group-name";
+					path "/resources:resources/res-gpc:packet-classifier/res-gpc:classifier/res-gpc:classifier-name";
 				}
 			}
 			container map {

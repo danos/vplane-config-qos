@@ -131,11 +131,11 @@ class Config(vci.Config):
 
             res_dict = proposed_config[f'{RES_NAMESPACE}:resources']
             gpc_dict = res_dict[f'{GPC_NAMESPACE}:packet-classifier']
-            gpc_group_list = gpc_dict['group']
+            gpc_classifier_list = gpc_dict['classifier']
 
             classifier_bindings = {}
             for fg in filter_config.groups.values():
-                errmsg = fg.check(gpc_group_list, classifier_bindings)
+                errmsg = fg.check(gpc_classifier_list, classifier_bindings)
                 if errmsg is not None:
                     LOG.info(f"Config:check failed for filter-group: "
                              f"{fg.name} {errmsg}")
@@ -144,7 +144,7 @@ class Config(vci.Config):
                                         f"filter-group {fg.name}: {errmsg}",
                                         "policy/filter-classification")
 
-                stat_count += fg.stats_needed(gpc_group_list)
+                stat_count += fg.stats_needed(gpc_classifier_list)
 
             platform_id = get_platform_id()
             LOG.debug(f"Platform id: {platform_id}")
@@ -165,13 +165,13 @@ class Config(vci.Config):
 
 
 def rules_updated(data):
-    gpc_groups = data.get('vyatta-resources-packet-classifier-v1:groups')
+    gpc_classes = data.get('vyatta-resources-packet-classifier-v1:classifiers')
 
-    if gpc_groups is not None:
+    if gpc_classes is not None:
         filter_config = FilterConfig(get_config())
 
         for fgroup in filter_config.groups.values():
-            if fgroup.classifier in gpc_groups:
+            if fgroup.classifier in gpc_classes:
                 filter_config.build_protobuf()
                 return
 
