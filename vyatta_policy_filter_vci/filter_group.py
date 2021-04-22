@@ -17,8 +17,8 @@ LOG = logging.getLogger('POLFIL VCI')
 
 class FilterGroup:
     """
-    A filter group contains mappings between Generic Packet Classifier (GPC)
-    group results and QoS actions. Each filter group may be bound to
+    A filter group contains mappings between Generic Packet Classifier
+    (GPC) results and QoS actions. Each filter group may be bound to
     multiple interfaces.
     """
     def __init__(self, fg_dict):
@@ -69,7 +69,7 @@ class FilterGroup:
 
     @property
     def classifier(self):
-        """ Return the name of the GPC group this filter group uses """
+        """ Return the name of the GPC classifier this filter group uses """
         return self._classifier
 
     def add_counters(self, pb_message, rules_message):
@@ -153,24 +153,23 @@ class FilterGroup:
 
             tbl_message.ifname = ifname
 
-    def check(self, gpc_group_list, cg_bindings):
+    def check(self, gpc_class_list, cg_bindings):
         """
         Validate this filter group against the Generic Packet Classifier config
         by checking:
-        - That all the results it uses are in the GPC group it
-        references.
-        - That no more than one group of each traffic type is configured on
+        - That all the results it uses are in the GPC classifier it references.
+        - That no more than one classifier of each traffic type is configured on
         any interface.
         """
         errmsg = None
 
-        # Find the GPC group that this filter group references
-        for class_group in gpc_group_list:
-            cg_name = class_group['group-name']
-            if cg_name == self._classifier:
-                rules = class_group.get('rule')
+        # Find the GPC that this filter group references
+        for gpc_classifier in gpc_class_list:
+            gpc_name = gpc_classifier['classifier-name']
+            if gpc_name == self._classifier:
+                rules = gpc_classifier.get('rule')
                 if rules is None:
-                    errmsg = f"Packet classifier {cg_name} has no rules"
+                    errmsg = f"Packet classifier {gpc_name} has no rules"
                     return errmsg
                 # Now check our results are all used in a rule
                 for result in self._result_actions:
@@ -184,11 +183,11 @@ class FilterGroup:
                             break
                     if not found:
                         errmsg = f"Result {result} is not in a rule in packet"\
-                            f" classifier {cg_name}"
+                            f" classifier {gpc_name}"
                         return errmsg
 
                 for ifname in self._bindings:
-                    traffic_type = class_group.get('ip-version')
+                    traffic_type = gpc_classifier.get('type')
                     exist_traffic_type = cg_bindings.get((ifname,
                                                           traffic_type))
                     if exist_traffic_type is None:
@@ -202,16 +201,16 @@ class FilterGroup:
 
         return errmsg
 
-    def _rule_count(self, gpc_group_list):
+    def _rule_count(self, gpc_class_list):
         """
-        Calculates the number of rules in the GPC group.
+        Calculates the number of rules in the GPC classifier.
         """
 
         # Find the GPC group that this filter group references
-        for class_group in gpc_group_list:
-            cg_name = class_group['group-name']
-            if cg_name == self._classifier:
-                rules = class_group.get('rule')
+        for gpc_classifier in gpc_class_list:
+            gpc_name = gpc_classifier['classifier-name']
+            if gpc_name == self._classifier:
+                rules = gpc_classifier.get('rule')
                 if rules is None:
                     return 0
 
@@ -224,9 +223,9 @@ class FilterGroup:
 
         return 0
 
-    def stats_needed(self, gpc_group_list):
+    def stats_needed(self, gpc_class_list):
         """
-        Calculates the number of statistics needed for a given GPC group.
+        Calculates the number of statistics needed for a given GPC classifier.
         """
 
         stat_count = 0
@@ -236,7 +235,7 @@ class FilterGroup:
             if self._counters_per_result:
                 stat_count = len(self._result_actions)
             elif self._counters_auto:
-                stat_count = self._rule_count(gpc_group_list)
+                stat_count = self._rule_count(gpc_class_list)
 
             # If counters not shared, need to count them for each interface.
             if not self._counters_shared:
