@@ -1,3 +1,13 @@
+vplane-config-qos (6.0.5) unstable; urgency=medium
+
+  [ Parthiban Ramalingam ]
+  * QoS LAG: SNMP and NETCONF support on LAG
+
+  [ Karthik Murugesan ]
+  * Validate WRED min and max threshold values to be less than queue-limit.
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Thu, 22 Apr 2021 09:26:37 +0100
+
 vplane-config-qos (6.0.4) unstable; urgency=medium
 
   [ Gavin Shearer ]
