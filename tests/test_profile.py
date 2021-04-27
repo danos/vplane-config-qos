@@ -532,12 +532,12 @@ TEST_DATA = [
         ]
     ),
     (
-        # A simple profile with a micro-seconds-period
+        # A simple profile with the period set to a decimal number
         # test_input
         {
             "burst": "16000",
             "id": "profile-1",
-            "micro-seconds-period": 123
+            "period": "0.123"
         },
         # expected_result
         [
