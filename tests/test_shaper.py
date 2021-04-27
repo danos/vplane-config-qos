@@ -167,13 +167,13 @@ TEST_DATA = [
         ]
     ),
     (
-        # A simple shaper with a micro-seconds-period rather than a period
+        # A simple shaper with the period set to a decimal number
         # test_input
         {
             "bandwidth": "10Gbit",
             "default": "profile-1",
             "frame-overhead": "24",
-            "micro-seconds-period": 100,
+            "period": "0.1",
             "profile": [
                 {"bandwidth": "1Gbit", "id": "profile-1"}
             ]
