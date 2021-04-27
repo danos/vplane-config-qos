@@ -41,14 +41,13 @@ class Shaper:
                 mark_map.shapers.append(self)
 
         if self._period is not None:
-            # period is specified in microseconds
-            self._period = int(self._period) * 1000
+            # Convert period from string to float, then convert from milliseconds to microseconds
+            self._period = float(self._period) * 1000
+            # Period is specified to 3 fraction digits in yang so after multiplying by 1000
+            # can safely cast to int without any loss
+            self._period = int(self._period)
         else:
-            self._period = shaper_dict.get('micro-seconds-period')
-            if self._period is not None:
-                self._period = int(self._period)
-            else:
-                self._period = PERIOD_DEFAULT_MS * 1000
+            self._period = PERIOD_DEFAULT_MS * 1000
 
         class_list = shaper_dict.get('class')
         if class_list is not None:
