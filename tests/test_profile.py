@@ -559,6 +559,6 @@ def test_profile(test_input, expected_result):
     interface = Mock(ifname="lo", **attrs)
     parent_bw = Bandwidth(PARENT_BW_DICT, None)
     assert parent_bw is not None
-    profile = Profile(0, test_input, parent_bw, None)
+    profile = Profile(0, test_input, parent_bw)
     assert profile is not None
     assert profile.commands("qos lo profile", interface, 0) == expected_result

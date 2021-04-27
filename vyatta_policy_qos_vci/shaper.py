@@ -59,17 +59,16 @@ class Shaper:
                     if name == qos_class.profile_name:
                         global_profile.shapers.append(self)
 
-        tc_list = shaper_dict.get('traffic-class')
-        self._tcs = TrafficClassBlock(tc_list, self._bandwidth)
-
         profile_id = len(global_profiles)
         profile_list = shaper_dict.get('profile')
         if profile_list is not None:
             for profile_dict in profile_list:
-                profile = Profile(profile_id, profile_dict, self._bandwidth, self._tcs)
+                profile = Profile(profile_id, profile_dict, self._bandwidth)
                 self._local_profiles[profile.name] = profile
                 profile_id += 1
 
+        tc_list = shaper_dict.get('traffic-class')
+        self._tcs = TrafficClassBlock(tc_list, self._bandwidth)
 
     @property
     def max_pipes(self):

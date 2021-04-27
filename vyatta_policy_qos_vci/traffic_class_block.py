@@ -55,14 +55,6 @@ class TrafficClassBlock:
         """ Add a new pipe-queue to the TC and return queue's wrr-id """
         return self._tcs[tc_id].add_pipe_queue(pipe_queue_id, priority_local)
 
-    def get_q_limit(self, tc_id):
-        """ Get Queue limit """
-        return self._tcs[tc_id].queue_limit
-
-    def is_qlimit_time(self, tc_id):
-        """ Check if queue-limit unit is time  """
-        return self._tcs[tc_id].is_qlimit_time()
-
     def commands(self, cmd_prefix):
         """ Generate commands for this traffic-class-block object """
         cmd_list = []

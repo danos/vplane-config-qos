@@ -42,7 +42,7 @@ TEST_DATA = [
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
 def test_wred_map(test_input, expected_result):
     """ Unit-test the WredMap class """
-    group = WredMap(test_input, 1, 0, None, None)
+    group = WredMap(test_input, 1, 0)
     assert group is not None
     assert group.commands("") == expected_result
 

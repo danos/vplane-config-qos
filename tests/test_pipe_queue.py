@@ -161,6 +161,6 @@ def test_pipe_queue(test_input, expected_result):
     assert parent_bw is not None
     tcb = TrafficClassBlock(TCB_DICT_LIST, parent_bw)
     assert tcb is not None
-    pipe_queues = PipeQueues(test_input, tcb, None)
+    pipe_queues = PipeQueues(test_input, tcb)
     assert pipe_queues is not None
     assert pipe_queues.commands("") == expected_result
