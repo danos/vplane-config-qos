@@ -7,7 +7,7 @@
 #
 
 """
-Unit-tests for the dscp.py module.
+Unit-tests for the provisioner.py module.
 """
 
 from unittest.mock import Mock, MagicMock, call
@@ -18,7 +18,7 @@ from vyatta_policy_qos_vci.provisioner import Provisioner
 from vyatta_policy_qos_vci.bond_membership import BondMembership
 
 # python doesn't define null, but it is valid JSON
-null = None
+NULL = None
 
 BOND_MEMBERSHIP = {
     'vyatta-interfaces-bonding-v1:bond-groups': [
@@ -60,7 +60,7 @@ TEST_DATA = [
                                 "dscp": "cs4",
                                 "pcp": 7,
                                 "pcp-inner": [
-                                    null
+                                    NULL
                                 ]
                             },
                             "police": {
@@ -1888,7 +1888,7 @@ def test_provisioner(old_config, new_config, bond_membership, expected_result):
         bond_membership_obj = BondMembership(notification=bond_membership)
 
     prov = Provisioner(old_config, new_config,
-        cur_bond_membership=bond_membership_obj)
+                       cur_bond_membership=bond_membership_obj)
     assert prov is not None
     # prov.commands writes the QoS config commands to the mocked controller
     prov.commands(ctrl)
