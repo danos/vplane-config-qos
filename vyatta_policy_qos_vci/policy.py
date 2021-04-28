@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019,2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -70,6 +70,10 @@ class Policy:
     def overhead(self):
         """ Return the policy's frame-overhead """
         return self._shaper.overhead
+
+    def check(self, path_prefix):
+        """ Check if policy configuration is valid """
+        return self._shaper.check(path_prefix)
 
     def commands(self, interface, subport_id, vlan_id):
         """ Generate the commands required by this policy object """

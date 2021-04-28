@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019,2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -18,7 +18,7 @@ class PipeQueues:
     Define the PipeQueues class.  A PipeQueue object describes a group of queue
     objects, which are identified by their pipe-queue-id (0 to 31).
     """
-    def __init__(self, pipe_queue_list, tc_block):
+    def __init__(self, pipe_queue_list, tc_block, shaper_tc_block):
         """ Create a PipeQueue object """
         self._pipe_queue = {}
         self._wred_group = {}
@@ -42,11 +42,20 @@ class PipeQueues:
 
             self._pipe_queue[pipe_queue_id] = Queue(tc_id, wrr_id, wrr_weight,
                                                     priority_local,
-                                                    wred_map_dict)
+                                                    wred_map_dict, shaper_tc_block)
 
     def pipe_queue(self, pipe_queue_id):
         """ Return the specified pipe_queue tuple """
         return self._pipe_queue[pipe_queue_id]
+
+    def check(self, path_prefix):
+        """ Check if configuration is valid """
+        for pipe_queue_id, queue in self._pipe_queue.items():
+            result, error, path = queue.check(f"{path_prefix}/queue/{pipe_queue_id}")
+            if not result:
+                return result, error, path
+
+        return True, None, None
 
     def commands(self, cmd_prefix):
         """ Generate the necessary commands for this PipeQueue object """

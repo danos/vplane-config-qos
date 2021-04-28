@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019,2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -42,7 +42,7 @@ TEST_DATA = [
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
 def test_wred_map(test_input, expected_result):
     """ Unit-test the WredMap class """
-    group = WredMap(test_input, 1)
+    group = WredMap(test_input, 1, None)
     assert group is not None
     assert group.commands("") == expected_result
 

@@ -2,7 +2,7 @@
 """
 The Policy QoS VCI entrypoint module
 """
-# Copyright (c) 2019-2020, AT&T Intellectual Property.
+# Copyright (c) 2019-2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -140,6 +140,13 @@ class Config(vci.Config):
         """ Move the validation checks from perl to here? """
         LOG.debug(f"Config:check - {proposed_config}")
         config = QosConfig(proposed_config)
+        for policy_qos in config.policies.values():
+            result, error, path = policy_qos.check(f"policy/qos/name/{policy_qos.name}")
+            if not result:
+                raise vci.Exception("vyatta-policy-qos-vci",
+                                    f"{error}",
+                                    path)
+
         for ingress_map in config.ingress_maps.values():
             if not ingress_map.check(proposed_config):
                 LOG.info("Config:check failed for ingress-map: "

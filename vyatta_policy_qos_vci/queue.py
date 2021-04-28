@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019,2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -18,7 +18,7 @@ class Queue:
     priority-local bit set and a number of different wred-maps objects
     attached to it.
     """
-    def __init__(self, tc_id, wrr_id, wrr_weight, priority_local, wred_map_dict):
+    def __init__(self, tc_id, wrr_id, wrr_weight, priority_local, wred_map_dict, shaper_tc_block):
         """ Create a Queue object """
         self._tc_id = tc_id
         self._wrr_id = wrr_id
@@ -27,12 +27,16 @@ class Queue:
         self._wred_maps = []
         self._wred_filter_weight = None
 
+        tc_qlimit = None
+        if shaper_tc_block is not None:
+            tc_qlimit = shaper_tc_block.get_q_limit(tc_id)
+
         if wred_map_dict is not None:
             self._wred_filter_weight = wred_map_dict['filter-weight']
             try:
                 dscp_group_list = wred_map_dict['dscp-group']
                 for wred_group_dict in dscp_group_list:
-                    self._wred_maps.append(WredMap(wred_group_dict, 1))
+                    self._wred_maps.append(WredMap(wred_group_dict, 1, tc_qlimit))
 
             except KeyError:
                 pass
@@ -40,7 +44,7 @@ class Queue:
             try:
                 drop_prec_list = wred_map_dict['drop-precedence']
                 for wred_dp_dict in drop_prec_list:
-                    self._wred_maps.append(WredMap(wred_dp_dict, 0))
+                    self._wred_maps.append(WredMap(wred_dp_dict, 0, tc_qlimit))
 
             except KeyError:
                 pass
@@ -64,6 +68,15 @@ class Queue:
     def priority_local(self):
         """ Return whether or not this is the priority-local queue """
         return self._priority_local
+
+    def check(self, path_prefix):
+        """ Check if configuration is valid """
+        for wred_map in self._wred_maps:
+            result, error, path = wred_map.check(path_prefix)
+            if not result:
+                return result, error, path
+
+        return True, None, None
 
     def commands(self, cmd_prefix, pipe_queue_id):
         """ Generate the necessary commands for this Queue object """

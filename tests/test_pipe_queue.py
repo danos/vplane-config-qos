@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019,2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -161,6 +161,6 @@ def test_pipe_queue(test_input, expected_result):
     assert parent_bw is not None
     tcb = TrafficClassBlock(TCB_DICT_LIST, parent_bw)
     assert tcb is not None
-    pipe_queues = PipeQueues(test_input, tcb)
+    pipe_queues = PipeQueues(test_input, tcb, None)
     assert pipe_queues is not None
     assert pipe_queues.commands("") == expected_result

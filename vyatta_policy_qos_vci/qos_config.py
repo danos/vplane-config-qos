@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2019-2020, AT&T Intellectual Property.
+# Copyright (c) 2019-2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -96,7 +96,7 @@ class QosConfig:
         if global_profiles_list is not None:
             profile_id = 0
             for profile_dict in global_profiles_list:
-                profile = Profile(profile_id, profile_dict, None)
+                profile = Profile(profile_id, profile_dict, None, None)
                 self._global_profiles[profile.name] = profile
                 profile_id += 1
 

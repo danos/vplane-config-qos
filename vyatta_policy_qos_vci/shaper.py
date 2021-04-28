@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2019-2020, AT&T Intellectual Property.
+# Copyright (c) 2019-2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -58,16 +58,16 @@ class Shaper:
                     if name == qos_class.profile_name:
                         global_profile.shapers.append(self)
 
+        tc_list = shaper_dict.get('traffic-class')
+        self._tcs = TrafficClassBlock(tc_list, self._bandwidth)
+
         profile_id = len(global_profiles)
         profile_list = shaper_dict.get('profile')
         if profile_list is not None:
             for profile_dict in profile_list:
-                profile = Profile(profile_id, profile_dict, self._bandwidth)
+                profile = Profile(profile_id, profile_dict, self._bandwidth, self._tcs)
                 self._local_profiles[profile.name] = profile
                 profile_id += 1
-
-        tc_list = shaper_dict.get('traffic-class')
-        self._tcs = TrafficClassBlock(tc_list, self._bandwidth)
 
     @property
     def max_pipes(self):
@@ -126,6 +126,23 @@ class Shaper:
             return profile.id
 
         return None
+
+    def check(self, path_prefix):
+        """ Check if shaper configuration is valid """
+        for name, profile in self._local_profiles.items():
+            if name == self._default:
+                result, error, path = profile.check(f"{path_prefix}/shaper")
+                if not result:
+                    return result, error, path
+                break
+
+        for name, profile in self._local_profiles.items():
+            if name != self._default:
+                result, error, path = profile.check(f"{path_prefix}/shaper")
+                if not result:
+                    return result, error, path
+
+        return True, None, None
 
     def commands(self, interface, subport_id, vlan_id):
         """ Generate the shaper's commands """

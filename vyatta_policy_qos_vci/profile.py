@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2019-2020, AT&T Intellectual Property.
+# Copyright (c) 2019-2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -23,7 +23,7 @@ class Profile:
     Profiles can either be local to a policy, or global and therefore can
     be used by multiple policies.
     """
-    def __init__(self, profile_id, profile_dict, parent_bw):
+    def __init__(self, profile_id, profile_dict, parent_bw, shaper_tcb):
         """ Create a profile object """
         self._profile_dict = profile_dict
         self._id = profile_id
@@ -49,7 +49,7 @@ class Profile:
 
         # Cross-link the pipe-queues to the traffic-classes to generate the
         # traffic-classes's wrr-queues
-        self._pipe_queues = PipeQueues(profile_dict.get("queue"), self._tcs)
+        self._pipe_queues = PipeQueues(profile_dict.get("queue"), self._tcs, shaper_tcb)
 
         map_dict = profile_dict.get("map")
         if map_dict is not None:
@@ -93,6 +93,20 @@ class Profile:
     def shapers(self):
         """ Return the list of shapers using this global profile """
         return self._shapers
+
+    def check(self, path_prefix):
+        """ Check if profile configuration is valid """
+        return self._pipe_queues.check(f"{path_prefix}/profile/{self._profile_name}")
+
+        result, error, path = self._pipe_queues.check(path_prefix)
+        if not result:
+            return result, error, path
+
+        result, error, path = self._tcs.check(path_prefix)
+        if not result:
+            return result, error, path
+
+        return True, None, None
 
     def commands(self, cmd_prefix, interface, vlan_id):
         """ Generate the list of profile commands """

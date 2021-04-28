@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019,2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -55,6 +55,10 @@ class TrafficClassBlock:
         """ Add a new pipe-queue to the TC and return queue's wrr-id """
         return self._tcs[tc_id].add_pipe_queue(pipe_queue_id, priority_local)
 
+    def get_q_limit(self, tc_id):
+        """ Get Queue limit """
+        return self._tcs[tc_id].queue_limit
+
     def commands(self, cmd_prefix):
         """ Generate commands for this traffic-class-block object """
         cmd_list = []
@@ -73,3 +77,13 @@ class TrafficClassBlock:
                 cmd_list.append(cmd)
 
         return cmd_list
+
+    def check(self, path_prefix):
+        """ Check if configuration is valid """
+
+        for traffic_class in self._tcs.values():
+            result, error, path = traffic_class.check(f"{path_prefix}/traffic-class/")
+            if not result:
+                return result, error, path
+
+        return True, None, None

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019,2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -11,6 +11,8 @@ A module to define the TrafficClass class
 
 from vyatta_policy_qos_vci.bandwidth import Bandwidth
 from vyatta_policy_qos_vci.wred import Wred
+from vyatta_policy_qos_vci.wred_map import get_limit
+
 
 class TrafficClass:
     """
@@ -25,8 +27,8 @@ class TrafficClass:
         self._wred = None
 
         if tc_dict is not None:
-            self._queue_limit_bytes = tc_dict.get('queue-limit-bytes')
-            self._queue_limit_packets = tc_dict.get('queue-limit')
+            self._queue_limit_bytes = get_limit(tc_dict.get('queue-limit-bytes'))
+            self._queue_limit_packets = get_limit(tc_dict.get('queue-limit'))
 
             wred_dict = tc_dict.get('random-detect')
             if wred_dict is not None:

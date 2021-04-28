@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019,2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -77,6 +77,6 @@ def test_queue(test_input, expected_result):
     wrr_weight = test_input.get('weight')
     priority_local = test_input.get('priority-local')
     wred_map_dict = test_input.get('wred-map-bytes')
-    queue = Queue(tc_id, wrr_id, wrr_weight, priority_local, wred_map_dict)
+    queue = Queue(tc_id, wrr_id, wrr_weight, priority_local, wred_map_dict, None)
     assert queue is not None
     assert queue.commands("", queue.wrr_id) == expected_result
