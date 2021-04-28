@@ -1,3 +1,9 @@
+vplane-config-qos (6.0.6) unstable; urgency=medium
+
+  * Revert "Validate WRED min and max threshold values to be less than queue-limit."
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Wed, 28 Apr 2021 09:18:34 +0100
+
 vplane-config-qos (6.0.5) unstable; urgency=medium
 
   [ Parthiban Ramalingam ]
