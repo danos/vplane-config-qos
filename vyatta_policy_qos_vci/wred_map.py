@@ -17,12 +17,12 @@ def byte_limits():
         "/run/vyatta-platform/features/vyatta-policy-qos-groupings-v1/byte-limits")
     return byte_limit_feature.is_file()
 
-def get_limit_time(limit_value, is_time):
+def get_limit(limit_value, is_time):
     if limit_value is not None:
         if is_time:
             return int(float(limit_value) * 1000)
         else:
-            return limit_value
+            return int(limit_value)
 
 class WredMap():
     """ Define the wred-map class """
@@ -35,8 +35,8 @@ class WredMap():
         else:
             self._colour = wred_map_dict['colour']
         self._mark_prob = wred_map_dict['mark-probability']
-        self._min_th = get_limit_time(wred_map_dict['min-threshold'], is_time)
-        self._max_th = get_limit_time(wred_map_dict['max-threshold'], is_time)
+        self._min_th = get_limit(wred_map_dict['min-threshold'], is_time)
+        self._max_th = get_limit(wred_map_dict['max-threshold'], is_time)
 
     def commands(self, cmd_prefix):
         """ Generate the necessary command for this wred-map object """
