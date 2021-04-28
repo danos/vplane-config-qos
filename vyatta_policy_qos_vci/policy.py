@@ -71,6 +71,10 @@ class Policy:
         """ Return the policy's frame-overhead """
         return self._shaper.overhead
 
+    def check(self, path_prefix):
+        """ Check if policy configuration is valid """
+        return self._shaper.check(path_prefix)
+
     def commands(self, interface, subport_id, vlan_id):
         """ Generate the commands required by this policy object """
         return self._shaper.commands(interface, subport_id, vlan_id)

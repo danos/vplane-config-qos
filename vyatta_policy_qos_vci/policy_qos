@@ -195,6 +195,14 @@ class Config(vci.Config):
                 bond_membership=_bond_membership)
         else:
             config = QosConfig(proposed_config)
+
+        for policy_qos in config.policies.values():
+            result, error, path = policy_qos.check(f"policy/qos/name/{policy_qos.name}")
+            if not result:
+                raise vci.Exception("vyatta-policy-qos-vci",
+                                    f"{error}",
+                                    path)
+
         for ingress_map in config.ingress_maps.values():
             if not ingress_map.check(proposed_config):
                 LOG.info("Config:check failed for ingress-map: "
