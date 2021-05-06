@@ -10,14 +10,15 @@
 
 package Vyatta::QoS::Red;
 require Exporter;
+use strict;
+use warnings;
+use Carp;
 
 our @ISA = qw(Exporter);
 
 our @EXPORT = qw(Redparams DEF_QSIZE_BYTES DEF_QSIZE_PACKETS);
 
-use strict;
-use warnings;
-use Carp;
+
 
 use Vyatta::QoS::Debug;
 
