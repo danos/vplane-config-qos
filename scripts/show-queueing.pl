@@ -132,7 +132,9 @@ sub get_if_subport_policy_name {
 
         $config->setLevel( $intf->path . " switch-group switch" );
         my $switch = $config->returnOrigValue();
-        return undef if !defined($switch);
+        if (!defined($switch)){
+            return;
+        }
 
         $config->setLevel(
             "interface switch $switch default-port-parameters policy qos");
@@ -151,7 +153,9 @@ sub get_if_subport_policy_name {
 
         $config->setLevel( $intf->path . " switch-group switch" );
         my $switch = $config->returnOrigValue();
-        return undef if !defined($switch);
+        if (!defined($switch)){
+            return;
+        }
 
         $config->setLevel(
 "interfaces switch $switch default-port-parameters vlan-parameters qos-parameters vlan $vlan_id policy qos"
@@ -159,7 +163,7 @@ sub get_if_subport_policy_name {
         $policy_name = $config->returnOrigValue();
         return $policy_name if defined($policy_name);
     }
-    return undef;
+    return;
 }
 
 # figure out which vlan tag is matchd with subport
