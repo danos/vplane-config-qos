@@ -1114,7 +1114,10 @@ sub show_platform_ingress_maps {
 
     my $platdscpmap;
     my $platpcpmap;
-    my $maps = $intf_data->{'ingress-maps'} if ( defined($intf_data) );
+
+    if ( defined($intf_data){
+        my $maps = $intf_data->{'ingress-maps'};
+    }
 
     if ( defined($maps) ) {
 
@@ -1153,7 +1156,9 @@ sub show_platform_egress_maps {
     my $platdesmap;
     my $platdscpgrp2dscpmap;
     my $ismarkmap = 0;
-    my $maps      = $intf_data->{'egress-maps'} if ( defined($intf_data) );
+    if ( defined($intf_data){
+        my $maps = $intf_data->{'egress-maps'};
+    }
 
     if ( !defined($maps) ) {
         $ismarkmap = 1;
