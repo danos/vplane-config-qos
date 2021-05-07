@@ -70,7 +70,7 @@ class Provisioner:
     def __init__(self, old, new, cur_bond_membership=None, bonding_ntfy=None):
         """ Create a provisioner object """
         self._is_hardware_qos_bond_enabled = bonding_ntfy is not None or \
-        cur_bond_membership is not None
+            cur_bond_membership is not None
         self._if_deletes = []
         self._if_updates = []
         self._if_creates = []
