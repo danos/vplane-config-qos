@@ -11,7 +11,6 @@ Unit-tests for the interface.py module.
 """
 
 import pytest
-from unittest.mock import Mock
 
 from vyatta_policy_qos_vci.ingress_map import IngressMap
 from vyatta_policy_qos_vci.egress_map import EgressMap

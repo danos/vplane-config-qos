@@ -7,7 +7,6 @@
 Unit-tests for the egress_map.py module.
 """
 
-from traceback import format_tb
 import logging
 import pytest
 from vyatta_policy_qos_vci.egress_map import EgressMap

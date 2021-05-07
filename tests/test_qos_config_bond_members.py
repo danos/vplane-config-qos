@@ -13,8 +13,6 @@ Unit-tests for the qos_config.py module.
 from vyatta_policy_qos_vci.qos_config_bond_members import QosConfigBondMembers
 from vyatta_policy_qos_vci.bond_membership import BondMembership
 
-from unittest.mock import Mock
-
 TEST_DATA = {
     'vyatta-interfaces-v1:interfaces': {
         'vyatta-interfaces-bonding-v1:bonding': [
