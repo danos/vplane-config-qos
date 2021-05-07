@@ -75,7 +75,7 @@ module vyatta-policy-filter-classification-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
-	revision 2021-04-16 {
+	revision 2021-05-07 {
 		description "Initial revision for version 1.";
 	}
 
@@ -345,9 +345,6 @@ module vyatta-policy-filter-classification-v1 {
 			leaf result {
 				description  "Classifier result";
 				configd:help "Classifier result";
-				must "/resources:resources/res-gpc:packet-classifier/res-gpc:classifier/res-gpc:rule[res-gpc:result = current()]" {
-					error-message "Result must be used in a classifier rule";
-				}
 				type leafref {
 					path "/resources:resources/res-gpc:packet-classifier/res-gpc:classifier/res-gpc:results/res-gpc:result";
 				}
