@@ -47,7 +47,7 @@ assert POLICY_1 is not None
 assert POLICY_2 is not None
 
 TEST_DATA = [
-    #subport-id, vlan-id, policy-obj
+    # subport-id, vlan-id, policy-obj
     (
         # test_input
         (0, 0, POLICY_1),
