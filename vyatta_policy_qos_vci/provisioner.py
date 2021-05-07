@@ -204,7 +204,7 @@ class Provisioner:
         if lp_des_changed:
             for interface in new_config.interfaces.values():
                 if (interface not in self._if_creates and
-                    interface not in self._if_updates):
+                        interface not in self._if_updates):
                     self._if_updates.append(interface)
 
     def _check_action_groups(self, old_config, new_config):
