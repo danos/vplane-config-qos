@@ -102,8 +102,11 @@ def parse_queue_statistics(queue_stats_elem, tc, indent, formatted):
     qlen = queue_stats_elem.find(QOS_URN + "qlen")
     random_drops = queue_stats_elem.find(QOS_URN + "random-drop")
 
-    print "{}tc/queue {}/{} - bytes: {}, dropped: {}, packets: {}, random-drops: {}, qlen: {}".format(spaces, tc, queue, databytes, dropped,
-                                                                                                      packets, random_drops, qlen)
+    print "{}tc/queue {}/{} - bytes: {}, dropped: {}, packets: {}, random-drops: {}, qlen: {}".format(spaces, tc,
+                                                                                                      queue, databytes,
+                                                                                                      dropped, packets,
+                                                                                                      random_drops, qlen
+                                                                                                      )
 
 
 def parse_traffic_class_queues_list(tc_queues_list_elem, indent, formatted):
@@ -205,8 +208,11 @@ def parse_rule(name, rules_elem, indent, formatted):
     policer_byts_excd = rules_elem.find(QOS_URN + "exceeded-bytes")
     databytes = rules_elem.find(QOS_URN + "bytes")
     packets = rules_elem.find(QOS_URN + "packets")
-    print "{}rule: {}, qos-class: {}, rule-number: {} - packets: {}, bytes: {}".format(spaces, name, qos_class, rule_number, packets, databytes)
-    print "action-group: {}, policer_pkts_excd: {}, policer_byts_excd: {}".format(action_group, policer_pkts_excd, policer_byts_excd)
+    print "{}rule: {}, qos-class: {}, rule-number: {} - packets: {}, bytes: {}".format(spaces, name, qos_class,
+                                                                                       rule_number, packets,
+                                                                                       databytes)
+    print "action-group: {}, policer_pkts_excd: {}, policer_byts_excd: {}".format(action_group, policer_pkts_excd,
+                                                                                  policer_byts_excd)
 
 
 def parse_groups(groups_elem, indent, formatted):
@@ -251,7 +257,8 @@ def parse_traffic_class_list(traffic_class_list_elem, indent, formatted):
     packets = traffic_class_list_elem.find(QOS_URN + "packets")
     random_drops = traffic_class_list_elem.find(QOS_URN + "random-drop")
 
-    print "{}tc: {}, bytes: {}, dropped: {}, packets: {}, random-drops: {}".format(spaces, tc, data_bytes, dropped, packets, random_drops)
+    print "{}tc: {}, bytes: {}, dropped: {}, packets: {}, random-drops: {}".format(spaces, tc, data_bytes, dropped,
+                                                                                   packets, random_drops)
 
 
 def parse_subport_list(subport_list_elem, indent, formatted):
