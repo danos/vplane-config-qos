@@ -63,7 +63,6 @@ class ProfileMap:
                 self._dscp_group_map[entry_dict['group-name']] = entry_dict['to']
                 self._drop_precedence[entry_dict['group-name']] = drop_precedence
 
-
         except KeyError:
             LOG.error("ProfileMap missing dscp-group data")
 

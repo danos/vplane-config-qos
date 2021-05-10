@@ -70,7 +70,6 @@ class Shaper:
                 self._local_profiles[profile.name] = profile
                 profile_id += 1
 
-
     @property
     def max_pipes(self):
         """ Return the number of pipes that this shaper uses """

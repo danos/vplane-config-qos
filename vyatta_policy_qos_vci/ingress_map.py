@@ -62,7 +62,6 @@ class IngressMap:
         except KeyError:
             LOG.error("IngressMap missing dscp-group data")
 
-
     def _handle_pcp(self, pcp_map_list):
         """ Process a list of pcp-values to designations """
         self._pcp2des = {}

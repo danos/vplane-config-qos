@@ -16,8 +16,6 @@ from vyatta_policy_qos_vci.egress_map import EgressMap
 LOG = logging.getLogger('Policy QoS VCI')
 
 
-
-
 TEST_DATA = [
     (
         # test_input

@@ -96,7 +96,6 @@ class Interface:
             except KeyError:
                 pass
 
-
         # If there is just an ingress map attached at the vif/vlan
         # level then there might be nothing on the interface itself.
         if if_policy_dict is not None:
@@ -164,7 +163,6 @@ class Interface:
                 except KeyError:
                     # Maybe there's no policy on this vif
                     pass
-
 
                 try:
                     ingress_map_name = if_policy_dict['vyatta-policy-qos-v1:ingress-map']
@@ -363,7 +361,6 @@ class Interface:
                    f"pipes {max_pipes} profiles {self.profile_index_size} "
                    f"overhead {overhead} {queue_limit_type}")
             cmd_list.append(cmd)
-
 
         for subport in self._subports:
             cmd_list += subport.commands(self)
