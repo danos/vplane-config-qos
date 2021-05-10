@@ -48,6 +48,7 @@ def test_fetch_bond_groups(mock_check_output):
 
     assert membership._fetch_bond_groups() == []
 
+
 @patch('vyatta_policy_qos_vci.bond_membership.subprocess.check_output')
 def test_fetch_membership(mock_check_output):
     """
@@ -111,6 +112,7 @@ def test_fetch_membership(mock_check_output):
 
     assert membership._fetch_membership() == expected
 
+
 def test_init_state_from_kernel():
     """
     Test BondMembership construction in the case where it has to fetch the
@@ -168,6 +170,7 @@ def test_init_state_from_kernel():
                     found = True
             assert found is True
 
+
 def test_init_state_from_notification():
     """
     Test BondMembership construction in the case where the LAG membership
@@ -216,6 +219,7 @@ def test_init_state_from_notification():
 
     assert membership is not None
     assert membership.get_membership() == expected
+
 
 def test_get_member_port_bond_name():
     """

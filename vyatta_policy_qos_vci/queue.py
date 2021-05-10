@@ -12,6 +12,7 @@ A module to define a class of Queue objects
 from vyatta_policy_qos_vci.wred_map import WredMap
 from vyatta_policy_qos_vci.traffic_class_block import TrafficClassBlock
 
+
 class Queue:
     """
     Define the Queue class.  A Queue object always defines the tc-id and wrr-id

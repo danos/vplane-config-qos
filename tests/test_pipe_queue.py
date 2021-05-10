@@ -154,6 +154,7 @@ TCB_DICT_LIST = [
     {"id": 3, "bandwidth": "10%", "queue-limit": 512}
 ]
 
+
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
 def test_pipe_queue(test_input, expected_result):
     """ Unit-test the pipe-queue class """

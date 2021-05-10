@@ -552,6 +552,7 @@ TEST_DATA = [
 
 PARENT_BW_DICT = {"bandwidth": "10Gbit", "burst": "9000"}
 
+
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
 def test_profile(test_input, expected_result):
     """ Unit-test the profile class """

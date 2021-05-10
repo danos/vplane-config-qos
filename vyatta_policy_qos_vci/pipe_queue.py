@@ -13,6 +13,7 @@ from vyatta_policy_qos_vci.queue import Queue
 
 PERIOD_DEFAULT_MS = 10
 
+
 class PipeQueues:
     """
     Define the PipeQueues class.  A PipeQueue object describes a group of queue

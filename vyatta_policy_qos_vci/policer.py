@@ -17,6 +17,7 @@ from vyatta_policy_qos_vci.dscp import str2dscp
 
 LOG = logging.getLogger('Policy QoS VCI')
 
+
 def parse_bandwidth(bandwidth):
     """
     Convert bandwidth string into a bytes-per-second integer value.

@@ -8,6 +8,7 @@ A module to define the Subport class of object"
 # SPDX-License-Identifier: LGPL-2.1-only
 #
 
+
 class Subport:
     """ Define the Subport class """
     def __init__(self, interface, subport_id, vlan_id, policy):

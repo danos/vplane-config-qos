@@ -10,6 +10,7 @@ between EgressMap objects and the Interfaces and vlans that they are attached
 to.
 """
 
+
 class EgressMapBinding:
     """ Define the EgressMapBinding class """
     def __init__(self, interface, vlan_id, egress_map):

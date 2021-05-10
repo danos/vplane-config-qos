@@ -164,6 +164,7 @@ TEST_DATA = {
     }
 }
 
+
 def simple_qos_config_test(qos_config):
     assert qos_config is not None
     assert len(qos_config.interfaces) == 2
@@ -177,10 +178,12 @@ def simple_qos_config_test(qos_config):
     assert qos_config.get_ingress_map("in-map-1") is not None
     assert qos_config.get_ingress_map("in-map-2") is not None
 
+
 def test_qosconfig():
     """ Simple Unit Test for the QoSConfig class """
     config = QosConfig(TEST_DATA)
     simple_qos_config_test(config)
+
 
 def test_qosconfig_bond_members_no_bonding():
     """ Simple Unit Test for the QoSConfigBondMembers class. This test

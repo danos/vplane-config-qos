@@ -11,11 +11,13 @@ A module to define a class of object to hold Wred parameters
 
 from pathlib import Path
 
+
 def byte_limits():
     """ Check the feature file to see if we are using byte or packet limits? """
     byte_limit_feature = Path(
         "/run/vyatta-platform/features/vyatta-policy-qos-groupings-v1/byte-limits")
     return byte_limit_feature.is_file()
+
 
 def get_limit(limit_value, is_time):
     """ Convert queue_limit/threshold values from msec to usec """
@@ -24,6 +26,7 @@ def get_limit(limit_value, is_time):
             return int(float(limit_value) * 1000)
         return int(limit_value)
 
+
 def check_threshold(is_time, max_th, is_ql_time, qlimit):
     """ Validate threshold values """
     if qlimit and max_th and (is_time == is_ql_time):
@@ -31,6 +34,7 @@ def check_threshold(is_time, max_th, is_ql_time, qlimit):
             return False
 
     return True
+
 
 class WredMap():
     """ Define the wred-map class """

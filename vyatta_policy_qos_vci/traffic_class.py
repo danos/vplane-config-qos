@@ -13,6 +13,7 @@ from vyatta_policy_qos_vci.bandwidth import Bandwidth
 from vyatta_policy_qos_vci.wred import Wred
 from vyatta_policy_qos_vci.wred_map import get_limit
 
+
 class TrafficClass:
     """
     Define the TrafficClass class.  A TrafficClass object defines its share

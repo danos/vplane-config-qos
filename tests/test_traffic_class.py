@@ -51,6 +51,7 @@ TEST_DATA = [
 # We need a parent bandwidth object to create the TrafficClass object
 PARENT_BW_DICT = {"bandwidth": "10Gbit", "burst": "9000"}
 
+
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
 def test_traffic_class(test_input, expected_result):
     """ Unit-test the traffic-class class """

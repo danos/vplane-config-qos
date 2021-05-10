@@ -11,6 +11,7 @@ A module to define Policy objects
 
 from vyatta_policy_qos_vci.shaper import Shaper
 
+
 class Policy:
     """ A class for policy objects """
     def __init__(self, policy_dict, global_profiles, mark_maps):

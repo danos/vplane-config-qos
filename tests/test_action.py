@@ -12,6 +12,7 @@ Unit-tests for the action.py module.
 
 from vyatta_policy_qos_vci.action import Action
 
+
 def test_action():
     """ Some simple unit-tests for the action class """
     # Python doesn't define null but it is valid JSON

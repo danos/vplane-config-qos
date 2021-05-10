@@ -16,6 +16,7 @@ from vyatta_policy_qos_vci.traffic_class_block import TrafficClassBlock
 
 PERIOD_DEFAULT_MS = 40
 
+
 class Shaper:
     """ Define the shaper class """
     def __init__(self, shaper_dict, global_profiles, mark_maps):

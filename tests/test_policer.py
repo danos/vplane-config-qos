@@ -46,6 +46,7 @@ TEST_DATA_BANDWIDTH = [
     ("1a", None)
 ]
 
+
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA_BANDWIDTH)
 def test_parse_bandwidth(test_input, expected_result):
     """ Simple unit-test function for parse_bandwidth """
@@ -67,6 +68,7 @@ TEST_DATA_RATELIMIT = [
     ("123apps", (None, False)),
     ("123abc", (None, False))
 ]
+
 
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA_RATELIMIT)
 def test_parse_ratelimit(test_input, expected_result):

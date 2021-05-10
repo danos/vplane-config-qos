@@ -11,6 +11,7 @@ A module to define a QoS "Class" objects
 
 from vyatta_policy_qos_vci.rule import Rule
 
+
 class Class:
     """
     Define the QoS "Class" class.  A QoS class object defines the linkage

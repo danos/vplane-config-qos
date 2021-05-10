@@ -23,6 +23,7 @@ MAX_DSCP = 63
 MIN_DESIGNATION = 0
 MAX_DESIGNATION = 7
 
+
 class ProfileMap:
     """
     The ProfileMap class provides four different types of mappings:

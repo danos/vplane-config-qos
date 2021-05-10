@@ -9,6 +9,7 @@
 A module to define the mark_map class
 """
 
+
 class MarkMap:
     """
     Define the MarkMap class

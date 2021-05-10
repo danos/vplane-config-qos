@@ -11,6 +11,7 @@ A simple class to hold the attributes of a WRED queue.
 
 GREEN = 0
 
+
 class Wred:
     """
     A class to define WRED queue objects

@@ -12,6 +12,7 @@ The module that defines the Action class.
 from vyatta_policy_qos_vci.dscp import str2dscp
 from vyatta_policy_qos_vci.policer import Policer
 
+
 class Action:
     """
     A class to represent QoS action groups.

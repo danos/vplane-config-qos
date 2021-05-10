@@ -28,6 +28,7 @@ PORT_DICT = {}
 # Read this from /etc/protocols
 PROTO_DICT = {}
 
+
 def good_name(string):
     """
     Check that the string only contains alpha-numberic characters, hyphens,

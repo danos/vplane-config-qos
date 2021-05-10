@@ -89,6 +89,7 @@ TEST_DATA = [
     )
 ]
 
+
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
 def test_ingress_map(test_input, expected_result):
     """

@@ -14,6 +14,7 @@ from vyatta_policy_qos_vci.wred_map import byte_limits
 
 MAX_TRAFFIC_CLASS = 4
 
+
 def get_default_queue_limit_dict():
     """
     Return the default queue-limit dictionary depending upon whether or not

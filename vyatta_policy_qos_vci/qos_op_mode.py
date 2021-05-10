@@ -48,6 +48,7 @@ LOG = logging.getLogger('Policy QoS VCI')
 
 config = {}
 
+
 def get_sysfs_value(ifname, valuename):
     """
     Return the value of a Linux sysfs interface attribute or an empty string

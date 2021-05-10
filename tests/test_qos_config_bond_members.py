@@ -54,6 +54,7 @@ TEST_DATA = {
     }
 }
 
+
 def test_qosconfig_bond_members():
     """ Simple Unit Test for the QoSConfigBondMembers class with bonding group
     in s9500 platform

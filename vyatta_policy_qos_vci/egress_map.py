@@ -20,6 +20,7 @@ LOG = logging.getLogger('Policy QoS VCI')
 MIN_DSCP = 0
 MAX_DSCP = 63
 
+
 class EgressMap:
     """
     The EgressMap class provides two different types of mappings:

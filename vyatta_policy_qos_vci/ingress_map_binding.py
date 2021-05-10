@@ -10,6 +10,7 @@ between IngressMap objects and the Interfaces and vlans that they are attached
 to.
 """
 
+
 class IngressMapBinding:
     """ Define the IngressMapBinding class """
     def __init__(self, interface, vlan_id, ingress_map):

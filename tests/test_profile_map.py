@@ -10,6 +10,7 @@
 Unit-tests for the profile_map.py module.
 """
 
+
 def test_profile_map():
     """
     It's difficult to unit-test the profile_map class as it is dependent upon

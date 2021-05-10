@@ -1868,6 +1868,7 @@ TEST_DATA = [
     )
 ]
 
+
 @pytest.mark.parametrize("old_config, new_config, bond_membership, expected_result", TEST_DATA)
 def test_provisioner(old_config, new_config, bond_membership, expected_result):
     """ Simple unit-test for the provisioner class """

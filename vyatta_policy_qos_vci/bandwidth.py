@@ -18,6 +18,7 @@ LOG = logging.getLogger('Policy QoS VCI')
 
 DEFAULT_BURST_MS = 4
 
+
 class Bandwidth:
     """ A class for bandwidth objects """
     def __init__(self, config_dict, parent_bw_obj):

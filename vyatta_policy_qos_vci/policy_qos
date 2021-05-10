@@ -39,6 +39,7 @@ from vyatta_policy_qos_vci.bond_membership import BondMembership
 # from the LAG component).
 _bond_membership = None
 
+
 def remove_deferred_ingress_maps(config, deferred_in_map_list):
     """
     Delete any deferred ingress-maps from the JSON config dictionary.
@@ -117,6 +118,7 @@ def send_qos_config_to_dataplane(new_config):
         LOG.error(f"Unhandled exception: {tb_type}\n{tb_value}\n{tb_output}")
 
     return actioned_config
+
 
 def bond_membership_update(data):
     """

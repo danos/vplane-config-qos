@@ -22,6 +22,7 @@ MAX_PCP = 7
 MIN_DSCP = 0
 MAX_DSCP = 63
 
+
 class IngressMap:
     """
     The IngressMap class provides two different types of mappings:

@@ -11,6 +11,7 @@ The module that defines objects to hold platform wide params.
 
 from pathlib import Path
 
+
 def is_hardware_qos_bond_enabled():
     """ Check the feature file to see if hardware-qos-bond is enabled """
     hardware_qos_bond_feature = Path(

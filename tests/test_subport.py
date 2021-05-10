@@ -96,6 +96,7 @@ TEST_DATA = [
     )
 ]
 
+
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
 def test_subport(test_input, expected_result):
     """ Unit-test a subport object """

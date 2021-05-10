@@ -653,6 +653,7 @@ OUT_MAP_2_DICT = {
     ]
 }
 
+
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
 def test_interface(test_input, expected_result):
     """ Unit-test the interface class with simple configs """
@@ -668,6 +669,7 @@ def test_interface(test_input, expected_result):
 
     assert interface is not None
     assert interface.commands() == expected_result
+
 
 def test_missing_bond_group():
     """
@@ -685,6 +687,7 @@ def test_missing_bond_group():
     with pytest.raises(MissingBondGroupError):
         Interface(if_type, if_dict, QOS_POLICY_DICT, ingress_map_dict,
                   egress_map_dict)
+
 
 def test_compare_bond_member_interface():
     """

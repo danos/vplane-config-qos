@@ -16,6 +16,7 @@ from vyatta_policy_qos_vci.traffic_class_block import TrafficClassBlock
 
 PERIOD_DEFAULT_MS = 10
 
+
 class Profile:
     """
     Define the Profile class.  A Profile object accumulates all the

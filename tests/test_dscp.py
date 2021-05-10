@@ -44,6 +44,7 @@ TEST_DATA = [
     ("0-3,0x6-0x16,af21-af23,p", None)
 ]
 
+
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
 def test_dscp_range(test_input, expected_result):
     """ Unit-test the dscp_range function """
