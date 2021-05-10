@@ -88,7 +88,7 @@ def send_qos_config_to_dataplane(new_config):
         LOG.debug(f'old-config: {old_config}')
         LOG.debug(f'new-config: {new_config}')
         prov = Provisioner(old_config, new_config,
-            cur_bond_membership=_bond_membership)
+                           cur_bond_membership=_bond_membership)
         with Controller() as ctrl:
             prov.commands(ctrl)
 
@@ -136,7 +136,7 @@ def bond_membership_update(data):
         ntfy_bond_membership = BondMembership(notification=data)
 
         prov = Provisioner(config, config, cur_bond_membership=_bond_membership,
-            bonding_ntfy=ntfy_bond_membership)
+                           bonding_ntfy=ntfy_bond_membership)
 
         # Update the LAG membership cache
         _bond_membership = ntfy_bond_membership
@@ -192,7 +192,7 @@ class Config(vci.Config):
         LOG.debug(f"Config:check - {proposed_config}")
         if is_hardware_qos_bond_enabled():
             config = QosConfigBondMembers(proposed_config,
-                bond_membership=_bond_membership)
+                                          bond_membership=_bond_membership)
         else:
             config = QosConfig(proposed_config)
 

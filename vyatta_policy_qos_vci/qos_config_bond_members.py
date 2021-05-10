@@ -84,8 +84,8 @@ class QosConfigBondMembers(QosConfig):
                                             self._egress_maps,
                                             bond_dict=interface)
                         LOG.debug(f"Created Interface obj for member "
-                                f"{member.get('tagnode')} of "
-                                f"LAG {interface.get('tagnode')}")
+                                  f"{member.get('tagnode')} of "
+                                  f"LAG {interface.get('tagnode')}")
                         self._interfaces[int_obj.ifname] = int_obj
 
             # Process all the other interface types

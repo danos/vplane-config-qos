@@ -95,7 +95,7 @@ def parse_queue_statistics(queue_stats_elem, tc, indent, formatted):
     random_drops = queue_stats_elem.find(QOS_URN + "random-drop")
 
     print "{}tc/queue {}/{} - bytes: {}, dropped: {}, packets: {}, random-drops: {}, qlen: {}".format(spaces, tc, queue, databytes, dropped, 
-packets, random_drops, qlen)
+                                                                                                      packets, random_drops, qlen)
 
 def parse_traffic_class_queues_list(tc_queues_list_elem, indent, formatted):
     """ """

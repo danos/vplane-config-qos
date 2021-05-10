@@ -521,7 +521,7 @@ TEST_DATA = [
 @pytest.mark.parametrize("config, cur_membership, notification,\
     expected_result", TEST_DATA)
 def test_lag_membership_ntfy(config, cur_membership, notification,
-                            expected_result):
+                             expected_result):
     # Mock up a dataplane context manager
     mock_dataplane = MagicMock()
     mock_dataplane.__enter__.return_value = mock_dataplane
@@ -540,7 +540,7 @@ def test_lag_membership_ntfy(config, cur_membership, notification,
 
     # prov.commands writes the QoS config commands to the mocked controller
     prov = Provisioner(config, config, cur_bond_membership=cur_membership_obj,
-        bonding_ntfy=ntfy_membership_obj)
+                       bonding_ntfy=ntfy_membership_obj)
     prov.commands(ctrl)
 
     # The tests for QoS on LAG contain a few corner cases where the number

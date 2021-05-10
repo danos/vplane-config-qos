@@ -85,9 +85,9 @@ class Provisioner:
             # Now process the QoS config
             if self._is_hardware_qos_bond_enabled:
                 old_config = QosConfigBondMembers(old,
-                    bond_membership=cur_bond_membership)
+                                                  bond_membership=cur_bond_membership)
                 new_config = QosConfigBondMembers(new,
-                    bond_membership=cur_bond_membership)
+                                                  bond_membership=cur_bond_membership)
             else:
                 old_config = QosConfig(old)
                 new_config = QosConfig(new)
@@ -106,7 +106,7 @@ class Provisioner:
             # objects where one contains the current membership state and the
             # other contains the new state from the notification.
             old_config = QosConfigBondMembers(old,
-                bond_membership=cur_bond_membership)
+                                              bond_membership=cur_bond_membership)
             new_config = QosConfigBondMembers(old, bond_membership=bonding_ntfy)
             self._check_interfaces(old_config, new_config)
 
@@ -204,7 +204,7 @@ class Provisioner:
         if lp_des_changed:
             for interface in new_config.interfaces.values():
                 if (interface not in self._if_creates and
-                   interface not in self._if_updates):
+                    interface not in self._if_updates):
                     self._if_updates.append(interface)
 
     def _check_action_groups(self, old_config, new_config):
