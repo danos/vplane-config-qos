@@ -351,7 +351,7 @@ def strip_name_space(tag, namespace):
     if tag.startswith(namespace):
         return tag.replace(namespace, "")
     else:
-        return None;
+        return None
 
 
 def parse_child_element(child_elem, indent, formatted):
@@ -442,4 +442,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main();
+    main()
