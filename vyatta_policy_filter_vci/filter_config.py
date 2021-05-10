@@ -8,6 +8,8 @@
 """
 Config for Policy Filter Classification
 """
+from vyatta_policy_filter_vci.filter_group import FilterGroup
+from vyatta.proto import GPCConfig_pb2
 import logging
 import zmq
 import sys
@@ -16,8 +18,6 @@ from vplaned import Controller, ControllerException
 # Note - this addition to path is to cater for the way
 #        dataplane constructs nested protobuf imports
 sys.path.append('/usr/lib/python3/dist-packages/vyatta/proto')
-from vyatta.proto import GPCConfig_pb2
-from vyatta_policy_filter_vci.filter_group import FilterGroup
 
 LOG = logging.getLogger('POLFIL VCI')
 
