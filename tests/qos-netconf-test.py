@@ -103,7 +103,7 @@ def parse_traffic_class_queues_list(tc_queues_list_elem, indent, formatted):
 #    print "--{}traffic-class-queues-list--".format(indent)
 #    print(objectify.dump(tc_queues_list_elem))
     tc = tc_queues_list_elem.find(QOS_URN + "traffic-class")
-    queue_stats_elem =  tc_queues_list_elem.find(QOS_URN + "queue-statistics")
+    queue_stats_elem = tc_queues_list_elem.find(QOS_URN + "queue-statistics")
     parse_queue_statistics(queue_stats_elem, tc, indent+2, formatted)
 
 def parse_traffic_class_rates(tc_rates_elem, indent, formatted):
