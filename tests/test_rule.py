@@ -145,7 +145,7 @@ TEST_DATA = [
         # expected_output
         "action=accept proto-final=6 dst-port=21 handle=tag(1)"
     ),
-        (
+    (
         # test_input
         {
             'action': 'pass',
