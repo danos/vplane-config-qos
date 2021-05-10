@@ -79,11 +79,11 @@ def test_action():
           "npf-cfg add action-group:gary 0 rproc=policer(0,25000000,100000,drop,,0,20)",
           "ALL")],
         [("policy action name bert",
-          "npf-cfg add action-group:bert 0 rproc=markpcp(4,none);" \
+          "npf-cfg add action-group:bert 0 rproc=markpcp(4,none);"
           "policer(0,125000000,10000,drop,,0,20)",
           "ALL")],
         [("policy action name jack",
-          "npf-cfg add action-group:jack 0 rproc=markpcp(7,inner);" \
+          "npf-cfg add action-group:jack 0 rproc=markpcp(7,inner);"
           "policer(0,250000000,20000,drop,,0,20)",
           "ALL")]
     ]
