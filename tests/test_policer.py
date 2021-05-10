@@ -75,6 +75,7 @@ def test_parse_ratelimit(test_input, expected_result):
     """ Simple unit-test function for parse_ratelimit """
     assert parse_ratelimit(test_input) == expected_result
 
+
 # We need to define null as None because null is a valid JSON field
 # value, but it isn't defined by python
 null = None

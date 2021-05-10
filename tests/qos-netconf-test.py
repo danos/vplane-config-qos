@@ -367,6 +367,7 @@ def parse_child_element(child_elem, indent, formatted):
     else:
         functionDict[tag](child_elem, indent, formatted)
 
+
 functionDict = {
     "qos-policy": parse_qos_policy,
     "qos-class": parse_qos_class,
@@ -438,6 +439,7 @@ def main():
 
     time_diff = after - before
     print "\nTime to dispatch 1 RPC request: {} seconds\n".format(time_diff) 
+
 
 if __name__ == "__main__":
     main();
