@@ -102,7 +102,7 @@ def parse_queue_statistics(queue_stats_elem, tc, indent, formatted):
     qlen = queue_stats_elem.find(QOS_URN + "qlen")
     random_drops = queue_stats_elem.find(QOS_URN + "random-drop")
 
-    print "{}tc/queue {}/{} - bytes: {}, dropped: {}, packets: {}, random-drops: {}, qlen: {}".format(spaces, tc, queue, databytes, dropped, 
+    print "{}tc/queue {}/{} - bytes: {}, dropped: {}, packets: {}, random-drops: {}, qlen: {}".format(spaces, tc, queue, databytes, dropped,
                                                                                                       packets, random_drops, qlen)
 
 
@@ -438,7 +438,7 @@ def main():
                 parse_child_element(child_elem, 0, args.formatted)
 
     time_diff = after - before
-    print "\nTime to dispatch 1 RPC request: {} seconds\n".format(time_diff) 
+    print "\nTime to dispatch 1 RPC request: {} seconds\n".format(time_diff)
 
 
 if __name__ == "__main__":
