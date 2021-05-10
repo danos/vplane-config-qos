@@ -344,7 +344,7 @@ def parse_policy(policy_elem, indent, formatted):
 #    print(objectify.dump(policy_elem))
     for child_elem in policy_elem.iterchildren():
         parse_child_element(child_elem, indent+2, formatted)
-    
+
 
 def strip_name_space(tag, namespace):
     """ """
@@ -424,9 +424,9 @@ def main():
         print to_xml(get_elem, pretty_print=args.formatted)
 
         qos_stats_xml = m.dispatch(get_elem)
-            
+
         after = time.time()
-        
+
         if args.xml:
             print qos_stats_xml
         else:
