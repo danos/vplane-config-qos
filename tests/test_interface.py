@@ -664,7 +664,7 @@ def test_interface(test_input, expected_result):
     egress_map_dict['out-map-2'] = EgressMap(OUT_MAP_2_DICT)
     if_type, if_dict, bond_dict = test_input
     interface = Interface(if_type, if_dict, QOS_POLICY_DICT, ingress_map_dict,
-                            egress_map_dict, bond_dict=bond_dict)
+                          egress_map_dict, bond_dict=bond_dict)
 
     assert interface is not None
     assert interface.commands() == expected_result
