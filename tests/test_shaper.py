@@ -142,7 +142,7 @@ TEST_DATA = [
                      "max-threshold": 63,
                      "min-threshold": 3
                  }
-                }
+                 }
             ]
         },
         # expected_result

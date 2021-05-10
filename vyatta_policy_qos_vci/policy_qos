@@ -311,7 +311,7 @@ if __name__ == "__main__":
          .model(vci.Model("net.vyatta.vci.policy.qos.v1")
                 .config(Config())
                 .state(State())
-               )
+                )
          .subscribe("vyatta-interfaces-bonding-v1",
                     "bond-membership-update",
                     bond_membership_update)

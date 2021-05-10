@@ -36,7 +36,7 @@ TEST_DATA = [
             "filter-weight": 5, "mark-probability": 10, "min-threshold": "32",
             "max-threshold": "96"
             }
-        },
+         },
         # expected_result
         (2, 256, " percent 50 msec 4", " limit packets 256"),
     ),
