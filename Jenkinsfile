@@ -10,7 +10,7 @@
 /* SRC_DIR is where the project will be checked out,
  * and where all the steps will be run.
  */
-def SRC_DIR="vplane-config-npf"
+def SRC_DIR="vplane-config-qos"
 
 // Pull Request builds might fail due to missing diffs: https://issues.jenkins-ci.org/browse/JENKINS-45997
 // Pull Request builds relationship to their targets branch: https://issues.jenkins-ci.org/browse/JENKINS-37491
@@ -122,10 +122,9 @@ EOF
                     steps {
                         dir("${SRC_DIR}") {
                             sh '''
-                               yang=`echo yang/*.yang | sed 's@yang/vyatta-policy-pbr-bridge-v1.yang @@' | sed 's/ /,/g'`
+                               yang=`echo yang/*.yang | sed 's/ /,/g'`
                                platform=`echo platform/*.platform | sed 's/ /,/g'`
-                               platyang=`echo platform/*.yang | sed 's/ /,/g'`
-                               dram --username jenkins -f \$yang -P \$platform -Y \$platyang -v yang/vyatta-policy-pbr-bridge-v1.yang -s
+                               dram --username jenkins -f \$yang -P \$platform -s
                                '''
                         }
                     }
