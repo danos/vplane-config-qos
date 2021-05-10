@@ -1,3 +1,16 @@
+vplane-config-qos (6.0.7) unstable; urgency=medium
+
+  [ Aidan Gallagher ]
+  * Remove micro-seconds-period from test JSON.
+  * Remove micro-seconds-period from profile and shaper
+  * Ignore __pycache__ in tests
+
+  [ Derek Fawcus ]
+  * GPC: cope with rename of GPC elements
+  * GPC: Change how classifier is referenced
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Mon, 10 May 2021 11:43:40 +0100
+
 vplane-config-qos (6.0.6) unstable; urgency=medium
 
   * Revert "Validate WRED min and max threshold values to be less than queue-limit."
