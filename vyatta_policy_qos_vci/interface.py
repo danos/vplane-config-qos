@@ -55,7 +55,7 @@ class Interface:
         self._policies = []
         self._profile_index = {}
 
-        if if_type in  POLICY_KEY:
+        if if_type in POLICY_KEY:
             self._name = if_dict.get(POLICY_KEY[if_type][0])
             policy_namespace = POLICY_KEY[if_type][1]
             vif_namespace = POLICY_KEY[if_type][2]

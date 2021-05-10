@@ -256,7 +256,7 @@ def parse_vlan_list(vlan_list_elem, indent, formatted):
     for child_elem in vlan_list_elem.iterchildren():
         if child_elem.tag == QOS_URN + "tag":
             vlan_tag = child_elem.text
-        elif  child_elem.tag == QOS_URN + "subport":
+        elif child_elem.tag == QOS_URN + "subport":
             subport_number = child_elem.text
         else:
             print "--unknown vlan-list element: {}".format(child_elem.tag)
