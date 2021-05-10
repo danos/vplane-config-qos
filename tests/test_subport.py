@@ -99,7 +99,7 @@ TEST_DATA = [
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
 def test_subport(test_input, expected_result):
     """ Unit-test a subport object """
-    attrs = {'profile_index_get.return_value':0}
+    attrs = {'profile_index_get.return_value': 0}
     interface = Mock(ifname="lo", **attrs)
     subport = Subport(interface, *test_input)
     assert subport is not None

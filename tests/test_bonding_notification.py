@@ -528,8 +528,8 @@ def test_lag_membership_ntfy(config, cur_membership, notification,
 
     # Mock up a controller class
     attrs = {
-        'get_dataplanes.return_value':[mock_dataplane],
-        'store.return_value':0
+        'get_dataplanes.return_value': [mock_dataplane],
+        'store.return_value': 0
     }
     ctrl = Mock(**attrs)
 

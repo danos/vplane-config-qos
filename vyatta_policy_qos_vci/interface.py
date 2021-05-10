@@ -19,11 +19,11 @@ LOG = logging.getLogger('Policy QoS VCI')
 
 POLICY_KEY = {
     # if_type:[name, policy_namespace, vif_namespace, qos_namespace]
-    'bonding': ('tagnode', 'vyatta-interfaces-policy-v1','', 'vyatta-interfaces-bonding-qos-v1',),
-    'dataplane': ('tagnode', 'vyatta-interfaces-policy-v1','', 'vyatta-policy-qos-v1'),
+    'bonding': ('tagnode', 'vyatta-interfaces-policy-v1', '', 'vyatta-interfaces-bonding-qos-v1',),
+    'dataplane': ('tagnode', 'vyatta-interfaces-policy-v1', '', 'vyatta-policy-qos-v1'),
     'vhost': ('name', 'vyatta-interfaces-vhost-policy-v1', 'vyatta-interfaces-vhost-vif-v1:', 'vyatta-interfaces-vhost-qos-v1'),
     'switch': ('name', 'vyatta-interfaces-switch-vif-policy-v1', '', 'vyatta-policy-qos-v1'),
-    'bond_member': ('tagnode', 'vyatta-interfaces-policy-v1','', 'vyatta-interfaces-bonding-qos-v1'),
+    'bond_member': ('tagnode', 'vyatta-interfaces-policy-v1', '', 'vyatta-interfaces-bonding-qos-v1'),
 }
 
 

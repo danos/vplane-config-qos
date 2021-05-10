@@ -1877,8 +1877,8 @@ def test_provisioner(old_config, new_config, bond_membership, expected_result):
 
     # Mock up a controller class
     attrs = {
-        'get_dataplanes.return_value':[mock_dataplane],
-        'store.return_value':0
+        'get_dataplanes.return_value': [mock_dataplane],
+        'store.return_value': 0
     }
     ctrl = Mock(**attrs)
 

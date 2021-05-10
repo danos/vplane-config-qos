@@ -55,8 +55,8 @@ TEST_DATA = [
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
 def test_policy(test_input, expected_result):
     """ Unit-test the policy class """
-    attrs = {'profile_index_get.return_value':0}
-    interface = Mock(ifname="lo",**attrs)
+    attrs = {'profile_index_get.return_value': 0}
+    interface = Mock(ifname="lo", **attrs)
     policy = Policy(test_input, {}, {})
     assert policy is not None
     assert policy.commands(interface, 0, 0) == expected_result

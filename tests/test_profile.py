@@ -555,7 +555,7 @@ PARENT_BW_DICT = {"bandwidth": "10Gbit", "burst": "9000"}
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
 def test_profile(test_input, expected_result):
     """ Unit-test the profile class """
-    attrs = {'profile_index_get.return_value':0}
+    attrs = {'profile_index_get.return_value': 0}
     interface = Mock(ifname="lo", **attrs)
     parent_bw = Bandwidth(PARENT_BW_DICT, None)
     assert parent_bw is not None

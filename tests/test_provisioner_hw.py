@@ -552,8 +552,8 @@ def test_provisioner_hw(fakes, old_config, new_config, expected_result):
 
     # Mock up a controller class
     attrs = {
-        'get_dataplanes.return_value':[mock_dataplane],
-        'store.return_value':0
+        'get_dataplanes.return_value': [mock_dataplane],
+        'store.return_value': 0
     }
     ctrl = Mock(**attrs)
 

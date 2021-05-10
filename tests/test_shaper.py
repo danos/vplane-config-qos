@@ -203,7 +203,7 @@ TEST_DATA = [
 @pytest.mark.parametrize("test_input, expected_result", TEST_DATA)
 def test_shaper(test_input, expected_result):
     """ Unit-test the shaper class """
-    attrs = {'profile_index_get.return_value':0}
+    attrs = {'profile_index_get.return_value': 0}
     interface = Mock(ifname="lo", **attrs)
     shaper = Shaper(test_input, {}, {})
     assert shaper is not None
