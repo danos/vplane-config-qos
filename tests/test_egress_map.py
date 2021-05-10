@@ -25,10 +25,10 @@ TEST_DATA = [
             {
                 'id': 'out-map-1',
                 'dscp-group': [
-                    {'id': 'group-1', 'dscp' : 0},
-                    {'id': 'group-2', 'dscp' : 1},
-                    {'id': 'group-3', 'dscp' : 2},
-                    {'id': 'group-4', 'dscp' : 3},
+                    {'id': 'group-1', 'dscp': 0},
+                    {'id': 'group-2', 'dscp': 1},
+                    {'id': 'group-3', 'dscp': 2},
+                    {'id': 'group-4', 'dscp': 3},
                 ]
             }
         ],

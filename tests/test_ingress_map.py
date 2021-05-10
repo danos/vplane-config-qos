@@ -18,22 +18,22 @@ TEST_DATA = [
             {
                 'id': 'in-map-1',
                 'pcp': [
-                    {'id': 0, 'designation': 0, 'drop-precedence' : "green"},
-                    {'id': 1, 'designation': 1, 'drop-precedence' : "yellow"},
-                    {'id': 2, 'designation': 2, 'drop-precedence' : "red"},
-                    {'id': 3, 'designation': 3, 'drop-precedence' : "red"},
-                    {'id': 4, 'designation': 4, 'drop-precedence' : "yellow"},
-                    {'id': 5, 'designation': 5, 'drop-precedence' : "green"},
-                    {'id': 6, 'designation': 6, 'drop-precedence' : "green"},
-                    {'id': 7, 'designation': 7, 'drop-precedence' : "yellow"}
+                    {'id': 0, 'designation': 0, 'drop-precedence': "green"},
+                    {'id': 1, 'designation': 1, 'drop-precedence': "yellow"},
+                    {'id': 2, 'designation': 2, 'drop-precedence': "red"},
+                    {'id': 3, 'designation': 3, 'drop-precedence': "red"},
+                    {'id': 4, 'designation': 4, 'drop-precedence': "yellow"},
+                    {'id': 5, 'designation': 5, 'drop-precedence': "green"},
+                    {'id': 6, 'designation': 6, 'drop-precedence': "green"},
+                    {'id': 7, 'designation': 7, 'drop-precedence': "yellow"}
                 ]
             }, {
                 'id': 'in-map-2',
                 'dscp-group': [
-                    {'id': 'group-1', 'designation': 0, 'drop-precedence' : "green"},
-                    {'id': 'group-2', 'designation': 1, 'drop-precedence' : "green"},
-                    {'id': 'group-3', 'designation': 2, 'drop-precedence' : "green"},
-                    {'id': 'group-4', 'designation': 2, 'drop-precedence' : "yellow"}
+                    {'id': 'group-1', 'designation': 0, 'drop-precedence': "green"},
+                    {'id': 'group-2', 'designation': 1, 'drop-precedence': "green"},
+                    {'id': 'group-3', 'designation': 2, 'drop-precedence': "green"},
+                    {'id': 'group-4', 'designation': 2, 'drop-precedence': "yellow"}
                 ],
                 'system-default': [None]
             }

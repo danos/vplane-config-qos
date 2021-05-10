@@ -409,5 +409,5 @@ def main():
     time_diff = after - before
     print "\nTime to dispatch 1 RPC request: {} seconds\n".format(time_diff) 
 
-if __name__ == "__main__" :
+if __name__ == "__main__":
     main();
