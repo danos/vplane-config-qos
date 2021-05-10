@@ -1,0 +1,112 @@
+#!/bin/bash
+#
+# Copyright (c) 2021, AT&T Intellectual Property.
+# All rights reserved.
+#
+# SPDX-License-Identifier: GPL-2.0-only
+#
+
+# TODO
+#
+# * SPDX license check only provided there's a copyright message?
+# * Remove dirs from $all_files
+#
+
+# $1: TARGET - most likely "origin/master"
+# $2: SOURCE - most likely "bugfix/foo" or "feature/bar"
+
+usage () {
+    echo "Usage: $(basename $0) target source" >&2
+    echo "target: something like 'origin/master'" >&2
+    echo "source: something like 'bugfix/foo' or 'feature/bar'" >&2
+}
+
+[ "$#" -ne 2 ] && { usage; exit 1; }
+
+# Exit status: presume success.
+status=0
+
+# List of files to ignore.
+IGN_FILES="configure.ac\nMakefile.am\ndebian\/.*\nplatform\/.*\.platform\nfeatures\/.*"
+
+# All files in the diff, except deleted files.
+all_files=`git diff --diff-filter=d --name-only --format=format:'' $1..$2`
+
+# Strip out the ignored files.
+check_files=`sed -e "$(sed 's:.*:s/&//ig:' <<< $(echo -e $IGN_FILES))" <<< $all_files`
+
+# Bail out if there's nothing to check.
+if [ -z "$check_files" ]; then
+    exit $status
+fi
+
+
+# Ensure all files contain a copyright message with the current year.
+#
+YEAR=`date +%Y`
+copyright_fails=`egrep -d skip -L "Copyright \(c) .*$YEAR,{,1} AT&T Intellectual Property" $check_files`
+if [ -n "$copyright_fails" ]; then
+    echo "$copyright_fails" | sed "s/^/Check copyright message: /"
+    echo
+    status=1
+fi
+
+
+# Ensure all files contain an SPDX license.
+#
+lic=`grep -L "SPDX-License-Identifier: " $check_files`
+if [ -n "$lic" ]; then
+    echo "$lic" | sed "s/^/Missing SPDX-License-Identifier: /"
+    echo
+    status=1
+fi
+
+
+# No trailing whitespace in any files.
+#
+if [ "$check_files" ]; then trail_fails=`grep -n "\s$" $check_files`; fi
+if [ -n "$trail_fails" ]; then
+    echo "$trail_fails" | sed "s/^/Trailing whitespace: /"
+    echo
+    status=1
+fi
+
+
+# Idempotent headers - .h files must end "#endif /* SOME TAG */"
+#
+h_files=`echo $check_files | grep -Po "[^[:blank:]]*\.h( |$)"`
+idem_fails=`for h in $h_files; do tail -n 1 $h | grep -L "^#endif.*[A-Z]" > /tmp/x && echo $h; done`
+
+if [ -n "$idem_fails" ]; then
+    echo "$idem_fails" | sed "s/^/Check idempotency: /"
+    echo
+    status=1
+fi
+
+
+# Ensure correct postal and web address in yang files.
+#
+yang_files=`echo $check_files | grep -Po "[^[:blank:]]*\.yang( |$)"`
+
+for yang in $yang_files; do
+
+    IFS="" addr=`grep -A3 "Postal" $yang`
+    a1=`echo $addr | grep "Postal: 208 S. Akard Street"`
+    a2=`echo $addr | grep "Dallas, TX 75202, USA"`
+    a3=`echo $addr | grep "Web: www.att.com"`
+
+    if [ -z "$a1" -o -z "$a2" -o -z "$a3" ]; then
+        echo "Incorrect address:"
+        echo "$addr"
+        echo
+        status=1
+    fi
+
+done
+
+
+# Exit status:
+#   0 on success
+#   1 on failure
+#
+exit $status
