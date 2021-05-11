@@ -1,3 +1,14 @@
+vplane-config-qos (6.0.8) unstable; urgency=medium
+
+  [ Alan Dewar ]
+  * Remove extraneous Yang must statement (Fixes: VRVDR-54991)
+
+  [ Karthik Murugesan ]
+  * Validate WRED min and max threshold values to be less than queue-limit
+  * Validate WRED min and max threshold values to be less than queue-limit
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Tue, 11 May 2021 13:59:57 +0100
+
 vplane-config-qos (6.0.7) unstable; urgency=medium
 
   [ Aidan Gallagher ]
