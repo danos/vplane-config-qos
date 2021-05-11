@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # Copyright (c) 2021, AT&T Intellectual Property
+# SPDX-License-Identifier: LGPL-2.1-only
 
 # -*- coding: utf-8 -*-
 

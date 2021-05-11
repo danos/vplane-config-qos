@@ -1,5 +1,6 @@
 #!/bin/bash
 # Copyright (c) 2019-2021, AT&T Intellectual Property
+# SPDX-License-Identifier: LGPL-2.1-only
 
 del policy
 commit
