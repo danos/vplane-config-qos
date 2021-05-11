@@ -115,16 +115,21 @@ EOF
 
                 /* We can't do a simple
                  *    sh "dram --username jenkins -d yang"
-                 * because the base yang dir contains a VNF module
-                 * and there are platform modules in another dir.
+                 * because augment and uplink files are not currently used and 
+                 * may be deprecated at some point in the future.
                  */
                 stage('DRAM') {
                     steps {
                         dir("${SRC_DIR}") {
                             sh '''
-                               yang=`echo yang/*.yang | sed 's/ /,/g'`
+                               yang=`echo yang/*.yang | \
+                               sed 's@yang/vyatta-policy-qos-uplink-v1.yang @@' | \
+                               sed 's@yang/vyatta-policy-qos-augment-v1.yang @@' | \
+                               sed 's@yang/vyatta-policy-qos-deviation-.*.yang @@' | \
+                               sed 's/ /,/g'`
                                platform=`echo platform/*.platform | sed 's/ /,/g'`
-                               dram --username jenkins -f \$yang -P \$platform -s
+                               deviations=`echo yang/*.yang | sed 's/ /,/g'`
+                               dram --username jenkins -f \$yang -P \$platform -Y \$deviations -s
                                '''
                         }
                     }
