@@ -22,7 +22,7 @@ if [ $ret -ne 1 ]; then
    exit 1;
 fi
 
-del int data $INTERFACE vif 11 
+del int data $INTERFACE vif 11
 commit
 
 ret=`run sh queuing $INTERFACE.10 class | grep markpcp | grep inner | grep active | wc -l`

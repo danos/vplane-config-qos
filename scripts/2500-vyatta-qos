@@ -4,7 +4,7 @@
 
 source "$(cd "$(dirname "${0}")" && pwd -P)"/../tech-support.functions
 
-header Traffic Policy 
+header Traffic Policy
 if cli-shell-api existsActive policy qos; then
 	header Current Traffic Policies
 	time_out "run show queuing"

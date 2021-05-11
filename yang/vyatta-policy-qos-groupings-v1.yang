@@ -508,7 +508,7 @@ module vyatta-policy-qos-groupings-v1 {
 				"Inverse of packet marking probability " +
 				"maximum value (see the paper Random Early" +
 				" Detection Gateways for Congestion Avoidance)";
-			configd:help 
+			configd:help
 				"Inverse of packet marking probability " +
 				"maximum value";
 			default "10";

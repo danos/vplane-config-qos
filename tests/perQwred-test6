@@ -65,7 +65,7 @@ fi
 
 # Tidy up
 del policy qos
-del resources group 
+del resources group
 del int data $INTERFACE policy
 commit
 

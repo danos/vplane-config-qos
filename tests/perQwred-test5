@@ -135,7 +135,7 @@ fi
 
 # Tidy up
 del policy qos
-del resources group 
+del resources group
 commit
 
 vplsh -l -c "debug -qos"

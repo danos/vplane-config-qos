@@ -18,12 +18,12 @@ AUTHORS       debian       platform      tests
 cfg-version   doc          README        vyatta
 configure.ac  lib          scripts       vyatta_policy_qos_vci
 COPYING       Makefile.am  templates-op  yang
-$ 
+$
 $ pytest-3
 ======================== test session starts =========================
 platform linux -- Python 3.6.8, pytest-3.3.2, py-1.5.2, pluggy-0.6.0
 rootdir: /home/adewar/stash-repos/vplane-config-qos, inifile:
-collected 25 items                                                   
+collected 25 items
 
 tests/test_action.py .                                         [  4%]
 tests/test_bandwidth.py .                                      [  8%]
@@ -57,9 +57,9 @@ $ pytest-3 tests/test_action.py
 ======================== test session starts =========================
 platform linux -- Python 3.6.8, pytest-3.3.2, py-1.5.2, pluggy-0.6.0
 rootdir: /home/adewar/stash-repos/vplane-config-qos, inifile:
-collected 1 item                                                     
+collected 1 item
 
 tests/test_action.py .                                         [100%]
 
 ====================== 1 passed in 0.01 seconds ======================
-$ 
+$

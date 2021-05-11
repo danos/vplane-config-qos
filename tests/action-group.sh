@@ -43,7 +43,7 @@ else
   echo "Test 3 passed"
 fi
 
-del policy 
+del policy
 commit
 
 . ./ag-test4 $INTERFACE
