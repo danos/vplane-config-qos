@@ -96,7 +96,7 @@ for yang in $yang_files; do
     a3=`echo $addr | grep "Web: www.att.com"`
 
     if [ -z "$a1" -o -z "$a2" -o -z "$a3" ]; then
-        echo "Incorrect address:"
+        echo "$yang has the incorrect address:"
         echo "$addr"
         echo
         status=1
