@@ -1,112 +1,98 @@
-#!/bin/bash
-#
-# Copyright (c) 2021, AT&T Intellectual Property.
-# All rights reserved.
-#
+#!/usr/bin/env python3
+# Copyright (c) 2021, AT&T Intellectual Property. All rights reserved.
 # SPDX-License-Identifier: GPL-2.0-only
-#
 
-# TODO
-#
-# * SPDX license check only provided there's a copyright message?
-# * Remove dirs from $all_files
-#
-
-# $1: TARGET - most likely "origin/master"
-# $2: SOURCE - most likely "bugfix/foo" or "feature/bar"
-
-usage () {
-    echo "Usage: $(basename $0) target source" >&2
-    echo "target: something like 'origin/master'" >&2
-    echo "source: something like 'bugfix/foo' or 'feature/bar'" >&2
-}
-
-[ "$#" -ne 2 ] && { usage; exit 1; }
-
-# Exit status: presume success.
-status=0
-
-# List of files to ignore.
-IGN_FILES="configure.ac\nMakefile.am\ndebian\/.*\nplatform\/.*\.platform\nfeatures\/.*"
-
-# All files in the diff, except deleted files.
-all_files=`git diff --diff-filter=d --name-only --format=format:'' $1..$2`
-
-# Strip out the ignored files.
-check_files=`sed -e "$(sed 's:.*:s/&//ig:' <<< $(echo -e $IGN_FILES))" <<< $all_files`
-
-# Bail out if there's nothing to check.
-if [ -z "$check_files" ]; then
-    exit $status
-fi
+import sys
+import re
+import subprocess
+import datetime
 
 
-# Ensure all files contain a copyright message with the current year.
-#
-YEAR=`date +%Y`
-copyright_fails=`egrep -d skip -L "Copyright \(c) .*$YEAR,{,1} AT&T Intellectual Property" $check_files`
-if [ -n "$copyright_fails" ]; then
-    echo "$copyright_fails" | sed "s/^/Check copyright message: /"
-    echo
-    status=1
-fi
+def get_changed_source_files(source, destination):
+
+    # Get all changes
+    git_command = f"git diff --diff-filter=d --name-only --format=format:'' {destination}...{source}"
+    result = subprocess.check_output(git_command, shell=True).decode("utf-8")
+    all_files = result.splitlines()
+
+    # Only keep source code files
+    to_check = []
+    for file in all_files:
+
+        # Check if there is a file extension.
+        # If there is then check if it is for a python, perl or yang file
+        file_split = file.split('.')
+        if len(file_split) > 1:
+            file_extension = file.split('.').pop()
+            if file_extension == 'py'   \
+                    or file_extension == 'yang' \
+                    or file_extension == 'pm':
+                to_check.append(file)
+        # Check if the file contains a shebang (!#)
+        # to determine if it is a script
+        else:
+            with open(file) as f:
+                first_line = f.readline()
+                if '!#' in first_line:
+                    to_check.append(file)
+    return to_check
 
 
-# Ensure all files contain an SPDX license.
-#
-lic=`grep -L "SPDX-License-Identifier: " $check_files`
-if [ -n "$lic" ]; then
-    echo "$lic" | sed "s/^/Missing SPDX-License-Identifier: /"
-    echo
-    status=1
-fi
+def check_att_licence(source_files):
+
+    for file in source_files:
+        year = datetime.datetime.now().year
+        pattern = rf"Copyright \(c\) .*{year}.* AT&T Intellectual Property"
+
+        with open(file) as f:
+            for line in f:
+                match = re.search(pattern, line)
+                if match:
+                    break
+            else:
+                print(f"Failed: File {file} does not contain AT&T licence")
+                sys.exit(1)
 
 
-# No trailing whitespace in any files.
-#
-if [ "$check_files" ]; then trail_fails=`grep -n "\s$" $check_files`; fi
-if [ -n "$trail_fails" ]; then
-    echo "$trail_fails" | sed "s/^/Trailing whitespace: /"
-    echo
-    status=1
-fi
+def check_spdx_licence(source_files):
+    for file in source_files:
+        pattern = r"SPDX-License-Identifier:"
+        with open(file) as f:
+            if pattern not in f.read():
+                print(f"Failed: File {file} does not contain SPDX licence")
+                sys.exit(1)
 
 
-# Idempotent headers - .h files must end "#endif /* SOME TAG */"
-#
-h_files=`echo $check_files | grep -Po "[^[:blank:]]*\.h( |$)"`
-idem_fails=`for h in $h_files; do tail -n 1 $h | grep -L "^#endif.*[A-Z]" > /tmp/x && echo $h; done`
+def check_yang_address(source_files):
+    yang_files = []
 
-if [ -n "$idem_fails" ]; then
-    echo "$idem_fails" | sed "s/^/Check idempotency: /"
-    echo
-    status=1
-fi
+    for file in source_files:
+        file_extension = file.split('.').pop()
+        if file_extension == 'yang':
+            yang_files.append(file)
 
+    pattern = r"Postal: 208 S\. Akard Street\n\s*Dallas\, TX 75202, USA\n\s*Web: www.att.com"
 
-# Ensure correct postal and web address in yang files.
-#
-yang_files=`echo $check_files | grep -Po "[^[:blank:]]*\.yang( |$)"`
-
-for yang in $yang_files; do
-
-    IFS="" addr=`grep -A3 "Postal" $yang`
-    a1=`echo $addr | grep "Postal: 208 S. Akard Street"`
-    a2=`echo $addr | grep "Dallas, TX 75202, USA"`
-    a3=`echo $addr | grep "Web: www.att.com"`
-
-    if [ -z "$a1" -o -z "$a2" -o -z "$a3" ]; then
-        echo "$yang has the incorrect address:"
-        echo "$addr"
-        echo
-        status=1
-    fi
-
-done
+    for file in yang_files:
+        with open(file) as f:
+            yang = f.read()
+            match = re.search(pattern, yang)
+            if not match:
+                print(f"Failed: Yang file {file} does not contain correct address")
+                sys.exit(1)
 
 
-# Exit status:
-#   0 on success
-#   1 on failure
-#
-exit $status
+if __name__ == '__main__':
+    if len(sys.argv) != 3:
+        source = "HEAD"
+        destination = "origin/master"
+        print("No source and destintion reference provided.")
+        print(f"Assuming source is {source} and destination is {destination}")
+    else:
+        source = sys.argv[1]
+        destination = sys.argv[2]
+
+    source_files = get_changed_source_files(source, destination)
+    check_att_licence(source_files)
+    check_spdx_licence(source_files)
+    check_yang_address(source_files)

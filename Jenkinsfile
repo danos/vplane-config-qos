@@ -185,7 +185,7 @@ EOF
                     }
                     steps {
                         dir("${SRC_DIR}") {
-                            sh "./codechecks upstream/${env.CHANGE_TARGET} origin/${env.BRANCH_NAME}"
+                            sh "./codechecks origin/${env.BRANCH_NAME} upstream/${env.CHANGE_TARGET} "
                         }
                     }
                 }
