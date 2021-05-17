@@ -55,11 +55,11 @@ class FilterAction:
             action_message.decision = GPCConfig_pb2.RuleAction.PASS
             return
 
-        if self._designation:
+        if self._designation is not None:
             action_message = rule_message.actions.add()
             action_message.designation = self._designation
 
-        if self._drop_prec:
+        if self._drop_prec is not None:
             colour_dict = {
                 'green': GPCConfig_pb2.RuleAction.GREEN,
                 'yellow': GPCConfig_pb2.RuleAction.YELLOW,
