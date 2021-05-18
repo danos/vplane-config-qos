@@ -1,4 +1,5 @@
 #!/bin/bash
+# Copyright (c) 2019-2021, AT&T Intellectual Property
 
 del policy
 commit

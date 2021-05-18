@@ -1,6 +1,7 @@
 #!/usr/bin/env python
+# Copyright (c) 2021, AT&T Intellectual Property
+
 # -*- coding: utf-8 -*-
-#
 
 # import logging
 

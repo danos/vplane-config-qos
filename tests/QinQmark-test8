@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright (c) 2021, AT&T Intellectual Property
+
 # Test 8
 # Check when marking ref count is tracked correctly for multiple vlans
 INTERFACE=$1

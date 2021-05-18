@@ -1,12 +1,9 @@
 # Module QoS::Red.pm
 #
-# Copyright (c) 2018-2019 AT&T Intellectual Property.
-# All Rights Reserved.
+# Copyright (c) 2018-2021, AT&T Intellectual Property.
 # Copyright (c) 2013-2015, Brocade Communications Systems, Inc.
-# All Rights Reserved.
-#
 # SPDX-License-Identifier: LGPL-2.1-only
-#
+
 
 package Vyatta::QoS::Red;
 require Exporter;

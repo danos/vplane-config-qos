@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 #
 # Copyright (c) 2020-2021, AT&T Intellectual Property.
-# All rights reserved.
-#
 # SPDX-License-Identifier: LGPL-2.1-only
-#
+
 """
 A module to define the filter group for QoS.
 """
