@@ -1,7 +1,7 @@
 # Module QoS::Red.pm
 #
-# Copyright (c) 2018-2021, AT&T Intellectual Property.
-# Copyright (c) 2013-2015, Brocade Communications Systems, Inc.
+# Copyright (c) 2018-2021, AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2013-2015, Brocade Communications Systems, Inc. All rights reserved.
 # SPDX-License-Identifier: LGPL-2.1-only
 
 
