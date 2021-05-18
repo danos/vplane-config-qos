@@ -220,8 +220,6 @@ EOF
             sh 'rm -f *.deb' // top-level dir
             sh "osc chroot --wipe --force --root ${env.OSC_BUILD_ROOT}"
             deleteDir()
-
-            // Do any clean up for DRAM?
         }
         success {
             echo 'Winning'
