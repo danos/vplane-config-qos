@@ -132,9 +132,7 @@ sub get_if_subport_policy_name {
 
         $config->setLevel( $intf->path . " switch-group switch" );
         my $switch = $config->returnOrigValue();
-        if (!defined($switch)){
-            return;
-        }
+        return undef if !defined($switch);
 
         $config->setLevel(
             "interface switch $switch default-port-parameters policy qos");
@@ -153,9 +151,7 @@ sub get_if_subport_policy_name {
 
         $config->setLevel( $intf->path . " switch-group switch" );
         my $switch = $config->returnOrigValue();
-        if (!defined($switch)){
-            return;
-        }
+        return undef if !defined($switch);
 
         $config->setLevel(
 "interfaces switch $switch default-port-parameters vlan-parameters qos-parameters vlan $vlan_id policy qos"
@@ -163,7 +159,7 @@ sub get_if_subport_policy_name {
         $policy_name = $config->returnOrigValue();
         return $policy_name if defined($policy_name);
     }
-    return;
+    return undef;
 }
 
 # figure out which vlan tag is matchd with subport
@@ -1114,10 +1110,7 @@ sub show_platform_ingress_maps {
 
     my $platdscpmap;
     my $platpcpmap;
-
-    if ( defined($intf_data){
-        my $maps = $intf_data->{'ingress-maps'};
-    }
+    my $maps = $intf_data->{'ingress-maps'} if ( defined($intf_data) );
 
     if ( defined($maps) ) {
 
@@ -1156,9 +1149,7 @@ sub show_platform_egress_maps {
     my $platdesmap;
     my $platdscpgrp2dscpmap;
     my $ismarkmap = 0;
-    if ( defined($intf_data){
-        my $maps = $intf_data->{'egress-maps'};
-    }
+    my $maps      = $intf_data->{'egress-maps'} if ( defined($intf_data) );
 
     if ( !defined($maps) ) {
         $ismarkmap = 1;
