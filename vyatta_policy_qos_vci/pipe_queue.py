@@ -40,6 +40,10 @@ class PipeQueues:
                 is_time = 0
                 wred_map_dict = pipe_queue.get('wred-map-bytes')
 
+            if wred_map_dict is None:
+                is_time = 0
+                wred_map_dict = pipe_queue.get('wred-map')
+
             self._pipe_queue[pipe_queue_id] = Queue(tc_id, wrr_id, wrr_weight,
                                                     priority_local,
                                                     wred_map_dict, is_time, shaper_tc_block)
