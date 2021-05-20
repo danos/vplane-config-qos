@@ -147,7 +147,7 @@ EOF
                                 discoverGitReferenceBuild()
                                 recordIssues tool: perlCritic(pattern: 'perlcritic.txt'),
                                     enabledForFailure: true,
-                                    qualityGates: [[type: 'TOTAL', threshold: 1, unstable: true]]
+                                    qualityGates: [[type: 'TOTAL', threshold: 10, unstable: true]]
                             }
                         }
                     }
