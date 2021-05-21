@@ -1,3 +1,9 @@
+vplane-config-qos (6.0.10) unstable; urgency=medium
+
+  * If its packets based wred setup the wred dictionary
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Fri, 21 May 2021 11:12:40 +0100
+
 vplane-config-qos (6.0.9) unstable; urgency=medium
 
   [ Alan Dewar ]
