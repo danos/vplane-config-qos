@@ -36,7 +36,8 @@ pipeline {
     agent any
 
     environment {
-        OBS_TARGET_PROJECT = 'Vyatta:Master'
+        OBS_INSTANCE = 'build-release'
+        OBS_TARGET_PROJECT = 'Vyatta:Unstable'
         OBS_TARGET_REPO = 'standard'
         OBS_TARGET_ARCH = 'x86_64'
         // # Replace : with _ in project name, as osc-buildpkg does
@@ -98,7 +99,7 @@ OSC_BUILDPACKAGE_TMP=\"${WORKSPACE}\"
 OSC_BUILDPACKAGE_BUILDSCRIPT=\"${WORKSPACE}/osc-buildpackage_buildscript_default\"
 EOF
 """
-                                    sh "osc-buildpkg -v -g -T -P ${env.OBS_TARGET_PROJECT} ${env.OBS_TARGET_REPO} -- --trust-all-projects --build-uid='caller'"
+                                    sh "osc-buildpkg -v -A ${env.OBS_INSTANCE} -g -T -P ${env.OBS_TARGET_PROJECT} ${env.OBS_TARGET_REPO} -- --trust-all-projects --build-uid='caller'"
                                 }
                             }
                         }
