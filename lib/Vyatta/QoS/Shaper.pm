@@ -496,9 +496,6 @@ sub valid_profile {
                 error $level,
                   "Too many queues assigned to traffic-class $prio\n"
                   if ( $qpertc[$prio] > QUEUES_PER_TC );
-            } else {
-                error "$level $path",
-                  "Traffic-class not defined for queue $id\n";
             }
         }
     } else {
