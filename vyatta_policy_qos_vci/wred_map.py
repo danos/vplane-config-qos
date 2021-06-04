@@ -10,6 +10,7 @@ A module to define a class of object to hold Wred parameters
 """
 
 from pathlib import Path
+from enum import Enum
 
 
 def byte_limits():
@@ -18,18 +19,17 @@ def byte_limits():
         "/run/vyatta-platform/features/vyatta-policy-qos-groupings-v1/byte-limits")
     return byte_limit_feature.is_file()
 
-
-def get_limit(limit_value, is_time):
+def get_limit(limit_value, qunits):
     """ Convert queue_limit/threshold values from msec to usec """
     if limit_value is not None:
-        if is_time:
+        if qunits == WredMap.Units.TIME:
             return int(float(limit_value) * 1000)
         return int(limit_value)
 
 
-def check_threshold(is_time, max_th, is_ql_time, qlimit):
+def check_threshold(qunits, max_th, qlimit):
     """ Validate threshold values """
-    if qlimit and max_th and (is_time == is_ql_time):
+    if qlimit and max_th and (qunits == WredMap.Units.TIME):
         if max_th >= qlimit:
             return False
 
@@ -38,25 +38,29 @@ def check_threshold(is_time, max_th, is_ql_time, qlimit):
 
 class WredMap():
     """ Define the wred-map class """
-    def __init__(self, wred_map_dict, is_dscp, is_time, tc_qlimit, is_ql_time):
+    def __init__(self, wred_map_dict, is_dscp, qunits, tc_qlimit):
         """ Create a wred-map object """
         self._is_dscp = is_dscp
-        self._is_time = is_time
-        self._is_ql_time = is_ql_time
+        self._qunits = qunits
         self._tc_qlimit = tc_qlimit
         if is_dscp:
             self._group_name = wred_map_dict['group-name']
         else:
             self._colour = wred_map_dict['colour']
         self._mark_prob = wred_map_dict['mark-probability']
-        self._min_th = get_limit(wred_map_dict['min-threshold'], is_time)
-        self._max_th = get_limit(wred_map_dict['max-threshold'], is_time)
+        self._min_th = get_limit(wred_map_dict['min-threshold'], qunits)
+        self._max_th = get_limit(wred_map_dict['max-threshold'], qunits)
+
+    class Units(Enum):
+        TIME = 1
+        BYTES = 2
+        PACKETS = 3
 
     def check(self, path_prefix):
         """ Check limit values and return appropriate error message for vci.exception """
-        status = check_threshold(self._is_time, self._max_th, self._is_ql_time, self._tc_qlimit)
+        status = check_threshold(self._qunits, self._max_th, self._tc_qlimit)
         if not status:
-            if self._is_time:
+            if self._qunits == WredMap.Units.TIME:
                 limits = "wred-map-time"
                 unit = "usec"
             else:
@@ -78,10 +82,12 @@ class WredMap():
 
     def commands(self, cmd_prefix):
         """ Generate the necessary command for this wred-map object """
-        if self._is_time:
+        if self._qunits == WredMap.Units.TIME:
             limits = "usec"
+        elif self._qunits == WredMap.Units.BYTES:
+            limits = "bytes"
         else:
-            limits = "bytes" if byte_limits() else "packets"
+            limits = "packets"
 
         if self._is_dscp:
             return (f"{cmd_prefix} dscp-group {self._group_name} {limits} "

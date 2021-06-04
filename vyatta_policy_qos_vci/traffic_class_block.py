@@ -60,10 +60,6 @@ class TrafficClassBlock:
         """ Get Queue limit """
         return self._tcs[tc_id].queue_limit
 
-    def is_qlimit_time(self, tc_id):
-        """ Check if queue-limit unit is time  """
-        return self._tcs[tc_id].is_qlimit_time()
-
     def commands(self, cmd_prefix):
         """ Generate commands for this traffic-class-block object """
         cmd_list = []

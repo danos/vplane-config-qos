@@ -433,8 +433,8 @@ TEST_DATA = [
             "qos lo profile 0 queue 0 wrr-weight 1 0",
             "qos lo profile 0 queue 0x1 wrr-weight 1 1",
             "qos lo profile 0 queue 0x2 wrr-weight 1 2",
-            "qos lo profile 0 queue 0x2 dscp-group priority-group-high packets 30000 20000 5",
-            "qos lo profile 0 queue 0x2 dscp-group priority-group-low packets 50000 40000 10",
+            "qos lo profile 0 queue 0x2 dscp-group priority-group-high bytes 30000 20000 5",
+            "qos lo profile 0 queue 0x2 dscp-group priority-group-low bytes 50000 40000 10",
             "qos lo profile 0 queue 0x2 wred-weight 10",
             "qos lo profile 0 queue 0x6 wrr-weight 1 3"
         ]

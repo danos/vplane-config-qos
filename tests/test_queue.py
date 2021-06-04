@@ -13,12 +13,12 @@ Unit-tests for the queue.py module.
 import pytest
 
 from vyatta_policy_qos_vci.queue import Queue
+from vyatta_policy_qos_vci.wred_map import WredMap
 
 # valid JSON data can have "none" in it, we need to define it for python
 null = None
 
 TEST_DATA = [
-    # During unit-test we always use packet limits
     (
         # test_input
         {"id": 0, "traffic-class": 0, "weight": 1},
@@ -63,8 +63,8 @@ TEST_DATA = [
         },
         # expected_result
         [" queue 0xf wrr-weight 4 3",
-         " queue 0xf dscp-group priority-group-high packets 30000 20000 5",
-         " queue 0xf dscp-group priority-group-low packets 50000 40000 10",
+         " queue 0xf dscp-group priority-group-high bytes 30000 20000 5",
+         " queue 0xf dscp-group priority-group-low bytes 50000 40000 10",
          " queue 0xf wred-weight 10"]
     ),
     (
@@ -107,11 +107,11 @@ def test_queue(test_input, expected_result):
     wrr_id = test_input.get('id')
     wrr_weight = test_input.get('weight')
     priority_local = test_input.get('priority-local')
-    is_time = 0
+    is_time = WredMap.Units.BYTES
     wred_map_dict = test_input.get('wred-map-bytes')
     if wred_map_dict is None:
         wred_map_dict = test_input.get('wred-map-time')
-        is_time = 1
+        is_time = WredMap.Units.TIME
     queue = Queue(tc_id, wrr_id, wrr_weight, priority_local, wred_map_dict, is_time, None)
     assert queue is not None
     assert queue.commands("", queue.wrr_id) == expected_result

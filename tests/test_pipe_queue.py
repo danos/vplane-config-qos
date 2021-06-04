@@ -104,14 +104,14 @@ TEST_DATA = [
         ],
     ),
     (
-        # one pipe-queue with two dscp-group wred-maps
+        # one pipe-queue with two dscp-group wred-maps using packet units
         # test_input
         [
             {
                 "id": 2,
                 "traffic-class": 2,
                 "weight": 1,
-                "wred-map-bytes": {
+                "wred-map": {
                     "dscp-group": [
                         {
                             "group-name": "priority-group-high",
@@ -138,6 +138,78 @@ TEST_DATA = [
             " queue 0x2 dscp-group priority-group-high packets 30000 20000 5",
             " queue 0x2 dscp-group priority-group-low packets 50000 40000 10",
             " queue 0x2 wred-weight 10"
+        ]
+    ),
+    (
+        # one pipe-queue with two dscp-group wred-maps using time units
+        # test_input
+        [
+            {
+                "id": 3,
+                "traffic-class": 3,
+                "weight": 60,
+                "wred-map-time": {
+                    "dscp-group": [
+                        {
+                            "group-name": "priority-group-high-drop",
+                            "mark-probability": 100,
+                            "max-threshold": "3",
+                            "min-threshold": "1"
+                        },
+                        {
+                            "group-name": "priority-group-low-drop",
+                            "mark-probability": 125,
+                            "max-threshold": "5",
+                            "min-threshold": "3"
+                        }
+                    ],
+                    "filter-weight": 7
+                }
+            }
+        ],
+        # expected_result
+        [
+            # one pipe-queue with two dscp-group wred-maps
+            " queue 0x3 wrr-weight 60 3",
+            " queue 0x3 dscp-group priority-group-high-drop usec 3000 1000 100",
+            " queue 0x3 dscp-group priority-group-low-drop usec 5000 3000 125",
+            " queue 0x3 wred-weight 7"
+        ]
+    ),
+    (
+        # one pipe-queue with two dscp-group wred-maps using byte units
+        # test_input
+        [
+            {
+                "id": 3,
+                "traffic-class": 3,
+                "weight": 60,
+                "wred-map-bytes": {
+                    "dscp-group": [
+                        {
+                            "group-name": "priority-group-high-drop",
+                            "mark-probability": 10,
+                            "max-threshold": "6250000",
+                            "min-threshold": "5625000"
+                        },
+                        {
+                            "group-name": "priority-group-low-drop",
+                            "mark-probability": 10,
+                            "max-threshold": "4375000",
+                            "min-threshold": "3125000"
+                        }
+                    ],
+                    "filter-weight": 6
+                }
+            }
+        ],
+        # expected_result
+        [
+            # one pipe-queue with two dscp-group wred-maps
+            " queue 0x3 wrr-weight 60 3",
+            " queue 0x3 dscp-group priority-group-high-drop bytes 6250000 5625000 10",
+            " queue 0x3 dscp-group priority-group-low-drop bytes 4375000 3125000 10",
+            " queue 0x3 wred-weight 6"
         ]
     )
 ]
