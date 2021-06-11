@@ -39,6 +39,7 @@ def parse_bandwidth(bandwidth):
         suffix = None
 
     multiplier_map = {
+        'b': 1,
         'k': 1000,
         'm': 1000000,
         'g': 1000000000,
@@ -51,16 +52,16 @@ def parse_bandwidth(bandwidth):
         multiplier_symbol = 'k'
         bitbytes = 'bit'
     elif len(suffix) < 2:
-        multiplier_symbol = None
-        bitbytes = None
-    elif suffix[0] == 'b':
-        multiplier_symbol = None
+        multiplier_symbol = suffix[0].lower()
+        bitbytes = 'bit'
+    elif suffix[0].lower() == 'b':
+        multiplier_symbol = 'b'
         bitbytes = suffix
-    elif suffix[1] == 'i':
-        multiplier_symbol = suffix[0:2]
+    elif suffix[1].lower() == 'i':
+        multiplier_symbol = suffix[0:2].lower()
         bitbytes = suffix[2:]
     else:
-        multiplier_symbol = suffix[0]
+        multiplier_symbol = suffix[0].lower()
         bitbytes = suffix[1:]
 
     bit_divisor = 0
@@ -69,13 +70,13 @@ def parse_bandwidth(bandwidth):
     elif bitbytes == 'bit':
         bit_divisor = 8
 
-    multiplier = 1
-    if multiplier_symbol is not None:
-        multiplier = multiplier_map[multiplier_symbol.lower()]
-
     result = None
     try:
+        multiplier = multiplier_map[multiplier_symbol]
         result = int((float(prefix) * multiplier) // bit_divisor)
+
+    except KeyError:
+        pass
 
     except ValueError:
         pass
