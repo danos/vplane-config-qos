@@ -78,3 +78,13 @@ class TrafficClassBlock:
                 cmd_list.append(cmd)
 
         return cmd_list
+
+    def check(self, path_prefix):
+        """ Check if configuration is valid """
+
+        for traffic_class in self._tcs.values():
+            result, error, path = traffic_class.check(f"{path_prefix}/traffic-class/")
+            if not result:
+                return result, error, path
+
+        return True, None, None

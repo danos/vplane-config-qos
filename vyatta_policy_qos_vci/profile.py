@@ -97,7 +97,16 @@ class Profile:
 
     def check(self, path_prefix):
         """ Check if profile configuration is valid """
-        return self._pipe_queues.check(f"{path_prefix}/profile/{self._profile_name}")
+        path_prefix = f"{path_prefix}/profile/{self._profile_name}"
+        
+        result, error, path = self._pipe_queues.check(path_prefix)
+        if not result:
+            return result, error, path
+
+        result, error, path = self._tcs.check(path_prefix)
+        if not result:
+            return result, error, path
+        return True, None, None
 
     def commands(self, cmd_prefix, interface, vlan_id):
         """ Generate the list of profile commands """

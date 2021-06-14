@@ -142,6 +142,10 @@ class Shaper:
                 result, error, path = profile.check(f"{path_prefix}/shaper")
                 if not result:
                     return result, error, path
+        
+        result, error, path =  self._tcs.check(f"{path_prefix}/shaper/{self._profile_name}")
+        if not result:
+                return result, error, path
 
         return True, None, None
 
