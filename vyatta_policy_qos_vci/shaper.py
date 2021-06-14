@@ -131,21 +131,13 @@ class Shaper:
     def check(self, path_prefix):
         """ Check if shaper configuration is valid """
         for name, profile in self._local_profiles.items():
-            if name == self._default:
-                result, error, path = profile.check(f"{path_prefix}/shaper")
-                if not result:
-                    return result, error, path
-                break
-
-        for name, profile in self._local_profiles.items():
-            if name != self._default:
-                result, error, path = profile.check(f"{path_prefix}/shaper")
-                if not result:
-                    return result, error, path
-        
-        result, error, path =  self._tcs.check(f"{path_prefix}/shaper/{self._profile_name}")
-        if not result:
+            result, error, path = profile.check(f"{path_prefix}/shaper")
+            if not result:
                 return result, error, path
+
+        result, error, path = self._tcs.check(f"{path_prefix}/shaper/{self._profile_name}")
+        if not result:
+            return result, error, path
 
         return True, None, None
 
