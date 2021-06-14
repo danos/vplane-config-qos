@@ -1,6 +1,6 @@
 # Module QoS::Shaper.pm
 #
-# Copyright (c) 2017-2019, AT&T Intellectual Property.
+# Copyright (c) 2017-2021, AT&T Intellectual Property.
 # All Rights Reserved.
 # Copyright (c) 2013-2017, Brocade Communications Systems, Inc.
 # All Rights Reserved.

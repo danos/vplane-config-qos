@@ -50,7 +50,7 @@ def check_att_licence(source_files):
                 if match:
                     break
             else:
-                print(f"Failed: File {file} does not contain AT&T licence")
+                print(f"Failed: File {file} does not contain AT&T licence for the current year ({year})")
                 sys.exit(1)
 
 
