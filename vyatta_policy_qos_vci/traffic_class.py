@@ -83,8 +83,11 @@ class TrafficClass:
 
     def check(self, path):
         """ Sanity check this object """
-        if self._queue_limit_packets is not None and self._queue_limit_bytes is not None:
-            return False, "Can't have both queue-limit-packets and queue-limit-bytes", path
+
+        if (self._queue_limit_packets is not None and self._queue_limit_bytes is not None or
+                self._queue_limit_packets is not None and self._queue_limit_time is not None or
+                self._queue_limit_bytes is not None and self._queue_limit_time is not None):
+            return False, "Can have only queue-limit-packets, queue-limit-bytes or queue-limit-time set", path
 
         if self._queue_limit_bytes is not None and self._wred is not None:
             return False, "traffic-class wred is SW-only", path
