@@ -66,6 +66,11 @@ module vyatta-policy-qos-groupings-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
+	revision 2021-06-16 {
+		description "Tighten up the pattern accepted by the
+			     bandwidth-auto-suffix and bandwidth-suffix
+			     typedefs.";
+	}
 	revision 2020-12-08 {
 		description "Add support for time based configuration of
 			     Queue depth and WRED.
@@ -179,7 +184,7 @@ module vyatta-policy-qos-groupings-v1 {
 	typedef bandwidth-auto-suffix {
 		type string {   /* Number followed by suffix */
 			pattern '((100|([0-9]+(\.([0-9]+))?))[gG][iI]?(bit|bps)?)|'
-				+ '([0-9]+(\.([0-9]+))?(([KMBkm][iI]?)?(bit|bps))?)|'
+				+ '([0-9]+(\.([0-9]+))?(([KMkm][iI]?)?(bit|bps))?)|'
                                 + '(auto)';
 			configd:pattern-help "<<number><suffix>>
    Suffixes are either 'bit' for bits-per-second or 'bps' for bytes-per-second.
@@ -192,7 +197,7 @@ module vyatta-policy-qos-groupings-v1 {
 	typedef bandwidth-suffix {
 		type string {   /* Number followed by suffix */
 			pattern '((100|([0-9]+(\.([0-9]+))?))[gG][iI]?(bit|bps)?)|'
-				+ '([0-9]+(\.([0-9]+))?(([KMBkm][iI]?)?(bit|bps))?)';
+				+ '([0-9]+(\.([0-9]+))?(([KMkm][iI]?)?(bit|bps))?)';
 			configd:pattern-help "<<number><suffix>>
    Suffixes are either 'bit' for bits-per-second or 'bps' for bytes-per-second.
    These can be preceded by a decimal (K,M,G) or binary (Ki,Mi,Gi)
