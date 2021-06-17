@@ -81,17 +81,18 @@ class TrafficClass:
 
         return wrr_id
 
-    def checks(self):
+    def check(self, path):
         """ Sanity check this object """
-        # Can't have both queue-limit-packets and queue-limit-bytes
         if self._queue_limit_packets is not None and self._queue_limit_bytes is not None:
-            return False
+            return False, "Can't have both queue-limit-packets and queue-limit-bytes", path
 
-        # traffic-class wred is SW-only
         if self._queue_limit_bytes is not None and self._wred is not None:
-            return False
+            return False, "traffic-class wred is SW-only", path
 
-        return True
+        if len(self._pipe_queue_list) > 8:
+            return False, f"Too many queues assigned to traffic-class {self._id}", path
+
+        return True, None, None
 
     def bandwidth_commands(self, cmd_prefix):
         """ Generate this traffic-class's bandwidth commands """

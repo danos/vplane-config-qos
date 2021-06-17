@@ -481,26 +481,6 @@ sub valid_profile_dscpgroupmap {
 # Check if profile is valid
 sub valid_profile {
     my $level  = shift;
-    my $config = new Vyatta::Config($level);
-
-    # get list of queues, if not defined then have default queues
-    my @queues = $config->listNodes('queue');
-    if (@queues) {
-        my @qpertc = (0) x QUEUES_PER_TC;
-
-        foreach my $id (@queues) {
-            my $path = "queue $id traffic-class";
-            my $prio = $config->returnValue($path);
-            if ( defined($prio) ) {
-                ++$qpertc[$prio];
-                error $level,
-                  "Too many queues assigned to traffic-class $prio\n"
-                  if ( $qpertc[$prio] > QUEUES_PER_TC );
-            }
-        }
-    } else {
-        @queues = qw(0 1 2 3 4 5 6 7);
-    }
     valid_profile_dscpgroupmap($level);
 }
 
