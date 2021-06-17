@@ -8,8 +8,6 @@
 """
 Config for Policy Filter Classification
 """
-from vyatta_policy_filter_vci.filter_group import FilterGroup
-from vyatta.proto import GPCConfig_pb2
 import logging
 import zmq
 import sys
@@ -17,7 +15,10 @@ from vplaned import Controller, ControllerException
 
 # Note - this addition to path is to cater for the way
 #        dataplane constructs nested protobuf imports
+# This causes a flake8 E402: module level import not at top of file error
 sys.path.append('/usr/lib/python3/dist-packages/vyatta/proto')
+from vyatta.proto import GPCConfig_pb2                            # noqa: E402
+from vyatta_policy_filter_vci.filter_group import FilterGroup     # noqa: E402
 
 LOG = logging.getLogger('POLFIL VCI')
 

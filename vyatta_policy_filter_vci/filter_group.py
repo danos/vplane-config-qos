@@ -7,8 +7,14 @@
 A module to define the filter group for QoS.
 """
 import logging
-from vyatta.proto import GPCConfig_pb2
-from vyatta_policy_filter_vci.filter_action import FilterAction
+import sys
+
+# Note - this addition to path is to cater for the way
+#        dataplane constructs nested protobuf imports
+# This causes a flake8 E402: 'module level import not at top of file' error
+sys.path.append('/usr/lib/python3/dist-packages/vyatta/proto')
+from vyatta.proto import GPCConfig_pb2                            # noqa: E402
+from vyatta_policy_filter_vci.filter_action import FilterAction   # noqa: E402
 
 LOG = logging.getLogger('POLFIL VCI')
 
