@@ -12,6 +12,8 @@ A module to define a class of Queue objects
 from vyatta_policy_qos_vci.wred_map import WredMap
 from vyatta_policy_qos_vci.traffic_class_block import TrafficClassBlock
 
+import logging
+LOG = logging.getLogger('Policy QoS VCI')
 
 class Queue:
     """
@@ -33,6 +35,7 @@ class Queue:
         if shaper_tc_block is not None:
             tc_qlimit = shaper_tc_block.get_q_limit(tc_id)
 
+        LOG.debug(f"Queue init tc_id {tc_id} wrr_id {wrr_id} weight {wrr_weight} lpq {priority_local}\n")
         if wred_map_dict is not None:
             self._wred_filter_weight = wred_map_dict['filter-weight']
             try:

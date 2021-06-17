@@ -27,9 +27,9 @@ def get_limit(limit_value, qunits):
         return int(limit_value)
 
 
-def check_threshold(qunits, max_th, qlimit):
+def check_threshold(max_th, qlimit):
     """ Validate threshold values """
-    if qlimit and max_th and (qunits == WredMap.Units.TIME):
+    if qlimit and max_th:
         if max_th >= qlimit:
             return False
 
@@ -58,14 +58,17 @@ class WredMap():
 
     def check(self, path_prefix):
         """ Check limit values and return appropriate error message for vci.exception """
-        status = check_threshold(self._qunits, self._max_th, self._tc_qlimit)
+        status = check_threshold(self._max_th, self._tc_qlimit)
         if not status:
             if self._qunits == WredMap.Units.TIME:
                 limits = "wred-map-time"
                 unit = "usec"
-            else:
+            elif self._qunits == WredMap.Units.BYTES:
                 limits = "wred-map-bytes"
                 unit = "bytes"
+            else:
+                limits = "wred-map"
+                unit = "packets"
 
             if self._is_dscp:
                 path = (f"{path_prefix}/{limits}/dscp-group/"
