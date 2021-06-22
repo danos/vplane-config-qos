@@ -208,4 +208,6 @@ def test_shaper(test_input, expected_result):
     interface = Mock(ifname="lo", **attrs)
     shaper = Shaper(test_input, {}, {})
     assert shaper is not None
+    # As all the JSON configs so the check method will not return any errors
+    assert shaper.check("") == (True, None, None)
     assert shaper.commands(interface, 0, 0) == expected_result

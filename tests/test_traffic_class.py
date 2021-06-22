@@ -59,6 +59,8 @@ def test_traffic_class(test_input, expected_result):
     assert parent_bw is not None
     test_tc = TrafficClass(test_input['id'], test_input, parent_bw)
     assert test_tc is not None
+    # As all the JSON configs so the check method will not return any errors
+    assert test_tc.check("") == (True, None, None)
     actual_result = (test_tc.id, test_tc.queue_limit,
                      test_tc.bandwidth_commands(""),
                      test_tc.queuelimit_commands())

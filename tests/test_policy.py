@@ -60,4 +60,6 @@ def test_policy(test_input, expected_result):
     interface = Mock(ifname="lo", **attrs)
     policy = Policy(test_input, {}, {})
     assert policy is not None
+    # As all the JSON configs so the check method will not return any errors
+    assert policy.check("") == (True, None, None)
     assert policy.commands(interface, 0, 0) == expected_result

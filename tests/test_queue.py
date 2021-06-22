@@ -114,4 +114,6 @@ def test_queue(test_input, expected_result):
         is_time = WredMap.Units.TIME
     queue = Queue(tc_id, wrr_id, wrr_weight, priority_local, wred_map_dict, is_time, None)
     assert queue is not None
+    # As all the JSON configs so the check method will not return any errors
+    assert queue.check("") == (True, None, None)
     assert queue.commands("", queue.wrr_id) == expected_result

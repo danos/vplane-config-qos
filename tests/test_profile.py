@@ -562,4 +562,6 @@ def test_profile(test_input, expected_result):
     assert parent_bw is not None
     profile = Profile(0, test_input, parent_bw, None)
     assert profile is not None
+    # As all the JSON configs so the check method will not return any errors
+    assert profile.check("") == (True, None, None)
     assert profile.commands("qos lo profile", interface, 0) == expected_result

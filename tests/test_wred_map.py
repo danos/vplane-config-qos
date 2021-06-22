@@ -45,6 +45,8 @@ def test_wred_map(test_input, expected_result):
     """ Unit-test the WredMap class """
     group = WredMap(test_input, 1, 0, None)
     assert group is not None
+    # As all the JSON configs so the check method will not return any errors
+    assert group.check("") == (True, None, None)
     assert group.commands("") == expected_result
 
 

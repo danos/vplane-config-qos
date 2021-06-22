@@ -236,4 +236,6 @@ def test_pipe_queue(test_input, expected_result):
     assert tcb is not None
     pipe_queues = PipeQueues(test_input, tcb, None)
     assert pipe_queues is not None
+    # As all the JSON configs so the check method will not return any errors
+    assert pipe_queues.check("") == (True, None, None)
     assert pipe_queues.commands("") == expected_result

@@ -108,4 +108,6 @@ def test_traffic_class_block(test_input, expected_result):
     assert parent_bw is not None
     tcb = TrafficClassBlock(test_input, parent_bw)
     assert tcb is not None
+    # As all the JSON configs so the check method will not return any errors
+    assert tcb.check("") == (True, None, None)
     assert tcb.commands("qos lo subport 2") == expected_result
