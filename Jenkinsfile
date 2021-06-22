@@ -159,19 +159,8 @@ EOF
                         dir("${SRC_DIR}") {
                             sh '''
                                pyfiles=`find . -type f -exec file --mime-type {} \\; | grep "text/x-python" | cut -d: -f1 | cut -c3- | xargs`
-                               python3 -m flake8 --output-file=flake8.out --count --exit-zero --exclude=.git/*,debian/* \$pyfiles
+                               python3 -m flake8 --count --exclude=.git/*,debian/* \$pyfiles
                                '''
-                        }
-                    }
-                    post {
-                        always {
-                            dir("${env.SRC_DIR}") {
-                                discoverGitReferenceBuild()
-                                recordIssues tool: flake8(pattern: 'flake8.out'),
-                                    enabledForFailure: true,
-                                    qualityGates: [[type: 'TOTAL', threshold: 20, unstable: true],
-                                                   [type: 'NEW', threshold: 9, unstable: true]]
-                            }
                         }
                     }
                 }
