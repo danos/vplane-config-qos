@@ -130,10 +130,6 @@ sub valid_binding {
     my $qmin = $self->{qmin};
 
     invalid
-"traffic-class $id max-threshold $qmax must be less than the queue limit $qlimit\n"
-      if defined $qmax && $qmax >= $qlimit;
-
-    invalid
 "traffic-class $id min-threshold $qmin must be less than max-threshold $qmax\n"
       if defined $qmin && defined $qmax && $qmin >= $qmax;
 

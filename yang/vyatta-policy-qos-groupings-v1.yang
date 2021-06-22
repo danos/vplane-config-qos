@@ -567,6 +567,9 @@ module vyatta-policy-qos-groupings-v1 {
 			configd:help "Random Early Detection (RED) parameters";
 			uses thresholds;
 			uses red-drop-line;
+			must "current()/max-threshold < ../queue-limit"{
+					error-message "max-threshold must be less than the queue limit";
+				}
 		}
 	}
 
