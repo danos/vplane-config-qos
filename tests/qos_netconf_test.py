@@ -453,7 +453,8 @@ def main():
         if args.xml:
             print(qos_stats_xml)
         else:
-            qos_stats_tree = objectify.fromstring(qos_stats_xml.data_xml)
+            data_xml = str.encode(qos_stats_xml.data_xml)
+            qos_stats_tree = objectify.fromstring(data_xml)
 
             print(objectify.dump(qos_stats_tree))
 
