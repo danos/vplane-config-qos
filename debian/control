@@ -5,7 +5,8 @@ Maintainer: Vyatta Package Maintainers <DL-vyatta-help@att.com>
 Build-Depends: debhelper (>= 9), autotools-dev,
 	       autoconf, automake, cpio, dh-yang, dh-vci, dh-python,
 	       python3 (>= 3.6), python3-all, python3-setuptools, python3-pytest,
-	       ebtables, python3-vyatta-cfgclient, python3-pytest-lazy-fixture
+	       ebtables, python3-vyatta-cfgclient, python3-pytest-lazy-fixture,
+	       python3-lxml, python3-ncclient
 Standards-Version: 3.9.6
 
 Package: vplane-config-qos
@@ -81,7 +82,7 @@ Description: Filter based classification yang
 
 Package: vyatta-vplane-qos-tests
 Architecture: all
-Depends: vplane-config-qos, ${misc:Depends}, python
+Depends: vplane-config-qos, ${misc:Depends}, python3 (>=3.6)
 Description: Vplane QoS tests
  This package contains the vplane-config-qos tests.
 

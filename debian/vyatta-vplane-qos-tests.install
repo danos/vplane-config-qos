@@ -24,7 +24,7 @@ usr/share/Qos/tests/ag-test4
 usr/share/Qos/tests/ag-test5
 usr/share/Qos/tests/ag-test6
 usr/share/Qos/tests/ag-test7
-usr/share/Qos/tests/qos-netconf-test.py
+usr/share/Qos/tests/qos_netconf_test.py
 usr/share/Qos/tests/README
 usr/share/Qos/tests/policer-tc.sh
 usr/share/Qos/tests/policer-tc-test1
