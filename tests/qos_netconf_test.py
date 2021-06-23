@@ -4,16 +4,14 @@
 
 # -*- coding: utf-8 -*-
 
-# import logging
 
 import argparse
 import time
 
-from lxml import etree
 from lxml import objectify
 
 from ncclient import manager
-from ncclient.xml_ import *
+from ncclient.xml_ import new_ele, sub_ele, to_xml
 
 QOS_URN = "{urn:vyatta.com:mgmt:vyatta-policy-qos:1}"
 POLICY_URN = "{urn:vyatta.com:mgmt:vyatta-policy:1}"
@@ -239,8 +237,6 @@ def parse_groups(groups_elem, indent, formatted):
     print(f"{spaces}--groups--")
 #    print(objectify.dump(groups_elem))
     name = groups_elem.find(QOS_URN + "name")
-    direction = groups_elem.find(QOS_URN + "direction")
-    ifindex = groups_elem.find(QOS_URN + "ifindex")
     for child_elem in groups_elem.iterchildren():
         if child_elem.tag == QOS_URN + "rule":
             parse_rule(name, child_elem, indent+2, formatted)
@@ -442,10 +438,12 @@ def main():
                              look_for_keys=False) as m:
         before = time.time()
         get_elem = new_ele('get')
+        # The following sub_ele calls filter the amount of XML data returned
+        # by the call to m.dispatch
         filter_elem = sub_ele(get_elem, 'filter', {"type": "subtree"})
         policy_elem = sub_ele(filter_elem, 'policy', {"xmlns": QOS_URN})
         qos_elem = sub_ele(policy_elem, 'qos', {"xmlns": QOS_URN})
-        state_elem = sub_ele(qos_elem, 'state', {"xmlns": QOS_URN})
+        sub_ele(qos_elem, 'state', {"xmlns": QOS_URN})
         print(to_xml(get_elem, pretty_print=args.formatted))
 
         qos_stats_xml = m.dispatch(get_elem)
