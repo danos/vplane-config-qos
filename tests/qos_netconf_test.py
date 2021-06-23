@@ -374,8 +374,8 @@ def strip_name_space(tag, namespace):
     """ strip the namespace of a XML tag """
     if tag.startswith(namespace):
         return tag.replace(namespace, "")
-    else:
-        return None
+
+    return None
 
 
 def parse_child_element(child_elem, indent, formatted):
