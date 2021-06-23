@@ -23,7 +23,6 @@ import vci
 from zmq.error import Again
 
 from vplaned import Controller, ControllerException
-from vyatta import configd
 
 from vyatta_policy_qos_vci.provisioner import Provisioner
 from vyatta_policy_qos_vci.provisioner import get_config

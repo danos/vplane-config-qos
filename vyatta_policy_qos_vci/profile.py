@@ -98,7 +98,7 @@ class Profile:
     def check(self, path_prefix):
         """ Check if profile configuration is valid """
         path_prefix = f"{path_prefix}/profile/{self._profile_name}"
-        
+
         result, error, path = self._pipe_queues.check(path_prefix)
         if not result:
             return result, error, path

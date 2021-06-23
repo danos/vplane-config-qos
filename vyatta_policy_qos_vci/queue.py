@@ -10,10 +10,10 @@ A module to define a class of Queue objects
 """
 
 from vyatta_policy_qos_vci.wred_map import WredMap
-from vyatta_policy_qos_vci.traffic_class_block import TrafficClassBlock
 
 import logging
 LOG = logging.getLogger('Policy QoS VCI')
+
 
 class Queue:
     """

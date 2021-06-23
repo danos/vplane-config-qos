@@ -19,6 +19,7 @@ def byte_limits():
         "/run/vyatta-platform/features/vyatta-policy-qos-groupings-v1/byte-limits")
     return byte_limit_feature.is_file()
 
+
 def get_limit(limit_value, qunits):
     """ Convert queue_limit/threshold values from msec to usec """
     if limit_value is not None:
