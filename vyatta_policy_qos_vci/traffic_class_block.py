@@ -46,7 +46,7 @@ class TrafficClassBlock:
         # Create TrafficClass objects for those not specified
         for tc_id in range(0, MAX_TRAFFIC_CLASS):
             try:
-                _ = self._tcs[tc_id]
+                _ = self._tcs[tc_id]  # noqa: F841
 
             except KeyError:
                 self._tcs[tc_id] = TrafficClass(tc_id, default_dict,

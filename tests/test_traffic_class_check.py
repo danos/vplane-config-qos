@@ -39,6 +39,8 @@ TRAFFIC_CLASS_DICT_LIST = [
         {"queue-limit": 1, "queue-limit-time": 1},
         {"queue-limit-bytes": 1, "queue-limit-time": 1}
 ]
+
+
 @pytest.mark.parametrize("traffic_class_dict", TRAFFIC_CLASS_DICT_LIST)
 def test_should_only_allow_one_queue_limit_type(traffic_class_dict):
 

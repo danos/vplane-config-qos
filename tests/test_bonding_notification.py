@@ -518,6 +518,7 @@ TEST_DATA = [
     )
 ]
 
+
 @pytest.mark.parametrize("config, cur_membership, notification,\
     expected_result", TEST_DATA)
 def test_lag_membership_ntfy(config, cur_membership, notification,
