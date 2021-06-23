@@ -106,14 +106,6 @@ EOF
                     } // stages
                 } // stage OSC
 
-                stage('Code Stats') {
-                    when {expression { env.CHANGE_ID == null }} // Not when this is a Pull Request
-                    steps {
-                        sh 'sloccount --duplicates --wide --details ${SRC_DIR} > sloccount.sc'
-                        sloccountPublish pattern: '**/sloccount.sc'
-                    }
-                }
-
                 /* We can't do a simple
                  *    sh "dram --username jenkins -d yang"
                  * because augment and uplink files are not currently used and 
