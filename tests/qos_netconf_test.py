@@ -385,13 +385,13 @@ def parse_child_element(child_elem, indent, formatted):
     if tag is None:
         tag = strip_name_space(child_elem.tag, POLICY_URN)
 
-    if tag not in functionDict.keys():
+    if tag not in FUNCTIONDICT.keys():
         print(f"--Failed to find parse function for {child_elem.tag}")
     else:
-        functionDict[tag](child_elem, indent, formatted)
+        FUNCTIONDICT[tag](child_elem, indent, formatted)
 
 
-functionDict = {
+FUNCTIONDICT = {
     "qos-policy": parse_qos_policy,
     "qos-class": parse_qos_class,
     "qos-profile": parse_qos_profile,
@@ -439,18 +439,18 @@ def main():
                                 level=manager.logging.WARNING)
     with manager.connect_ssh(args.ip, username="vyatta", password="vyatta",
                              port=22, hostkey_verify=False, allow_agent=False,
-                             look_for_keys=False) as m:
+                             look_for_keys=False) as ssh:
         before = time.time()
         get_elem = new_ele('get')
         # The following sub_ele calls filter the amount of XML data returned
-        # by the call to m.dispatch
+        # by the call to ssh.dispatch
         filter_elem = sub_ele(get_elem, 'filter', {"type": "subtree"})
         policy_elem = sub_ele(filter_elem, 'policy', {"xmlns": QOS_URN})
         qos_elem = sub_ele(policy_elem, 'qos', {"xmlns": QOS_URN})
         sub_ele(qos_elem, 'state', {"xmlns": QOS_URN})
         print(to_xml(get_elem, pretty_print=args.formatted))
 
-        qos_stats_xml = m.dispatch(get_elem)
+        qos_stats_xml = ssh.dispatch(get_elem)
 
         after = time.time()
 
