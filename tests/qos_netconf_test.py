@@ -152,6 +152,14 @@ def parse_token_bucket_rate(tb_rate_elem, indent, formatted):
     spaces = "".ljust(indent)
     tb_rate = tb_rate_elem.text
     print(f"{spaces}token-bucket-rate: {tb_rate}")
+
+
+def parse_token_bucket_rate_64(tb_rate_elem, indent, formatted):
+    """ """
+    if not formatted:
+        indent = 0
+    spaces = "".ljust(indent)
+    tb_rate = tb_rate_elem.text
     print(f"{spaces}token-bucket-rate-64: {tb_rate}")
 
 
@@ -171,6 +179,15 @@ def parse_traffic_class_period(tc_period_elem, indent, formatted):
     spaces = "".ljust(indent)
     tc_period = tc_period_elem.text
     print(f"{spaces}traffic-class-period: {tc_period}")
+
+
+def parse_traffic_class_period_usec(tc_period_elem, indent, formatted):
+    """ """
+    if not formatted:
+        indent = 0
+    spaces = "".ljust(indent)
+    tc_period = tc_period_elem.text
+    print(f"{spaces}traffic-class-period-usec: {tc_period}")
 
 
 def parse_pipe(pipe_elem, indent, formatted):
@@ -387,8 +404,10 @@ functionDict = {
     "traffic-class-rates": parse_traffic_class_rates,
     "weighted-round-robin-weights": parse_weighted_round_robin_weights,
     "token-bucket-rate": parse_token_bucket_rate,
+    "token-bucket-rate-64": parse_token_bucket_rate_64,
     "token-bucket-size": parse_token_bucket_size,
     "traffic-class-period": parse_traffic_class_period,
+    "traffic-class-period-usec": parse_traffic_class_period_usec,
     "pipe": parse_pipe,
     "pipe-list": parse_pipe_list,
     "rule": parse_rule,
