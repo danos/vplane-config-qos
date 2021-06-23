@@ -3,7 +3,10 @@
 # SPDX-License-Identifier: LGPL-2.1-only
 
 # -*- coding: utf-8 -*-
-
+"""
+A python script to retrieve QoS operational state information from a
+remote Vyatta vRouter via netconf/ssh connection.
+"""
 
 import argparse
 import time
@@ -18,6 +21,7 @@ POLICY_URN = "{urn:vyatta.com:mgmt:vyatta-policy:1}"
 
 
 def parse_qos_policy(qos_policy_elem, indent, formatted):
+    """ parse a qos policy """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -26,6 +30,7 @@ def parse_qos_policy(qos_policy_elem, indent, formatted):
 
 
 def parse_qos_class(qos_class_elem, indent, formatted):
+    """ parse a qos class """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -34,6 +39,7 @@ def parse_qos_class(qos_class_elem, indent, formatted):
 
 
 def parse_qos_profile(qos_profile_elem, indent, formatted):
+    """ parse a qos profile """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -42,6 +48,7 @@ def parse_qos_profile(qos_profile_elem, indent, formatted):
 
 
 def parse_subport_name(subport_name_elem, indent, formatted):
+    """ parse a subport name """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -50,7 +57,7 @@ def parse_subport_name(subport_name_elem, indent, formatted):
 
 
 def parse_subport(subport_elem, indent, formatted):
-    """ """
+    """ parse a subport """
 #    print("--subport--")
 #    print(objectify.dump(subport_elem))
     if not formatted:
@@ -61,7 +68,7 @@ def parse_subport(subport_elem, indent, formatted):
 
 
 def parse_dscp_to_queue_map(dscp_to_queue_map_elem, indent, formatted):
-    """ """
+    """ parse a dscp-to-queue map """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -70,12 +77,11 @@ def parse_dscp_to_queue_map(dscp_to_queue_map_elem, indent, formatted):
     dscp_value = dscp_to_queue_map_elem.find(QOS_URN + "dscp")
     queue = dscp_to_queue_map_elem.find(QOS_URN + "queue")
     tc = dscp_to_queue_map_elem.find(QOS_URN + "traffic-class")
-
     print(f"{spaces}dscp: {dscp_value}, queue: {queue}, traffic-class: {tc}")
 
 
 def parse_pcp_to_queue_map(pcp_to_queue_map_elem, indent, formatted):
-    """ """
+    """ parse a pcp-to-queue map"""
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -84,12 +90,11 @@ def parse_pcp_to_queue_map(pcp_to_queue_map_elem, indent, formatted):
     pcp_value = pcp_to_queue_map_elem.find(QOS_URN + "pcp")
     queue = pcp_to_queue_map_elem.find(QOS_URN + "queue")
     tc = pcp_to_queue_map_elem.find(QOS_URN + "traffic-class")
-
     print(f"{spaces}pcp: {pcp_value}, queue: {queue}, traffic-class: {tc}")
 
 
 def parse_queue_statistics(queue_stats_elem, tc, indent, formatted):
-    """ """
+    """ parse queue statistics """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -101,14 +106,13 @@ def parse_queue_statistics(queue_stats_elem, tc, indent, formatted):
     packets = queue_stats_elem.find(QOS_URN + "packets")
     qlen = queue_stats_elem.find(QOS_URN + "qlen")
     random_drops = queue_stats_elem.find(QOS_URN + "random-drop")
-
     print(f"{spaces}tc/queue {tc}/{queue} - bytes: {databytes}, "
           f"dropped: {dropped}, packets: {packets}, "
           f"random-drops: {random_drops}, qlen: {qlen}")
 
 
 def parse_traffic_class_queues_list(tc_queues_list_elem, indent, formatted):
-    """ """
+    """ parse a list of traffic-class queues """
 #    spaces = "".ljust(indent)
 #    print(f"{spaces}--traffic-class-queues-list--")
 #    print(objectify.dump(tc_queues_list_elem))
@@ -118,7 +122,7 @@ def parse_traffic_class_queues_list(tc_queues_list_elem, indent, formatted):
 
 
 def parse_traffic_class_rates(tc_rates_elem, indent, formatted):
-    """ """
+    """ parse a traffic-class's rates """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -132,7 +136,7 @@ def parse_traffic_class_rates(tc_rates_elem, indent, formatted):
 
 
 def parse_weighted_round_robin_weights(wrr_weights_elem, indent, formatted):
-    """ """
+    """ parse WRR weights """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -144,7 +148,7 @@ def parse_weighted_round_robin_weights(wrr_weights_elem, indent, formatted):
 
 
 def parse_token_bucket_rate(tb_rate_elem, indent, formatted):
-    """ """
+    """ parse token-bucket rate """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -153,7 +157,7 @@ def parse_token_bucket_rate(tb_rate_elem, indent, formatted):
 
 
 def parse_token_bucket_rate_64(tb_rate_elem, indent, formatted):
-    """ """
+    """ parse 64-bit version of token-bucket rate """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -162,7 +166,7 @@ def parse_token_bucket_rate_64(tb_rate_elem, indent, formatted):
 
 
 def parse_token_bucket_size(tb_size_elem, indent, formatted):
-    """ """
+    """ parse token-bucket size """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -171,7 +175,7 @@ def parse_token_bucket_size(tb_size_elem, indent, formatted):
 
 
 def parse_traffic_class_period(tc_period_elem, indent, formatted):
-    """ """
+    """ parse traffic-class period """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -180,7 +184,7 @@ def parse_traffic_class_period(tc_period_elem, indent, formatted):
 
 
 def parse_traffic_class_period_usec(tc_period_elem, indent, formatted):
-    """ """
+    """ parse traffic-class period in microseconds """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -189,6 +193,7 @@ def parse_traffic_class_period_usec(tc_period_elem, indent, formatted):
 
 
 def parse_pipe(pipe_elem, indent, formatted):
+    """ parse a pipe """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -197,7 +202,7 @@ def parse_pipe(pipe_elem, indent, formatted):
 
 
 def parse_pipe_list(pipe_list_elem, indent, formatted):
-    """ """
+    """ parse a list of pipes """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -210,7 +215,7 @@ def parse_pipe_list(pipe_list_elem, indent, formatted):
 
 
 def parse_rule(name, rules_elem, indent, formatted):
-    """ """
+    """ parse a rule """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -230,7 +235,7 @@ def parse_rule(name, rules_elem, indent, formatted):
 
 
 def parse_groups(groups_elem, indent, formatted):
-    """ """
+    """ parse a group of rules """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -243,7 +248,7 @@ def parse_groups(groups_elem, indent, formatted):
 
 
 def parse_rules(rules_elem, indent, formatted):
-    """ """
+    """ parse a rules block """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -257,7 +262,7 @@ def parse_rules(rules_elem, indent, formatted):
 
 
 def parse_traffic_class_list(traffic_class_list_elem, indent, formatted):
-    """ """
+    """ parse a traffic-class list """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -274,7 +279,7 @@ def parse_traffic_class_list(traffic_class_list_elem, indent, formatted):
 
 
 def parse_subport_list(subport_list_elem, indent, formatted):
-    """ """
+    """ parse a subport list """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -287,7 +292,7 @@ def parse_subport_list(subport_list_elem, indent, formatted):
 
 
 def parse_vlan_list(vlan_list_elem, indent, formatted):
-    """ """
+    """ parse a vlan list """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -306,7 +311,7 @@ def parse_vlan_list(vlan_list_elem, indent, formatted):
 
 
 def parse_shaper(ifname, shaper_elem, indent, formatted):
-    """ """
+    """ parse a shaper """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -318,7 +323,7 @@ def parse_shaper(ifname, shaper_elem, indent, formatted):
 
 
 def parse_if_list(if_list_elem, indent, formatted):
-    """ """
+    """ parse an if-list """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -333,7 +338,7 @@ def parse_if_list(if_list_elem, indent, formatted):
 
 
 def parse_state(state_elem, indent, formatted):
-    """ """
+    """ parse a qos state block """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -344,7 +349,7 @@ def parse_state(state_elem, indent, formatted):
 
 
 def parse_qos(qos_elem, indent, formatted):
-    """ """
+    """ parse a qos block """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -355,7 +360,7 @@ def parse_qos(qos_elem, indent, formatted):
 
 
 def parse_policy(policy_elem, indent, formatted):
-    """ """
+    """ parse a qos policy """
     if not formatted:
         indent = 0
     spaces = "".ljust(indent)
@@ -366,7 +371,7 @@ def parse_policy(policy_elem, indent, formatted):
 
 
 def strip_name_space(tag, namespace):
-    """ """
+    """ strip the namespace of a XML tag """
     if tag.startswith(namespace):
         return tag.replace(namespace, "")
     else:
@@ -374,9 +379,8 @@ def strip_name_space(tag, namespace):
 
 
 def parse_child_element(child_elem, indent, formatted):
-    """ """
+    """ parse a child element """
 #    print(child_elem.tag)
-
     tag = strip_name_space(child_elem.tag, QOS_URN)
     if tag is None:
         tag = strip_name_space(child_elem.tag, POLICY_URN)
@@ -421,7 +425,7 @@ functionDict = {
 
 
 def main():
-    """  """
+    """  The Main Program """
     print("Hello world\n")
     parser = argparse.ArgumentParser(description='Collect QoS op-mode data')
     parser.add_argument('-i', '--ip', help='ip-address of vRouter')
