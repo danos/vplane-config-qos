@@ -309,7 +309,8 @@ class Rule:
             self._ipv6_route = f" ipv6-route={route_type}"
 
         if 'tcp' in rule_dict:
-            self._proto_final = " proto-final=6"
+            if self._protocol is None:
+                self._proto_final = " proto-final=6"
             flags_dict = rule_dict['tcp']
             flags = flags_dict.get('flags')
             self._tcp_flags = f" tcp-flags={flags}"
