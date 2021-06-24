@@ -572,6 +572,19 @@ TEST_DATA = [
         {'id': 'm-64', 'action': 'pass', 'tcp': {'flags': '!ACK'}},
         # expected_output
         "action=accept proto-final=6 tcp-flags=!ACK handle=tag(1)"
+    ),
+    (
+        # test_input
+        {
+            'id': 'm-65',
+            'action': 'pass',
+            'protocol': 'tcp',
+            'tcp': {
+                'flags': 'SYN,RST,URG'
+            }
+        },
+        # expected_output
+        "action=accept proto-final=6 tcp-flags=SYN,RST,URG handle=tag(1)"
     )
 ]
 
