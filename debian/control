@@ -30,27 +30,12 @@ Description: Action groups YANG
  This YANG module provides the action groups configuration for use by
  NPF components.
 
-Package: vyatta-policy-qos-augment-v1-yang
-Architecture: all
-Depends: ${misc:Depends}, ${yang:Depends}
-Conflicts: vyatta-policy-qos-v1-yang
-Description: QoS policy augment YANG
- This YANG module provides the qos augment under the policy
- configuration tree.
-
 Package: vyatta-policy-qos-groupings-v1-yang
 Architecture: all
 Depends: vplane-config-qos, ${misc:Depends}, ${yang:Depends}
 Description: QoS YANG groupings
  This YANG module provides common groupings for quality of service
  configuration that can be used for a number of interface types.
-
-Package: vyatta-policy-qos-uplink-v1-yang
-Architecture: all
-Depends: vplane-config-qos, ${misc:Depends}, ${yang:Depends}
-Description: Uplink QoS YANG
- This YANG module provides the quality of service configuration for
- uplink interface types.
 
 Package: vyatta-policy-qos-v1-yang
 Architecture: all
