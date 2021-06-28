@@ -129,10 +129,6 @@ sub valid_binding {
     my $qmax = $self->{qmax};
     my $qmin = $self->{qmin};
 
-    invalid
-"traffic-class $id min-threshold $qmin must be less than max-threshold $qmax\n"
-      if defined $qmin && defined $qmax && $qmin >= $qmax;
-
     invalid "traffic-class $id mark-probability not set\n"
       unless defined( $self->{prob} );
 

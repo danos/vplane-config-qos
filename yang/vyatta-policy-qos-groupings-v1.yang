@@ -455,6 +455,9 @@ module vyatta-policy-qos-groupings-v1 {
 			}
 			description "Maximum threshold";
 			configd:help "Maximum threshold";
+			must "not(../min-threshold) or (../max-threshold > ../min-threshold)" {
+				error-message "min-threshold must be less than max-threshold";
+			}
 		}
 	}
 
