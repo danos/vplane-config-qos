@@ -129,9 +129,6 @@ sub valid_binding {
     my $qmax = $self->{qmax};
     my $qmin = $self->{qmin};
 
-    invalid "traffic-class $id mark-probability not set\n"
-      unless defined( $self->{prob} );
-
     invalid "traffic-class $id filter-weight not set\n"
       unless defined( $self->{weight} );
 
