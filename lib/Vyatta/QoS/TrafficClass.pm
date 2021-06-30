@@ -1,6 +1,6 @@
 # Module QoS::TrafficClass.pm
 #
-# Copyright (c) 2018-2020 AT&T Intellectual Property.
+# Copyright (c) 2018-2021 AT&T Intellectual Property.
 # All Rights Reserved.
 # Copyright (c) 2013-2017, Brocade Communications Systems, Inc.
 # All Rights Reserved.
@@ -124,10 +124,6 @@ sub valid_binding {
         $min_period = int($min_period) + 1;
         invalid "Minimum necessary period for $location is $min_period microseconds."
           if ( $min_period > $period && not $period_is_default );
-
-        if ( defined $tc->{red} ) {
-            $tc->{red}->valid_binding( $id, $tc->{limit} );
-        }
     }
 
     return 1;

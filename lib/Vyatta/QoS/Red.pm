@@ -123,13 +123,4 @@ sub command {
       $self->{qmin}, $self->{qmax}, $self->{prob}, $self->{weight};
 }
 
-# Validate that this RED configuration can be bound
-sub valid_binding {
-    my ( $self, $id, $qlimit ) = @_;
-    my $qmax = $self->{qmax};
-    my $qmin = $self->{qmin};
-
-    return 1;
-}
-
 1;
