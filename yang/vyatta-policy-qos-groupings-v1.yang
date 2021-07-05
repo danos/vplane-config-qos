@@ -66,10 +66,12 @@ module vyatta-policy-qos-groupings-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
-	revision 2021-06-16 {
+	revision 2021-07-06 {
 		description "Tighten up the pattern accepted by the
 			     bandwidth-auto-suffix and bandwidth-suffix
-			     typedefs.";
+			     typedefs.
+				 Check max-threshold > queue-limit and check
+				 min-threshold < max-threshold.";
 	}
 	revision 2020-12-08 {
 		description "Add support for time based configuration of
