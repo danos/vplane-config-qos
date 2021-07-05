@@ -24,6 +24,8 @@ vyatta-op-policy-qos-v1:ingress-map,              \
 vyatta-op-policy-qos-v1:gpc,                      \
 vyatta-policy-qos-v1:ingress-map,		  \
 vyatta-policy-qos-groupings-v1:ingress-map,       \
+vyatta-op-policy-qos-v1:egress-map,               \
+vyatta-policy-qos-v1:egress-map,                  \
 vyatta-policy-filter-classification-v1:generic-packet-classifier
 
 [Platform accton.as5916-54xks]
