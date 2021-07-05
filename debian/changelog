@@ -1,3 +1,11 @@
+vplane-config-qos (6.0.11) unstable; urgency=medium
+
+  [ Alan Dewar ]
+  * UT: update unit-test to reproduce VRVDR-50590
+  * VCI: fix NPF rule command generation for TCP
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Mon, 05 Jul 2021 16:30:55 +0100
+
 vplane-config-qos (6.0.10) unstable; urgency=medium
 
   * If its packets based wred setup the wred dictionary
