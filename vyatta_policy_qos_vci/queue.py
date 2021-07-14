@@ -10,6 +10,8 @@ A module to define a class of Queue objects
 """
 
 from vyatta_policy_qos_vci.wred_map import WredMap
+from vyatta_policy_qos_vci.traffic_class_block import TrafficClassBlock
+from typing import Dict, List, Tuple, Optional
 
 import logging
 LOG = logging.getLogger('Policy QoS VCI')
@@ -22,7 +24,15 @@ class Queue:
     priority-local bit set and a number of different wred-maps objects
     attached to it.
     """
-    def __init__(self, tc_id, wrr_id, wrr_weight, priority_local, wred_map_dict, qunits, shaper_tc_block):
+
+    def __init__(self, tc_id: int,
+                 wrr_id: int,
+                 wrr_weight: int,
+                 priority_local: int,
+                 wred_map_dict: Dict[str, list],
+                 qunits: WredMap.Units,
+                 shaper_tc_block: TrafficClassBlock) -> None:
+
         """ Create a Queue object """
         self._tc_id = tc_id
         self._wrr_id = wrr_id
@@ -57,26 +67,26 @@ class Queue:
                 pass
 
     @property
-    def tc_id(self):
+    def tc_id(self) -> int:
         """ Return the queue's traffic-class id """
         return self._tc_id
 
     @property
-    def wrr_id(self):
+    def wrr_id(self) -> int:
         """ Return the queue's wrr queue id """
         return self._wrr_id
 
     @property
-    def wrr_weight(self):
+    def wrr_weight(self) -> int:
         """ Return the queue's wrr weight """
         return self._wrr_weight
 
     @property
-    def priority_local(self):
+    def priority_local(self) -> int:
         """ Return whether or not this is the priority-local queue """
         return self._priority_local
 
-    def check(self, path_prefix):
+    def check(self, path_prefix: str) -> Tuple[bool, Optional[str], Optional[str]]:
         """ Check if configuration is valid """
         for wred_map in self._wred_maps:
             result, error, path = wred_map.check(path_prefix)
@@ -85,15 +95,16 @@ class Queue:
 
         return True, None, None
 
-    def commands(self, cmd_prefix, pipe_queue_id):
+    def commands(self, cmd_prefix: str, pipe_queue_id: int) -> List[str]:
         """ Generate the necessary commands for this Queue object """
         cmd_list = []
 
         qmap = (self._wrr_id << 2 | self._tc_id)
-        if qmap != 0:
-            qmap = hex(qmap)
-
-        cmd_prefix = f"{cmd_prefix} queue {qmap}"
+        if qmap == 0:
+            cmd_prefix = f"{cmd_prefix} queue {qmap}"
+        else:
+            qmap_hex = hex(qmap)
+            cmd_prefix = f"{cmd_prefix} queue {qmap_hex}"
 
         cmd = f"{cmd_prefix} wrr-weight {self._wrr_weight} {pipe_queue_id}"
         if self._priority_local:
