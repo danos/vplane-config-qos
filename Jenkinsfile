@@ -106,29 +106,43 @@ EOF
                     } // stages
                 } // stage OSC
 
-                /* We can't do a simple
-                 *    sh "dram --username jenkins -d yang"
-                 * because augment and uplink files are not currently used and 
-                 * may be deprecated at some point in the future.
-                 */
-                stage('DRAM') {
+                stage('yang') {
                     steps {
                         dir("${SRC_DIR}") {
-                            sh '''
-                               yang=`echo yang/*.yang | \
-                               sed 's@yang/vyatta-policy-qos-uplink-v1.yang @@' | \
-                               sed 's@yang/vyatta-policy-qos-augment-v1.yang @@' | \
-                               sed 's@yang/vyatta-policy-qos-deviation-.*.yang @@' | \
-                               sed 's/ /,/g'`
-                               platform=`echo platform/*.platform | sed 's/ /,/g'`
-                               deviations=`echo yang/*.yang | sed 's/ /,/g'`
-                               dram --username jenkins -f \$yang -P \$platform -Y \$deviations -s
-                               '''
+                            sh "invoke yang --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
+                               
                         }
                     }
                 }
-
-                stage('Perlcritic') {
+                stage('flake8') {
+                    steps {
+                        dir("${SRC_DIR}") {
+                               sh "invoke flake8 --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
+                        }
+                    }
+                }
+                stage('licence') {
+                    steps {
+                        dir("${SRC_DIR}") {
+                            sh "invoke licence --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
+                        }
+                    }
+                }
+                stage('gitlint') {
+                    agent {
+                        docker {
+                            image 'jorisroovers/gitlint'
+                            args '--entrypoint=""'
+                            reuseNode true
+                        }
+                    }
+                    steps {
+                        dir("${SRC_DIR}") {
+                            sh "invoke gitlint --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
+                        }
+                    }
+                }
+                stage('perlcritic') {
                     steps {
                         dir("${SRC_DIR}") {
                             sh script: "perlcritic --quiet --severity 5 . 2>&1 | tee perlcritic.txt", returnStatus: true
@@ -142,54 +156,6 @@ EOF
                                     enabledForFailure: true,
                                     qualityGates: [[type: 'TOTAL', threshold: 10, unstable: true]]
                             }
-                        }
-                    }
-                }
-
-                stage('Flake8') {
-                    steps {
-                        dir("${SRC_DIR}") {
-                            sh '''
-                               pyfiles=`find . -type f -exec file --mime-type {} \\; | grep "text/x-python" | cut -d: -f1 | cut -c3- | xargs`
-                               python3 -m flake8 --count --exclude=.git/*,debian/* \$pyfiles
-                               '''
-                        }
-                    }
-                }
-
-                stage('Codechecks') {
-                    when {
-                        allOf {
-                            // Only if this is a Pull Request
-                            expression { env.CHANGE_ID != null }
-                            expression { env.CHANGE_TARGET != null }
-                        }
-                    }
-                    steps {
-                        dir("${SRC_DIR}") {
-                            sh "./codechecks origin/${env.BRANCH_NAME} upstream/${env.CHANGE_TARGET} "
-                        }
-                    }
-                }
-
-                stage('Gitlint') {
-                    agent {
-                        docker {
-                            image 'jorisroovers/gitlint'
-                            args '--entrypoint=""'
-                            reuseNode true
-                        }
-                    }
-                    when {
-                        allOf {
-                            // Only if this is a Pull Request
-                            expression { env.CHANGE_ID != null }
-                            expression { env.CHANGE_TARGET != null }
-                        }
-                    }
-                    steps {
-                        dir("${SRC_DIR}") {
-                            sh "gitlint --commits upstream/${env.CHANGE_TARGET}..origin/${env.BRANCH_NAME}"
                         }
                     }
                 }
