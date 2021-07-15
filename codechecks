@@ -10,8 +10,8 @@ import datetime
 
 def get_changed_source_files(source, destination):
 
-    # Get all changes
-    git_command = f"git diff --diff-filter=d --name-only --format=format:'' {destination}...{source}"
+    # Get all changes. Ignore files that were deleted and files that were only renamed.
+    git_command = f"git diff --diff-filter=rd --name-only --format=format:'' --find-renames=100% {destination}...{source}"  # noqa: E501
     result = subprocess.check_output(git_command, shell=True).decode("utf-8")
     all_files = result.splitlines()
 
