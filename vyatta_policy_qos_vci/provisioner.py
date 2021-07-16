@@ -92,8 +92,8 @@ class Provisioner:
                 old_config = QosConfig(old)
                 new_config = QosConfig(new)
 
-            self._check_platform_params(old_config, new_config)
-            self._check_interfaces(old_config, new_config)
+            lp_des_changed = self._check_platform_params(old_config, new_config)
+            self._check_interfaces(old_config, new_config, lp_des_changed)
             self._check_policies(old_config, new_config)
             self._check_global_profiles(old_config, new_config)
             self._check_mark_maps(old_config, new_config)
@@ -108,15 +108,16 @@ class Provisioner:
             old_config = QosConfigBondMembers(old,
                 bond_membership=cur_bond_membership)
             new_config = QosConfigBondMembers(old, bond_membership=bonding_ntfy)
-            self._check_interfaces(old_config, new_config)
+            self._check_interfaces(old_config, new_config, False)
 
-    def _check_interfaces(self, old_config, new_config):
+    def _check_interfaces(self, old_config, new_config, lp_des_changed):
         """ Check for any changes to interface config """
         for name, interface in new_config.interfaces.items():
             old_interface = old_config.find_interface(name)
             if old_interface is not None:
-                if interface != old_interface:
-                    # This interface has been modified, delete the old
+                if interface != old_interface or lp_des_changed:
+                    # This interface has been modified or the local
+                    # priority designator has changed, delete the old
                     # version, add the new one
                     self._if_deletes.append(old_interface)
                     self._if_creates.append(interface)
@@ -199,13 +200,7 @@ class Provisioner:
             self._obj_delete.append(old_config.plat_lp_des)
             lp_des_changed = True
 
-        # If the local prio designator changes, then all policies need
-        # an update
-        if lp_des_changed:
-            for interface in new_config.interfaces.values():
-                if (interface not in self._if_creates and
-                   interface not in self._if_updates):
-                    self._if_updates.append(interface)
+        return lp_des_changed
 
     def _check_action_groups(self, old_config, new_config):
         """ Check for any changes to action-groups """
