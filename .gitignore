@@ -26,3 +26,14 @@ debian/vplane-config-qos
 
 vyatta_policy_qos_vci/__pycache__
 tests/__pycache__
+*cache*
+
+# Coverage
+htmlcov
+.coverage
+
+#IDE
+.vscode/
+
+
+

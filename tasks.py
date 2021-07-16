@@ -9,6 +9,7 @@ import datetime
 from typing import List
 import magic
 from invoke import task
+from invoke import Collection
 
 # ***************************************************
 # Helper functions used by multiple stages
@@ -76,7 +77,7 @@ def licence(context, commits="master...HEAD"):
                 else:
                     print(f"Failed: File {file} does not contain AT&T licence for the current year ({year})")
                     error = True
-            return error
+        return error
 
     def check_spdx_licence(source_files: List[str]) -> bool:
         error = False
@@ -157,28 +158,39 @@ def flake8(context, commits="master...HEAD"):
         python_files = " ".join(python_files)
         return context.run(f"python3 -m flake8 --count {python_files}", echo=True)
 
+@task
+def mypy(context, commits="master...HEAD"):
+    """Run python static type checker"""
+    files = get_changed_files(commits)
+    python_files = get_files_by_types(files, ["Python"])
+    if python_files:  # Only run mypy if there are files to check (otherwise it will run it over the directory)
+        python_files = " ".join(python_files)
+        return context.run(f"mypy {python_files}", echo=True)
 
 @task
-def unittest(context):
+def pytest(context):
     """Run the unit test suite"""
-    return context.run("pytest-3", echo=True)
+    return context.run("coverage run --source . -m pytest", echo=True)
+
+@task(pre=[pytest])
+def coverage(context):
+    """Run the unit test suite"""
+    context.run("coverage html", echo=True)
+    return context.run("coverage report", echo=True)
 
 
 @task
 def gitlint(context, commits="master...HEAD"):
     """Run the unit test suite"""
-    # context.run() fails for gitlint. Possilbly because of https://github.com/fabric/fabric/issues/1812
+    # context.run() fails for gitlint. Possibly because of https://github.com/fabric/fabric/issues/1812
     # So invoke gitlint using subprocess.run rather than invokes context.run
     command = f"gitlint --commits {commits}"
     print(f"Running: {command}", flush=True)
     output = subprocess.run(command, shell=True)
-    sys.exit(output.returncode)
+    if output.returncode:
+        sys.exit(output.returncode)
 
-@task
-def mypy(gitlint(context, commits="master...HEAD"):
-
-
-@task(pre=[licence, unittest, flake8, gitlint, yang])
+@task(pre=[licence, pytest, flake8, gitlint, yang])
 def all(context, commits="master...HEAD"):
     """Run all stages in the pipeline. Use invoke pre tasks to invoke all stages"""
     pass

@@ -128,6 +128,21 @@ EOF
                         }
                     }
                 }
+                stage('mypy') {
+                    steps {
+                        dir("${SRC_DIR}") {
+                            sh "invoke mypy --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
+                        }
+                    }
+                }
+                stage('coverage') {
+                    steps {
+                        dir("${SRC_DIR}") {
+                            sh "invoke coverage --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
+                        }
+                        //TODO: Archive htmlcov directory
+                    }
+                }
                 stage('gitlint') {
                     agent {
                         docker {
