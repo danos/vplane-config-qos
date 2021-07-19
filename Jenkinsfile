@@ -67,7 +67,7 @@ pipeline {
             cancelPreviousBuilds()
         }}}
 
-        stage('Run tests') {
+        stage(' ') {
             parallel {
                 stage('OSC') {
                     stages {
@@ -105,26 +105,10 @@ EOF
                         }
                     } // stages
                 } // stage OSC
-
-                stage('yang') {
-                    steps {
-                        dir("${SRC_DIR}") {
-                            sh "invoke yang --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
-                               
-                        }
-                    }
-                }
                 stage('flake8') {
                     steps {
                         dir("${SRC_DIR}") {
                                sh "invoke flake8 --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
-                        }
-                    }
-                }
-                stage('licence') {
-                    steps {
-                        dir("${SRC_DIR}") {
-                            sh "invoke licence --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
                         }
                     }
                 }
@@ -135,25 +119,44 @@ EOF
                         }
                     }
                 }
-                stage('coverage') {
-                    steps {
-                        dir("${SRC_DIR}") {
-                            sh "invoke coverage --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
+                stage(' ') {
+                    stages {
+                        stage('pytest') {
+                            steps {
+                                dir("${SRC_DIR}") {
+                                    sh "invoke pytest"
+                                }
+                            }
                         }
-                        //TODO: Archive htmlcov directory
+                        stage('coverage') {
+                            steps {
+                                dir("${SRC_DIR}") {
+                                    sh "invoke coverage"
+                                }
+                                //TODO: Archive htmlcov directory
+                            }
+                        }
                     }
                 }
                 stage('gitlint') {
-                    agent {
-                        docker {
-                            image 'jorisroovers/gitlint'
-                            args '--entrypoint=""'
-                            reuseNode true
-                        }
-                    }
                     steps {
                         dir("${SRC_DIR}") {
                             sh "invoke gitlint --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
+                        }
+                    }
+                }
+                stage('licence') {
+                    steps {
+                        dir("${SRC_DIR}") {
+                            sh "invoke licence --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
+                        }
+                    }
+                }
+                stage('yang') {
+                    steps {
+                        dir("${SRC_DIR}") {
+                            sh "invoke yang --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
+                               
                         }
                     }
                 }
