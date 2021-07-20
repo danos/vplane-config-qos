@@ -26,12 +26,14 @@ from typing import List
 import magic
 from invoke import task
 import os
+import functools
 
 # ***************************************************
 # Helper functions used by multiple stages
 # ***************************************************
 
 
+@functools.lru_cache(maxsize=1)
 def get_files(commits: str) -> List:
     def get_all_files(repo_root: str) -> List:
         """Return every file in this repository. Ignore .git folder and files excluded by .gitignore"""
@@ -61,7 +63,7 @@ def get_files(commits: str) -> List:
         result = subprocess.check_output(git_command, shell=True).decode("utf-8")
         changed_files = result.splitlines()
 
-        print(f"Files to check {changed_files}\n")
+        print(f"Files to check {changed_files}\n", flush=True)
         changed_files_full_path = [repo_root + '/' + s for s in changed_files]
         return changed_files_full_path
 
@@ -104,7 +106,7 @@ def flake8(context, commits="master...HEAD"):
     python_files = get_files_by_types(files, ["Python"])
     if python_files:  # Only run flake8 if there are files to check (otherwise it will run it over the directory)
         python_files = " ".join(python_files)
-        return context.run(f"python3 -m flake8 --count {python_files}", echo=True)
+        context.run(f"python3 -m flake8 --count {python_files}", echo=True)
 
 
 @task
@@ -114,20 +116,20 @@ def mypy(context, commits="master...HEAD"):
     python_files = get_files_by_types(files, ["Python"])
     if python_files:  # Only run mypy if there are files to check (otherwise it will run it over the directory)
         python_files = " ".join(python_files)
-        return context.run(f"mypy {python_files}", echo=True)
+        context.run(f"mypy {python_files}", echo=True)
 
 
 @task
 def pytest(context):
     """Run the unit test suite"""
-    return context.run("coverage run --source . -m pytest", echo=True)
+    context.run("coverage run --source . -m pytest", echo=True)
 
 
 @task(pre=[pytest])
 def coverage(context):
     """Generate the coverage report for the unit test suite"""
     context.run("coverage html", echo=True)
-    return context.run("coverage report", echo=True)
+    context.run("coverage report", echo=True)
 
 
 @task
@@ -177,14 +179,13 @@ def licence(context, commits="master...HEAD"):
     att_error = check_att_licence(code_files)
     spdx_error = check_spdx_licence(code_files)
     if att_error or spdx_error:
-        return True
-    return False
+        sys.exit(1)
 
 
 @task
 def yang(context, commits="master...HEAD"):
     """Run dram and check yang address"""
-    def check_yang_address(yang_files: List[str]) -> bool:
+    def check_yang_address(yang_files: List[str]):
 
         pattern = r"Postal: 208 S\. Akard Street\n\s*Dallas\, TX 75202, USA\n\s*Web: www.att.com"
         error = False
@@ -195,10 +196,10 @@ def yang(context, commits="master...HEAD"):
                 if not match:
                     print(f"Failed: Yang file {file} does not contain correct address")
                     error = True
-        return error
+        if error:
+            sys.exit(1)
 
-    # TODO: if invoked via jenkins for PR, then raise dram request and post link on PR page
-    def run_dram(yang_files: List[str]) -> bool:
+    def run_dram(yang_files: List[str]):
 
         filenames = []
         platform_yang = []
@@ -219,21 +220,19 @@ def yang(context, commits="master...HEAD"):
         if platform_yang:
             dram_command += f"--platform-yang {platform_yang}"
 
-        return context.run(dram_command, echo=True)
+        context.run(dram_command, echo=True)
 
     files = get_files(commits)
     yang_files = get_files_by_types(files, ["Yang"])
     # If there are no yang changes then can skip this
     if yang_files:
-        addr_error = check_yang_address(yang_files)
-        dram_error = run_dram(yang_files)
-        if addr_error or dram_error:
-            return True
-    return False
+        check_yang_address(yang_files)
+        run_dram(yang_files)
 
 
 @task(pre=[flake8, mypy, pytest, coverage, gitlint, licence, yang])
 def all(context, commits="master...HEAD"):
-    """Run all stages in the pipeline.
-       Use invoke pre tasks to invoke all stages"""
-    pass
+    """Run all stages in the pipeline."""
+    # Use invoke pre tasks to call each stage
+    # If no stage has called exited early then all stages were succesful
+    print("\nSUCCESS")
