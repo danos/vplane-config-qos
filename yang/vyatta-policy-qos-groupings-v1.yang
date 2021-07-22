@@ -66,12 +66,13 @@ module vyatta-policy-qos-groupings-v1 {
 
 		 This module provides common groupings for Quality of Service.";
 
-	revision 2021-07-06 {
+	revision 2021-07-22 {
 		description "Tighten up the pattern accepted by the
 			     bandwidth-auto-suffix and bandwidth-suffix
 			     typedefs.
 				 Check max-threshold > queue-limit and check
-				 min-threshold < max-threshold.";
+				 min-threshold < max-threshold.
+			     Rationalised error messages.";
 	}
 	revision 2020-12-08 {
 		description "Add support for time based configuration of
@@ -657,7 +658,7 @@ module vyatta-policy-qos-groupings-v1 {
 					error-message "There must be a system-default ingress-map configured.";
 				}
 				must "(not(../dscp-group))" {
-					error-message "Cannot mix designation values and dscp-groups in same profile map";
+					error-message "Cannot mix dscp-groups and designation in same profile map";
 				}
 			}
 		}
