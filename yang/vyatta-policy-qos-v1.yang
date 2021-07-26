@@ -49,7 +49,7 @@ module vyatta-policy-qos-v1 {
 	contact
 		"AT&T
 		 Postal: 208 S. Akard Street
-		 Dallas, TX 75202
+		 Dallas, TX 75202, USA
 		 Web: www.att.com";
 
 	description
@@ -89,6 +89,10 @@ module vyatta-policy-qos-v1 {
 		 SPDX-License-Identifier: BSD-3-Clause
 
 		 This module implements vyatta-policy-qos-v1.";
+
+	revision 2021-07-26 {
+		description "Added support for per VLAN QoS on LAG.";
+	}
 
 	revision 2021-03-16 {
 		description "Add check to prevent bonding interface from having
@@ -750,6 +754,20 @@ module vyatta-policy-qos-v1 {
 			must "(not(../../../../interfaces-policy:policy))" {
 				error-message "Policies are not permitted under both interface and switch-group CLI tree";
 			}
+			type leafref {
+				path "/policy:policy/qos/name/id";
+			}
+			configd:help "QoS policy name for interface";
+		}
+	}
+
+	augment /if:interfaces/bonding:bonding/bd-sw:switch-group/bd-sw:port-parameters/bd-sw:vlan-parameters/bd-sw:qos-parameters/bd-sw:vlan/sw-pol:policy {
+		if-feature hardware-qos-bond;
+		leaf qos {
+			must "(count(../../../../../sw-pol:policy/qos) = 1)" {
+				error-message "There must be a bonding level policy";
+			}
+
 			type leafref {
 				path "/policy:policy/qos/name/id";
 			}
