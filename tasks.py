@@ -122,14 +122,14 @@ def mypy(context, commits="master...HEAD"):
 @task
 def pytest(context):
     """Run the unit test suite"""
-    context.run("coverage run --source . -m pytest", echo=True)
+    context.run("python3-coverage run --source . -m pytest", echo=True)
 
 
 @task(pre=[pytest])
 def coverage(context):
     """Generate the coverage report for the unit test suite"""
-    context.run("coverage html", echo=True)
-    context.run("coverage report", echo=True)
+    context.run("python3-coverage html", echo=True)
+    context.run("python3-coverage report", echo=True)
 
 
 @task
@@ -230,7 +230,13 @@ def yang(context, commits="master...HEAD"):
         run_dram(yang_files)
 
 
-@task(pre=[flake8, mypy, pytest, coverage, gitlint, licence, yang])
+@task
+def build(context):
+    """Build the debian packages"""
+    context.run(f"dpkg-buildpackage", echo=True)
+
+
+@task(pre=[flake8, mypy, pytest, coverage, gitlint, licence, yang, build])
 def all(context, commits="master...HEAD"):
     """Run all stages in the pipeline."""
     # Use invoke pre tasks to call each stage
