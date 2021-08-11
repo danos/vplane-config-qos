@@ -1,2 +1,46 @@
+# Overview
+
 This package has the Vyatta configuration and operational templates
 and scripts for dataplane Qos.
+
+# Environment
+This package contains a number of build dependencies described in the [Debian control file](debian/control)
+
+
+It is recommended you install them in a containerized environment.
+
+The [Dockerfile](Dockerfile) gives docker instructions on how to create an image with all the necessary dependencies. 
+
+(// TODO: replace this with docker compose?)
+1. Change directory to the top of the project directory where the dockerfile exists
+2. Build the image and tag it
+```
+docker image build --tag vplane-config-qos . 
+```
+3. Build the container from the image and start the bash shell
+* Mount lets the container access the repository
+* User ID is changed so new files are not written to as root
+```
+docker run -it --mount type=bind,src=${PWD},dst=/tmp/vplane-config-qos --user $(id -u):$(id -g) vplane-config-qos /bin/bash
+```
+
+
+
+# Tasks
+This project uses [Invoke](http://www.pyinvoke.org/) as a task runner. Type `invoke --list` to see a list of tasks.
+
+Most checks can either check all files or just the changed files. The changed files are determined by using git to compare branches. By default most checks will compare the current branch to master. 
+  
+Run Flake8 over files changed between current branch and master  
+`invoke flake8`  
+Run Flake8 over all files  
+`invoke flake8 --commits all`  
+Run Flake8 over files changed between arbitary commits  
+`invoke flake8 --commits 7e6c554ea5...7e6c554ea5df`  
+
+# Build
+Run `invoke build`.  
+The Debian packages will be generated in the parent directory.
+// TODO: How to get debs out of container and onto host system.
+Copy them to a system running DANOS and install them.
+
