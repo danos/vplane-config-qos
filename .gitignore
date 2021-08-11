@@ -35,5 +35,7 @@ htmlcov
 #IDE
 .vscode/
 
+# Generated
+deb_packages/
 
 

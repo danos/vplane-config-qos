@@ -40,7 +40,6 @@ Run Flake8 over files changed between arbitary commits
 
 # Build
 Run `invoke build`.  
-The Debian packages will be generated in the parent directory.
-// TODO: How to get debs out of container and onto host system.
+The generated Debian packages will be generated in the child directory "deb_packages".
 Copy them to a system running DANOS and install them.
 

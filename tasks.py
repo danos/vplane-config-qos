@@ -232,8 +232,12 @@ def yang(context, commits="master...HEAD"):
 
 @task
 def build(context):
-    """Build the debian packages"""
+    """Build the debian packages.
+       Copy packages from parent directory to new child directory"""
     context.run(f"dpkg-buildpackage", echo=True)
+    context.run(f"mkdir -p deb_packages", echo=True)
+    context.run(f"cp ../*.deb ./deb_packages/", echo=True)
+
 
 
 @task(pre=[flake8, mypy, pytest, coverage, gitlint, licence, yang, build])

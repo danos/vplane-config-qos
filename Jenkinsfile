@@ -89,10 +89,14 @@ pipeline {
                             sh "invoke yang --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
                     }
                 }
-                // TODO: archive the created debs
                 stage('build') {        
                     steps {
                             sh "invoke build"
+                    }
+                    post {
+                        always {
+                            archiveArtifacts artifacts: 'deb_packages/*.deb', fingerprint: true
+                        }
                     }
                 }
                 stage('perlcritic') {
