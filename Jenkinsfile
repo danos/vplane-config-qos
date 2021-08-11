@@ -93,16 +93,6 @@ pipeline {
                             sh "invoke yang --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
                     }
                 }
-                stage('build') {        
-                    steps {
-                            sh "invoke build"
-                    }
-                    post {
-                        always {
-                            archiveArtifacts artifacts: 'deb_packages/*.deb', fingerprint: true
-                        }
-                    }
-                }
                 stage('perlcritic') {
                     steps {
                             sh script: "perlcritic --quiet --severity 5 . 2>&1 | tee perlcritic.txt", returnStatus: true
@@ -117,7 +107,18 @@ pipeline {
                     }
                 }
             } // parallel
-        } // Run tests
+        } // Stage ' ' 
+        // Run build after so nothing is changing whilst it is building
+        stage('build') {        
+            steps {
+                sh "invoke build"
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'deb_packages/*.deb', fingerprint: true
+                }
+            }
+        }
     } // stages
 
     post {
