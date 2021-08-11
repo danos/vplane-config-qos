@@ -239,7 +239,6 @@ def build(context):
     context.run(f"cp ../*.deb ./deb_packages/", echo=True)
 
 
-
 @task(pre=[flake8, mypy, pytest, coverage, gitlint, licence, yang, build])
 def all(context, commits="master...HEAD"):
     """Run all stages in the pipeline."""

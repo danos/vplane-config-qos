@@ -69,7 +69,11 @@ pipeline {
                         stage('coverage') {
                             steps {
                                     sh "invoke coverage"
-                                //TODO: Archive htmlcov directory
+                            }
+                            post {
+                                always {
+                                    archiveArtifacts artifacts: 'htmlcov/', fingerprint: true
+                                }
                             }
                         }
                     }
