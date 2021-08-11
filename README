@@ -1,7 +1,6 @@
 # Overview
 
-This package has the Vyatta configuration and operational templates
-and scripts for dataplane Qos.
+This package has the Vyatta configuration and operational templates and scripts for dataplane Qos.
 
 # Environment
 This package contains a number of build dependencies described in the [Debian control file](debian/control)
@@ -11,20 +10,24 @@ It is recommended you install them in a containerized environment.
 
 The [Dockerfile](Dockerfile) gives docker instructions on how to create an image with all the necessary dependencies. 
 
-(// TODO: replace this with docker compose?)
+(// TODO: Would it be better to replace this with docker compose?)
 1. Change directory to the top of the project directory where the dockerfile exists
 2. Build the image and tag it
 ```
 docker image build --tag vplane-config-qos . 
 ```
 3. Build the container from the image and start the bash shell
-* Mount lets the container access the repository
-* User ID is changed so new files are not written to as root
 ```
-docker run -it --mount type=bind,src=${PWD},dst=/tmp/vplane-config-qos --user $(id -u):$(id -g) vplane-config-qos /bin/bash
+docker run --interactive --tty --mount type=bind,src=${PWD},dst=/tmp/vplane-config-qos --user $(id -u):$(id -g) vplane-config-qos
 ```
-
-
+* `--interactive`: Keep STDIN open even if not attached
+* `--tty`: Allocate a pseudo-TTY
+* `--mount`: Attach a filesystem mount to the container. Lets container access the repository.
+  * `type=bind`:   
+  * `src=${PWD}`: Mount current working directory on the host
+  *  `dst=/tmp/vplane-config-qos`: Directory to mount in the container.
+* `--user $(id -u):$(id -g)`: Make container use the same UID & GID as the host to stop the container creating files with root as the owner.
+* `vplane-config-qos` The name of the image created in step 2
 
 # Tasks
 This project uses [Invoke](http://www.pyinvoke.org/) as a task runner. Type `invoke --list` to see a list of tasks.
