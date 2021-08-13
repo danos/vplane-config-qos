@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 
 # *************************************************
-# Developer---->|
-#               |---->tasks.py
-# Jenkins ----->|
+# Developer---->|                  |----> External tool (eg. gitlint)
+#               |---->tasks.py---->|
+# Jenkins ----->|                  |----> External tool (eg. mypy)
 #
 # Jenkinsfile should be a simple & thin wrapper that calls functionality in tasks.py
 # All functions with a @task decorator are individual stages that perform some check.

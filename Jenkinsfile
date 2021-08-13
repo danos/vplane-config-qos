@@ -28,9 +28,7 @@ pipeline {
     // Set user ID and group ID to be the as the jenkins user's IDs
     // TODO: https://stackoverflow.com/questions/44805076/setting-build-args-for-dockerfile-agent-using-a-jenkins-declarative-pipeline
     agent {
-        dockerfile {
-            args '--user 107:111'
-        }
+        dockerfile true
     }
 
     options {
@@ -127,5 +125,3 @@ pipeline {
         }
     }
 }
-
-
