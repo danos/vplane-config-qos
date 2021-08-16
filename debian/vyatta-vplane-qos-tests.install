@@ -1,36 +1,36 @@
-usr/share/Qos/tests/action-group.sh
-usr/share/Qos/tests/perQwred-tests.sh
-usr/share/Qos/tests/perQwred-test1
-usr/share/Qos/tests/perQwred-test2
-usr/share/Qos/tests/perQwred-test3
-usr/share/Qos/tests/perQwred-test4
-usr/share/Qos/tests/perQwred-test5
-usr/share/Qos/tests/perQwred-test6
-usr/share/Qos/tests/QinQ-tests.sh
-usr/share/Qos/tests/QinQmark-test1
-usr/share/Qos/tests/QinQmark-test2
-usr/share/Qos/tests/QinQmark-test3
-usr/share/Qos/tests/QinQmark-test4
-usr/share/Qos/tests/QinQmark-test5
-usr/share/Qos/tests/QinQmark-test6
-usr/share/Qos/tests/QinQmark-test8
-usr/share/Qos/tests/QinQmark-test7
-usr/share/Qos/tests/QinQmark-test9
-usr/share/Qos/tests/po-policy-tests.sh
-usr/share/Qos/tests/po-ag-tests.sh
-usr/share/Qos/tests/po-firewall-tests.sh
-usr/share/Qos/tests/po-tests.sh
-usr/share/Qos/tests/ag-test4
-usr/share/Qos/tests/ag-test5
-usr/share/Qos/tests/ag-test6
-usr/share/Qos/tests/ag-test7
-usr/share/Qos/tests/qos_netconf_test.py
-usr/share/Qos/tests/README
-usr/share/Qos/tests/policer-tc.sh
-usr/share/Qos/tests/policer-tc-test1
-usr/share/Qos/tests/policer-tc-test2
-usr/share/Qos/tests/policer-tc-test3
-usr/share/Qos/tests/switch-test1
-usr/share/Qos/tests/switch-test2
-usr/share/Qos/tests/switch-test3
-usr/share/Qos/tests/switch-test4
+tests/action-group.sh usr/share/Qos/tests
+tests/perQwred-tests.sh usr/share/Qos/tests
+tests/perQwred-test1 usr/share/Qos/tests
+tests/perQwred-test2 usr/share/Qos/tests
+tests/perQwred-test3 usr/share/Qos/tests
+tests/perQwred-test4 usr/share/Qos/tests
+tests/perQwred-test5 usr/share/Qos/tests
+tests/perQwred-test6 usr/share/Qos/tests
+tests/QinQ-tests.sh usr/share/Qos/tests
+tests/QinQmark-test1 usr/share/Qos/tests
+tests/QinQmark-test2 usr/share/Qos/tests
+tests/QinQmark-test3 usr/share/Qos/tests
+tests/QinQmark-test4 usr/share/Qos/tests
+tests/QinQmark-test5 usr/share/Qos/tests
+tests/QinQmark-test6 usr/share/Qos/tests
+tests/QinQmark-test8 usr/share/Qos/tests
+tests/QinQmark-test7 usr/share/Qos/tests
+tests/QinQmark-test9 usr/share/Qos/tests
+tests/po-policy-tests.sh usr/share/Qos/tests
+tests/po-ag-tests.sh usr/share/Qos/tests
+tests/po-firewall-tests.sh usr/share/Qos/tests
+tests/po-tests.sh usr/share/Qos/tests
+tests/ag-test4 usr/share/Qos/tests
+tests/ag-test5 usr/share/Qos/tests
+tests/ag-test6 usr/share/Qos/tests
+tests/ag-test7 usr/share/Qos/tests
+tests/qos_netconf_test.py usr/share/Qos/tests
+tests/README usr/share/Qos/tests
+tests/policer-tc.sh usr/share/Qos/tests
+tests/policer-tc-test1 usr/share/Qos/tests
+tests/policer-tc-test2 usr/share/Qos/tests
+tests/policer-tc-test3 usr/share/Qos/tests
+tests/switch-test1 usr/share/Qos/tests
+tests/switch-test2 usr/share/Qos/tests
+tests/switch-test3 usr/share/Qos/tests
+tests/switch-test4 usr/share/Qos/tests

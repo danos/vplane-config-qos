@@ -1,16 +1,18 @@
-opt/vyatta/bin/qos-op-mode.pl
-opt/vyatta/bin/show-ext-buf.pl
-opt/vyatta/bin/show-queueing.pl
-opt/vyatta/bin/qos-clear-counters.pl
-opt/vyatta/sbin/qos-validate.pl
-opt/vyatta/share/perl5/Vyatta/QoS/Bandwidth.pm
-opt/vyatta/share/perl5/Vyatta/QoS/Class.pm
-opt/vyatta/share/perl5/Vyatta/QoS/Debug.pm
-opt/vyatta/share/perl5/Vyatta/QoS/Profile.pm
-opt/vyatta/share/perl5/Vyatta/QoS/Queue.pm
-opt/vyatta/share/perl5/Vyatta/QoS/Red.pm
-opt/vyatta/share/perl5/Vyatta/QoS/Shaper.pm
-opt/vyatta/share/perl5/Vyatta/QoS/Subport.pm
-opt/vyatta/share/perl5/Vyatta/QoS/TrafficClass.pm
-opt/vyatta/share/perl5/Vyatta/QoS/Policy.pm
-opt/vyatta/share/vyatta-op/templates/monitor/queuing/node.def
+scripts/qos-op-mode.pl opt/vyatta/bin
+scripts/show-ext-buf.pl opt/vyatta/bin
+scripts/show-queueing.pl opt/vyatta/bin
+scripts/qos-clear-counters.pl opt/vyatta/bin
+scripts/qos-validate.pl opt/vyatta/sbin
+
+lib/Vyatta/QoS/Bandwidth.pm opt/vyatta/share/perl5/Vyatta/QoS
+lib/Vyatta/QoS/Class.pm opt/vyatta/share/perl5/Vyatta/QoS
+lib/Vyatta/QoS/Debug.pm opt/vyatta/share/perl5/Vyatta/QoS
+lib/Vyatta/QoS/Profile.pm opt/vyatta/share/perl5/Vyatta/QoS
+lib/Vyatta/QoS/Queue.pm opt/vyatta/share/perl5/Vyatta/QoS
+lib/Vyatta/QoS/Red.pm opt/vyatta/share/perl5/Vyatta/QoS
+lib/Vyatta/QoS/Shaper.pm opt/vyatta/share/perl5/Vyatta/QoS
+lib/Vyatta/QoS/Subport.pm opt/vyatta/share/perl5/Vyatta/QoS
+lib/Vyatta/QoS/TrafficClass.pm opt/vyatta/share/perl5/Vyatta/QoS
+lib/Vyatta/QoS/Policy.pm opt/vyatta/share/perl5/Vyatta/QoS
+
+templates-op/monitor/queuing/node.def opt/vyatta/share/vyatta-op/templates/monitor/queuing
