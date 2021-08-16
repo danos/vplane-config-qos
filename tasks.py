@@ -183,63 +183,15 @@ def licence(context, commits="master...HEAD"):
 
 
 @task
-def yang(context, commits="master...HEAD"):
-    """Run dram and check yang address"""
-    def check_yang_address(yang_files: List[str]):
-
-        pattern = r"Postal: 208 S\. Akard Street\n\s*Dallas\, TX 75202, USA\n\s*Web: www.att.com"
-        error = False
-        for file in yang_files:
-            with open(file) as f:
-                yang = f.read()
-                match = re.search(pattern, yang)
-                if not match:
-                    print(f"Failed: Yang file {file} does not contain correct address")
-                    error = True
-        if error:
-            sys.exit(1)
-
-    def run_dram(yang_files: List[str]):
-
-        filenames = []
-        platform_yang = []
-
-        # TODO: seperate yang files into different folders, eg. platform folder, deviation folder, etc
-        for file in yang_files:
-            if "deviation" in file:
-                platform_yang.append(file)
-            else:
-                filenames.append(file)
-
-        filenames = ",".join(filenames)
-        platform_yang = ",".join(platform_yang)
-
-        dram_command = "dram --username jenkins --suppress"
-        if filenames:
-            dram_command += f" --filenames {filenames}"
-        if platform_yang:
-            dram_command += f"--platform-yang {platform_yang}"
-
-        context.run(dram_command, echo=True)
-
-    files = get_files(commits)
-    yang_files = get_files_by_types(files, ["Yang"])
-    # If there are no yang changes then can skip this
-    if yang_files:
-        check_yang_address(yang_files)
-        run_dram(yang_files)
-
-
-@task
 def build(context):
     """Build the debian packages.
        Copy packages from parent directory to new child directory"""
-    context.run(f"dpkg-buildpackage", echo=True)
-    context.run(f"mkdir -p deb_packages", echo=True)
-    context.run(f"cp ../*.deb ./deb_packages/", echo=True)
+    context.run("dpkg-buildpackage", echo=True)
+    context.run("mkdir -p deb_packages", echo=True)
+    context.run("cp ../*.deb ./deb_packages/", echo=True)
 
 
-@task(pre=[flake8, mypy, pytest, coverage, gitlint, licence, yang, build])
+@task(pre=[flake8, mypy, pytest, coverage, gitlint, licence, build])
 def all(context, commits="master...HEAD"):
     """Run all stages in the pipeline."""
     # Use invoke pre tasks to call each stage

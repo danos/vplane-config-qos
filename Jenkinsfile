@@ -86,11 +86,6 @@ pipeline {
                             sh "invoke licence --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
                     }
                 }
-                stage('yang') {
-                    steps {
-                            sh "invoke yang --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
-                    }
-                }
                 stage('perlcritic') {
                     steps {
                             sh script: "perlcritic --quiet --severity 5 . 2>&1 | tee perlcritic.txt", returnStatus: true
