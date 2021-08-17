@@ -18,7 +18,7 @@ docker image build --tag vplane-config-qos .
 ```
 3. Build the container from the image and start the bash shell
 ```
-docker run --interactive --tty --mount type=bind,src=${PWD},dst=/tmp/vplane-config-qos --user $(id -u):$(id -g) vplane-config-qos
+docker run --interactive --tty --mount type=bind,src=${PWD},dst=/tmp/vplane-config-qos --user $(id -u):$(id -g) --rm vplane-config-qos
 ```
 * `--interactive`: Keep STDIN open even if not attached
 * `--tty`: Allocate a pseudo-TTY
@@ -27,6 +27,7 @@ docker run --interactive --tty --mount type=bind,src=${PWD},dst=/tmp/vplane-conf
   * `src=${PWD}`: Mount current working directory on the host
   *  `dst=/tmp/vplane-config-qos`: Directory to mount in the container.
 * `--user $(id -u):$(id -g)`: Make container use the same UID & GID as the host to stop the container creating files with root as the owner.
+* `--rm`: Automatically clean up the container and remove the file system when the container exits.
 * `vplane-config-qos` The name of the image created in step 2
 
 # Tasks

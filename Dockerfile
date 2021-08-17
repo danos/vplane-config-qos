@@ -8,10 +8,10 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Having problems resolving build.eng.vyatta.net so hard coded in the IP address.
 # TODO: Consider finding a better fix
 RUN echo 'deb [trusted=yes] http://10.156.50.45:82/Vyatta:/Tools/xUbuntu_20.04/ ./' >> /etc/apt/sources.list
-RUN apt update --yes
+RUN apt-get update --yes --allow-releaseinfo-change
 
 # Install mk-build-deps program
-RUN apt install --yes devscripts equivs
+RUN apt-get install --yes devscripts equivs
 
 # Only copy the debian control file as it describes the projects dependencies
 COPY ./debian/control /tmp/vplane-config-qos/debian/control
@@ -19,7 +19,7 @@ WORKDIR /tmp/vplane-config-qos
 
 # Install application dependencies
 RUN mk-build-deps \
- && apt install --yes --fix-missing ./vplane-config-qos-build-deps_*_all.deb
+ && apt-get install --yes --fix-missing ./vplane-config-qos-build-deps_*_all.deb
 
 # Jenkins mounts the directory at /var/lib/jenkins/workspace/DANOS_vplane-config-qos_PR-XXX
 # Non root users do not have write permissions in /var so cannot write above the mounted directory
