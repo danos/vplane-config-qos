@@ -46,8 +46,8 @@ pipeline {
         }}}
 
         stage(' ') {
-            parallel {               
-                stage('flake8') {        
+            parallel {
+                stage('flake8') {
                     steps {
                             sh "invoke flake8 --commits upstream/${env.CHANGE_TARGET}...origin/${env.BRANCH_NAME}"
                     }
@@ -100,9 +100,9 @@ pipeline {
                     }
                 }
             } // parallel
-        } // Stage ' ' 
+        } // Stage ' '
         // Run build after so nothing is changing whilst it is building
-        stage('build') {        
+        stage('build') {
             steps {
                 sh "invoke build"
             }

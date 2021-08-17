@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 9), autotools-dev,
 	       python3 (>= 3.6), python3-all, python3-setuptools, python3-pytest,
 	       ebtables, python3-pytest-lazy-fixture,
 	       python3-lxml, python3-ncclient, 
-		   python3-invoke, python3-coverage, python3-flake8, gitlint, mypy
+	       python3-invoke, python3-coverage, python3-flake8, gitlint, mypy
 Standards-Version: 3.9.6
 
 Package: vplane-config-qos
