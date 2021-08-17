@@ -1,3 +1,159 @@
+vplane-config-qos (7.0.0) unstable; urgency=medium
+
+  [ aroberts ]
+  * Register for VCI RPC for netconf and op-mode commands
+  * Revert "Register for VCI RPC for netconf and op-mode commands"
+  * Register for VCI RPC for netconf and op-mode commands
+
+  [ Parthiban Ramalingam ]
+  * QoS LAG: SNMP and NETCONF support on LAG
+
+  [ Gavin Shearer ]
+  * J2/GPC: Update validation to check not running out of statistics resources
+  * GPC: fix flake8 warning due to using a tab in existing code
+
+  [ Aidan Gallagher ]
+  * Remove micro-seconds-period from test JSON.
+  * Remove micro-seconds-period from profile and shaper
+  * Ignore __pycache__ in tests
+
+  [ Alan Dewar ]
+  * UT: fix some pylint warnings in unit-test
+  * UT: add new SIAD deployment config sanity test (Fixes: VRVDR-54979)
+
+  [ Derek Fawcus ]
+  * GPC: cope with rename of GPC elements
+  * GPC: Change how classifier is referenced
+
+  [ Karthik Murugesan ]
+  * Validate WRED min and max threshold values to be less than queue-limit
+  * Validate WRED min and max threshold values to be less than queue-limit
+
+  [ Alan Dewar ]
+  * Remove extraneous Yang must statement (Fixes: VRVDR-54991)
+
+  [ Aidan Gallagher ]
+  * Inital Jenkinsfile and codechecks
+  * Change Jenkinsfile for QoS
+  * Perlcritic fix - reorder use statements
+  * Perlcritic fix - replace return undef with return
+  * Perlcritic fix - declare variable on seperate line
+  * Flake8 - set max line length to 120
+  * Flake8 - fix E124
+  * Flake8 - fix E127
+  * Flake8 - fix E128
+  * Flake8 - fix E131
+  * Flake8 - fix E203
+  * Flake8 - fix E222
+  * Flake8 - fix E231
+  * Flake8 - fix E265
+  * Flake8 - fix E271
+  * Flake8 - fix E302
+  * Flake8 - fix E303
+  * Flake8 - fix E305
+  * Flake8 - fix E402
+  * Flake8 - fix E502
+  * Flake8 - fix E703
+  * Flake8 - fix W291
+  * Flake8 - fix W293
+  * Flake 8 - fix E265
+  * Flake8 - fix F401
+  * Flake8 - fix E122
+  * Flake8 - fix E129
+  * Flake8 - fix E501
+  * Configure Dram from QoS
+  * Remove trailing whitespace
+  * Update AT&T licence year
+  * Add AT&T licence to source files
+  * Add SPDX-Licence to source files
+  * Update yang contact address
+  * Initial port of codechecks written in bash to python
+  * Replace old codechecks with python codechecks
+  * Add "All rights reserved." to AT&T copyright message
+  * Remove unnecessary comment
+
+  [ Alan Dewar ]
+  * GPC-VCI: designation 0 not sent down to dataplane (Fixes: VRVDR-55098)
+
+  [ Aidan Gallagher ]
+  * Revert Perlcritic fixs
+  * Increase perl warning threshold
+
+  [ aroberts ]
+  * If its packets based wred setup the wred dictionary
+
+  [ Aidan Gallagher ]
+  * Jenkinsfile: use Vyatta:Unstable
+
+  [ aroberts ]
+  * Add unit tests for wred packets and time
+
+  [ Alan Dewar ]
+  * VCI: policer.py didn't handle '1g' bandwidths
+  * Tighten up bandwidth yang pattern (Fixes: VRVDR-55307)
+  * Add protobuf directory to sys.path (Fixes: VRVDR-55338)
+
+  [ aroberts ]
+  * Fixup queue-limit checks for all units
+
+  [ Aidan Gallagher ]
+  * Ensure all commits reference a JIRA ticket
+  * Remove Perl: profile-with-a-queue-without-a-traffic-class
+  * Checks traffic class does not have more than 8 queues
+  * Check traffic class during validation/commit
+  * Remove superfluous code in shaper check
+  * Codechecks: print more more explanatory message
+  * Check that only 1 queue limit type is being set
+
+  [ Alan Dewar ]
+  * VCI: fix shaper object has no attribute error
+  * UT: add calls to VCI objects check methods
+  * Convert qos-netconf-test.py to python3
+  * Convert qos_netconf_test.py to python3
+  * Convert qos_netconf_test.py to python3
+  * Convert qos_netconf_test.py to python3
+  * Convert qos_netconf_test.py to python3
+  * Convert qos_netconf_test.py to python3
+  * Convert qos_netconf_test.py to python3
+  * Convert qos_netconf_test.py to python3
+  * Convert qos_netconf_test.py to python3
+  * Fix build breakage
+
+  [ Aidan Gallagher ]
+  * Jenkinsfile: Remove flake8 quality gates
+  * Jenkinsfile: Remove Code Stats
+  * Fix various flake8 warnings
+  * Fix flake8 warnings
+
+  [ Alan Dewar ]
+  * UT: update unit-test to reproduce VRVDR-50590
+  * VCI: fix NPF rule command generation for TCP
+
+  [ Aidan Gallagher ]
+  * Move max-threshold > queue-limit check from perl to yang
+  * Move min-threshold < max-threshold from Perl to Yang
+  * Remove mark-probability not set check
+  * Remove filter-weight not set check
+  * Remove red valid_binding function
+  * Update yang revision log
+  * Remove augment and uplink packages
+
+  [ Parthiban Ramalingam ]
+  * QoS: Enable "egress-map" feature on the J2
+
+  [ Alan Dewar ]
+  * VCI: stop double programming of interfaces
+
+  [ Aidan Gallagher ]
+  * Move vyatta_policy_qos_vci unit tests
+  * Ignore renamed files from checks
+  * Add type hinting
+
+  [ Alan Dewar ]
+  * Make two similar error messages identical
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Tue, 17 Aug 2021 15:18:08 +0100
+
 vplane-config-qos (6.1.0) unstable; urgency=medium
 
   [ Alan Dewar ]
