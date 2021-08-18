@@ -3,10 +3,20 @@
 This package has the Vyatta configuration and operational templates and scripts for dataplane Qos.
 
 # Environment
-This package contains a number of build dependencies described in the [Debian control file](debian/control)
+## Dependencies
+This repository contains 3 types of dependencies.
+**Debian build packaging dependencies**: 
+Needed on the host machine to package the scripts into .deb files.
+Located in the [debian control file](debian/control) under the `Build-Depends:` section.
+**Developer dependencies**:
+Needed on the host machine to run quality checks on the source code.
+Located in the [requirements file](dev-requirements.txt).
+**Debian deployed dependencies**:
+Needed on the target machine.
+Located in the [debian control file](debian/control) under the packages `Depends:` section.
 
-
-It is recommended you install them in a containerized environment.
+## Container
+A containerized environment is provided with all the host dependencies installed.
 
 The [Dockerfile](Dockerfile) gives docker instructions on how to create an image with all the necessary dependencies. 
 
@@ -42,8 +52,12 @@ Run Flake8 over all files
 Run Flake8 over files changed between arbitary commits  
 `invoke flake8 --commits 7e6c554ea5...7e6c554ea5df`  
 
+When opening a pull request you should ensure all stages are successfull. 
+
 # Build
 Run `invoke build`.  
 The generated Debian packages will be generated in the child directory "deb_packages".
 Copy them to a system running DANOS and install them.
+
+
 

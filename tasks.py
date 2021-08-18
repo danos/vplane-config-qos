@@ -122,14 +122,14 @@ def mypy(context, commits="master...HEAD"):
 @task
 def pytest(context):
     """Run the unit test suite"""
-    context.run("python3-coverage run --source . -m pytest", echo=True)
+    context.run("coverage run --source . -m pytest", echo=True)
 
 
 @task(pre=[pytest])
 def coverage(context):
     """Generate the coverage report for the unit test suite"""
-    context.run("python3-coverage html", echo=True)
-    context.run("python3-coverage report", echo=True)
+    context.run("coverage html", echo=True)
+    context.run("coverage report", echo=True)
 
 
 @task

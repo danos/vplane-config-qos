@@ -1,0 +1,18 @@
+# List of development dependencies installed using pip.
+# These packages are for checking the quality of the code on the host machine 
+# and are not required on the target machine.
+# Install with: `pip install -r dev-requirements.txt`
+invoke
+pytest
+pytest-lazy-fixture
+coverage
+flake8
+gitlint
+mypy
+
+# Packages for systems tests (eg. qos_netconf_test.py) 
+# Packages are mastered in debian/control Package: vyatta-vplane-qos-tests 
+# Placed here so can run the test scripts without having to install the package
+# Note: apt and pip might give different version of these libraries
+lxml
+ncclient
