@@ -183,7 +183,7 @@ def licence(context, commits="master...HEAD"):
 
 
 @task
-def build(context):
+def package(context):
     """Build the debian packages.
        Copy packages from parent directory to new child directory"""
     context.run("dpkg-buildpackage", echo=True)
@@ -191,7 +191,7 @@ def build(context):
     context.run("cp ../*.deb ./deb_packages/", echo=True)
 
 
-@task(pre=[flake8, mypy, pytest, coverage, gitlint, licence, build])
+@task(pre=[flake8, mypy, pytest, coverage, gitlint, licence, package])
 def all(context, commits="master...HEAD"):
     """Run all stages in the pipeline."""
     # Use invoke pre tasks to call each stage

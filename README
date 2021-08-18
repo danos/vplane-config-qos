@@ -54,8 +54,8 @@ Run Flake8 over files changed between arbitary commits
 
 When opening a pull request you should ensure all stages are successfull. 
 
-# Build
-Run `invoke build`.  
+# Packaging
+Run `invoke package`.  
 The generated Debian packages will be generated in the child directory "deb_packages".
 Copy them to a system running DANOS and install them.
 

@@ -102,9 +102,9 @@ pipeline {
             } // parallel
         } // Stage ' '
         // Run build after so nothing is changing whilst it is building
-        stage('build') {
+        stage('package') {
             steps {
-                sh "invoke build"
+                sh "invoke package"
             }
             post {
                 always {
