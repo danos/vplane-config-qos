@@ -41,7 +41,7 @@ docker run --interactive --tty --mount type=bind,src=${PWD},dst=/tmp/vplane-conf
 * `vplane-config-qos` The name of the image created in step 2
 
 # Tasks
-This project uses [Invoke](http://www.pyinvoke.org/) as a task runner. Type `invoke --list` to see a list of tasks.
+This project uses [Invoke](http://www.pyinvoke.org/) as a task runner. From the root of the project directory type `invoke --list` to see a list of tasks.
 
 Most checks can either check all files or just the changed files. The changed files are determined by using git to compare branches. By default most checks will compare the current branch to master. 
   

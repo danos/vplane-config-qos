@@ -16,6 +16,8 @@
 # Either all files can be checked or only changed files.
 # By default tasks.py will compare the branch you are on with master to see what has changed.
 # If you specify `--commits all` (eg `invoke flake8 --commits all`) then all files will be checked.
+#
+# Currently this script is expected to be run from the root of the project directory. 
 # **************************************************
 
 import sys
@@ -121,8 +123,9 @@ def mypy(context, commits="master...HEAD"):
 
 @task
 def pytest(context):
-    """Run the unit test suite"""
-    context.run("coverage run --source . -m pytest", echo=True)
+    """Run the unit test suite.
+       Tell pytest to only look in vyatta_policy_qos_vci, otherwise it will fail"""
+    context.run("coverage run --source . -m pytest vyatta_policy_qos_vci", echo=True)
 
 
 @task(pre=[pytest])
