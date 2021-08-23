@@ -2,7 +2,9 @@ Source: vplane-config-qos
 Section: contrib/net
 Priority: extra
 Maintainer: Vyatta Package Maintainers <DL-vyatta-help@att.com>
-Build-Depends: debhelper (>= 9), dh-yang, dh-vci
+Build-Depends: debhelper (>= 9), 
+               dh-yang,
+               dh-vci
 Standards-Version: 3.9.6
 
 Package: vplane-config-qos
