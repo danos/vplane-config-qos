@@ -27,7 +27,6 @@ import datetime
 from typing import List
 import magic
 from invoke import task
-import os
 import functools
 
 # ***************************************************
@@ -44,19 +43,11 @@ def get_files(commits: str) -> List:
         # any file extension. Therefore it is necessary to pass every file to these tools so no files are
         # left out.
 
-        all_files = []
-        for root, dirs, files in os.walk(repo_root):
-            if ".git" in dirs:                          # Ignore any files in .git/
-                dirs.remove(".git")
-            for file in files:
-                all_files.append(os.path.join(root, file))
-
-        # Ignore any files in .gitignore
-        all_files_str = " ".join(all_files)
-        ignored_files = subprocess.check_output(
-            [f"git check-ignore {all_files_str}"], shell=True).decode("utf-8").rstrip().split()
-        valid_files = list(set(all_files) - set(ignored_files))
-        return valid_files
+        git_command = "git ls-tree -r --full-name --name-only HEAD"
+        result = subprocess.check_output(git_command, shell=True).decode("utf-8")
+        all_files = result.splitlines()
+        all_files_full_path = [repo_root + '/' + s for s in all_files]
+        return all_files_full_path
 
     def get_changed_files(repo_root: str, commits: str) -> List:
         """Return all the files with content that has changed"""
