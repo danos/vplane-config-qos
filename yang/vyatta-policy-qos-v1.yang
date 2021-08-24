@@ -90,6 +90,11 @@ module vyatta-policy-qos-v1 {
 
 		 This module implements vyatta-policy-qos-v1.";
 
+	revision 2021-03-24 {
+		description "Add a check to prevent mark-maps and egress-maps
+			     from being applied to the same interface.";
+	}
+
 	revision 2021-02-22 {
 		description "Added support for LAG QoS.";
 	}
@@ -768,6 +773,9 @@ module vyatta-policy-qos-v1 {
 		}
 		leaf egress-map {
 			if-feature egress-map;
+			must "not (/policy:policy/qos/name[id = current()/../qos]/shaper/mark-map)" {
+				error-message "Must not mix mark-maps and egress-maps on the same interface";
+			}
 			type leafref {
 				path "/policy:policy/egress-map/id";
 			}
@@ -785,6 +793,9 @@ module vyatta-policy-qos-v1 {
 		}
 		leaf egress-map {
 			if-feature egress-map;
+			must "not (/policy:policy/qos/name[id = current()/../../../interfaces-policy:policy/qos]/shaper/mark-map)" {
+				error-message "Must not mix mark-maps and egress-maps on the same interface";
+			}
 			type leafref {
 				path "/policy:policy/egress-map/id";
 			}
@@ -809,6 +820,9 @@ module vyatta-policy-qos-v1 {
 			must "(not(/policy:policy/egress-map[id = current()]/designation/dscp))" {
 				error-message "Egress-map with DSCP configuration not supported on switch-group interface";
 			}
+			must "not (/policy:policy/qos/name[id = current()/../qos]/shaper/mark-map)" {
+				error-message "Must not mix mark-maps and egress-maps on the same interface";
+			}
 		}
 	}
 
@@ -828,6 +842,9 @@ module vyatta-policy-qos-v1 {
 			configd:help "QoS policy egress-map for vlan";
 			must "(not(/policy:policy/egress-map[id = current()]/designation/dscp))" {
 				error-message "Egress-map with DSCP configuration not supported on switch-group interface";
+			}
+			must "not (/policy:policy/qos/name[id = current()/../../../../../sw-pol:policy/qos]/shaper/mark-map)" {
+				error-message "Must not mix mark-maps and egress-maps on the same interface";
 			}
 		}
 	}
