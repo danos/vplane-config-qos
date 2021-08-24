@@ -106,11 +106,6 @@ pipeline {
             steps {
                 sh "invoke package"
             }
-            post {
-                always {
-                    archiveArtifacts artifacts: 'deb_packages/*.deb', fingerprint: true
-                }
-            }
         }
     } // stages
 
