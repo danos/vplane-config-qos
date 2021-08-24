@@ -1,18 +1,18 @@
-scripts/qos-op-mode.pl opt/vyatta/bin
-scripts/show-ext-buf.pl opt/vyatta/bin
-scripts/show-queueing.pl opt/vyatta/bin
-scripts/qos-clear-counters.pl opt/vyatta/bin
-scripts/qos-validate.pl opt/vyatta/sbin
+
 
 lib/Vyatta/QoS/Bandwidth.pm opt/vyatta/share/perl5/Vyatta/QoS
 lib/Vyatta/QoS/Class.pm opt/vyatta/share/perl5/Vyatta/QoS
 lib/Vyatta/QoS/Debug.pm opt/vyatta/share/perl5/Vyatta/QoS
+lib/Vyatta/QoS/Policy.pm opt/vyatta/share/perl5/Vyatta/QoS
 lib/Vyatta/QoS/Profile.pm opt/vyatta/share/perl5/Vyatta/QoS
 lib/Vyatta/QoS/Queue.pm opt/vyatta/share/perl5/Vyatta/QoS
 lib/Vyatta/QoS/Red.pm opt/vyatta/share/perl5/Vyatta/QoS
 lib/Vyatta/QoS/Shaper.pm opt/vyatta/share/perl5/Vyatta/QoS
 lib/Vyatta/QoS/Subport.pm opt/vyatta/share/perl5/Vyatta/QoS
 lib/Vyatta/QoS/TrafficClass.pm opt/vyatta/share/perl5/Vyatta/QoS
-lib/Vyatta/QoS/Policy.pm opt/vyatta/share/perl5/Vyatta/QoS
-
+scripts/qos-clear-counters.pl opt/vyatta/bin
+scripts/qos-op-mode.pl opt/vyatta/bin
+scripts/qos-validate.pl opt/vyatta/sbin
+scripts/show-ext-buf.pl opt/vyatta/bin
+scripts/show-queueing.pl opt/vyatta/bin
 templates-op/monitor/queuing/node.def opt/vyatta/share/vyatta-op/templates/monitor/queuing

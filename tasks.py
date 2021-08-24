@@ -10,7 +10,7 @@
 # Jenkinsfile should be a simple & thin wrapper that calls functionality in tasks.py
 # All functions with a @task decorator are individual stages that perform some check.
 #
-# Tasks are accesible from the command line by typing `invoke {TASKNAME}`
+# Tasks are accessible from the command line by typing `invoke {TASKNAME}`
 # Type `invoke -l` to see a list of available commands.
 #
 # Either all files can be checked or only changed files.
@@ -189,5 +189,5 @@ def package(context):
 def all(context, commits="master...HEAD"):
     """Run all stages in the pipeline."""
     # Use invoke pre tasks to call each stage
-    # If no stage has called exited early then all stages were succesful
+    # If no stage has exited early then all stages were successful
     print("\nSUCCESS")

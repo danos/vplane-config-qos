@@ -49,10 +49,10 @@ Run Flake8 over files changed between current branch and master
 `invoke flake8`  
 Run Flake8 over all files  
 `invoke flake8 --commits all`  
-Run Flake8 over files changed between arbitary commits  
-`invoke flake8 --commits 7e6c554ea5...7e6c554ea5df`  
+Run Flake8 over files changed between arbitrary commits or references  
+`invoke flake8 --commits master-next...master`  
 
-When opening a pull request you should ensure all stages are successfull. 
+When opening a pull request you should ensure all stages are successful. 
 
 # Packaging
 Run `invoke package`.  
