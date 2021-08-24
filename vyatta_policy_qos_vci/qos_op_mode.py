@@ -137,7 +137,18 @@ def get_vlan_policy_name(if_type_dict, vlan_tag):
                     return policy_dict['vyatta-policy-qos-v1:qos']
 
         except KeyError:
-            return None
+            # Hardware switch bonding vlan policy attachment point
+            try:
+                policy_dict = if_type_dict['vyatta-interfaces-bonding-switch-v1:switch-group']
+                port_params_dict = policy_dict['port-parameters']
+                qos_params_dict = port_params_dict['qos-parameters']
+                vlan_list = qos_params_dict['vlan']
+                for vlan_dict in vlan_list:
+                    if vlan_dict['vlan-id'] == vlan_tag:
+                        policy_dict = port_params_dict['vyatta-interfaces-switch-policy-v1:policy']
+                        return policy_dict['vyatta-policy-qos-v1:qos']
+            except KeyError:
+                return None
 
     return None
 

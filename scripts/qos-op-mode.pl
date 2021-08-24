@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 #
-# Copyright (c) 2017-2020, AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2021, AT&T Intellectual Property. All rights reserved.
 #
 # This script issues a "qos optimised-show" command to the vyatta dataplane and
 # in return receives the QoS operational state (including counters) encoded in
@@ -71,6 +71,16 @@ sub get_if_subport_policy_name {
         return $policy_name if defined($policy_name);
 
         $config->setLevel( $intf->path . " vif $vif_id policy qos" );
+        $policy_name = $config->returnOrigValue();
+
+        # Deal with bonding interface
+        $config->setLevel( $intf->path . " bond-group" );
+        $bond_name = $config->returnOrigValue();
+        return $policy_name if !defined($bond_name);
+
+        # bonding interface L2 mode
+        $config->setLevel( " interfaces bonding $bond_name switch-group
+            . port-parameters vlan-parameters qos-parameters vlan $vif_id policy qos" );
         $policy_name = $config->returnOrigValue();
     } else {
 
