@@ -84,6 +84,10 @@ def get_files_by_types(files: List, types: List[str]) -> List:
                 file_extension = file.split('.').pop()
                 if file_extension == "yang":
                     files_by_types.append(file)
+            if "Markdown" in types:
+                file_extension = file.split('.').pop()
+                if file_extension == "md":
+                    files_by_types.append(file)
 
     return files_by_types
 
@@ -177,6 +181,21 @@ def licence(context, commits="master...HEAD"):
 
 
 @task
+def whitespace(context, commits="master...HEAD"):
+    files = get_files(commits)
+
+    # Remove markdown files as they use trailing whitespace
+    markdown_files = get_files_by_types(files, ["Markdown"])
+    files = set(files) - set(markdown_files)
+    files_str = " ".join(files)
+
+    # Grep for white space before end of line
+    # Exclaimation mark at the start inverts the return code so matches are errors
+    command = rf'! grep --with-filename --line-number --only-matching "\s$" {files_str}'
+    context.run(command, echo=True)
+
+
+@task
 def package(context):
     """Build the debian packages.
        Copy packages from parent directory to new child directory"""
@@ -185,7 +204,7 @@ def package(context):
     context.run("cp ../*.deb ./deb_packages/", echo=True)
 
 
-@task(pre=[flake8, mypy, pytest, coverage, gitlint, licence, package])
+@task(pre=[flake8, mypy, pytest, coverage, gitlint, licence, whitespace, package])
 def all(context, commits="master...HEAD"):
     """Run all stages in the pipeline."""
     # Use invoke pre tasks to call each stage
