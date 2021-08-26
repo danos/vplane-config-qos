@@ -17,7 +17,7 @@
 # By default tasks.py will compare the branch you are on with master to see what has changed.
 # If you specify `--commits all` (eg `invoke flake8 --commits all`) then all files will be checked.
 #
-# Currently this script is expected to be run from the root of the project directory. 
+# Currently this script is expected to be run from the root of the project directory.
 # **************************************************
 
 import sys
@@ -59,9 +59,9 @@ def get_files(commits: str) -> List:
         return valid_files
 
     def get_changed_files(repo_root: str, commits: str) -> List:
-        """Return all the files that have changed"""
+        """Return all the files with content that has changed"""
 
-        git_command = f"git diff --diff-filter=rd --find-renames=100% --name-only --format=format:'' {commits}"
+        git_command = f"git diff -G'.' --diff-filter=rd --find-renames=100% --name-only --format=format:'' {commits}"
         result = subprocess.check_output(git_command, shell=True).decode("utf-8")
         changed_files = result.splitlines()
 
@@ -152,10 +152,10 @@ def licence(context, commits="master...HEAD"):
     """Check source code files contain the spdx licence and an up to date AT&T licence"""
 
     def check_att_licence(source_files: List[str]) -> bool:
+        error = False
         for file in source_files:
             year = datetime.datetime.now().year
             pattern = rf"Copyright \(c\) .*{year}.* AT&T Intellectual Property"
-            error = False
 
             with open(file) as f:
                 for line in f:
