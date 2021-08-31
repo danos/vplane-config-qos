@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM debian:11
 USER root
 
 # Set working dir where files describing dependencies will be copied to
@@ -11,8 +11,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Add Vyatta tools repository
 RUN apt-get update --yes && \
     apt-get install --yes wget gnupg2 && \
-    wget -q -O- http://build.eng.vyatta.net:82/Vyatta:/Tools/xUbuntu_20.04/Release.key | apt-key add - && \
-    echo 'deb http://build.eng.vyatta.net:82/Vyatta:/Tools/xUbuntu_20.04/ ./' >> /etc/apt/sources.list && \
+    wget -q -O- http://repos.eng.vyatta.net/Vyatta:/Tools/Debian11/Release.key | apt-key add - && \
+    echo 'deb http://repos.eng.vyatta.net/Vyatta:/Tools/Debian11/ ./' >> /etc/apt/sources.list && \
     apt-get update --yes
 
 #-----Debian build/packaging dependencies------
@@ -24,6 +24,9 @@ COPY ./debian/control /tmp/vplane-config-qos/debian/control
 
 # Install application's build/packaging dependencies
 RUN mk-build-deps --install --remove --tool='apt-get --yes'
+
+# Install vyatta configuration for debian lintian tool
+RUN apt-get install --yes --fix-missing lintian-profile-vyatta
 #------------------------------------------------
 
 #-----------Pip development dependencies---------

@@ -198,14 +198,32 @@ def whitespace(context, commits="master...HEAD"):
 
 @task
 def package(context):
-    """Build the debian packages.
-       Copy packages from parent directory to new child directory"""
+    """ Build the debian packages.
+        Copy packages from parent directory to new child directory. Do not remove them
+        as lintian still expects them in the parent directory.
+        Clean up after a package is built.
+    """
     context.run("dpkg-buildpackage", echo=True)
     context.run("mkdir -p deb_packages", echo=True)
     context.run("cp ../*.deb ./deb_packages/", echo=True)
 
 
-@task(pre=[flake8, mypy, pytest, coverage, gitlint, licence, whitespace, package])
+@task
+def clean(context):
+    context.run("dh clean", echo=True)
+    context.run("py3clean .", echo=True)
+
+
+@task
+def lintian(context):
+    """ Lint debain packages.
+        Having issues with error: source-is-missing .../test_show_queueing.cpython-39-pytest-6.2.5.pyc
+        For some reason lintian find pycache files even when they don't exist anymore.
+    """
+    context.run("lintian --fail-on error --profile vyatta", echo=True)
+
+
+@task(pre=[flake8, mypy, pytest, coverage, gitlint, licence, whitespace, package, clean, lintian])
 def all(context, commits="master...HEAD"):
     """Run all stages in the pipeline."""
     # Use invoke pre tasks to call each stage
