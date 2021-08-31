@@ -29,9 +29,9 @@ tests/QinQmark-test8 usr/share/Qos/tests
 tests/QinQmark-test9 usr/share/Qos/tests
 tests/QinQ-tests.sh usr/share/Qos/tests
 tests/qos_netconf_test.py usr/share/Qos/tests
-tests/qos_op_mode_config.json
-tests/qos_op_mode_expected_results.json
-tests/qos_op_mode_test_data.json
+tests/qos_op_mode_config.json usr/share/Qos/tests
+tests/qos_op_mode_expected_results.json usr/share/Qos/tests
+tests/qos_op_mode_test_data.json usr/share/Qos/tests
 tests/README usr/share/Qos/tests
 tests/switch-test1 usr/share/Qos/tests
 tests/switch-test2 usr/share/Qos/tests
