@@ -49,7 +49,7 @@ def print_gpc_tables(tbl_dict):
 
                 # Print the rules for each table
                 for rule in table['rules']:
-                    txt = f"{rule['result']}[{rule['rule-number']}]".ljust(22)
+                    txt = f"{rule['result']}[{rule['orig-number']}]".ljust(22)
                     counter = rule['counter']
                     txt2 = str(counter['packets']).rjust(17)
                     print(f"{txt}{txt2} Packets")
