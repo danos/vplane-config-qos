@@ -32,11 +32,10 @@ use constant TC_MASK  => 0x3;
 
 sub is_hardware_qos_bond_enabled {
     my $feature_marker =
-       "/run/vyatta-platform/features/vyatta-policy-qos-v1/hardware-qos-bond";
+      "/run/vyatta-platform/features/vyatta-policy-qos-v1/hardware-qos-bond";
 
     return -e $feature_marker;
 }
-
 
 #
 # The following global variable controls whether we're accessing and displaying
@@ -191,25 +190,25 @@ sub subport_vlan {
 }
 
 sub show {
-    my $name = shift;
-    my @members =();
+    my $name    = shift;
+    my @members = ();
     my $fmt;
     my $l;
 
     if ($bits64) {
         $fmt = "%-5s %2s %3s %8s %8s %-7s %3s %20s %-9s\n";
-        $l = sprintf $fmt, 'Class', 'TC', 'WRR', 'Pipe-QID', 'Qlength', '',
-            'PLQ',
-            'Counters', '';
+        $l   = sprintf $fmt, 'Class', 'TC', 'WRR', 'Pipe-QID', 'Qlength', '',
+          'PLQ',
+          'Counters', '';
     } else {
         $fmt = "%-8s %4s %4s %7s %10s %16s %9s %9s %3s\n";
-        $l = sprintf $fmt, 'Class', 'Prio', 'WRR', 'Qlength',
-            'Packets', 'Bytes', 'Tail-drop', 'RED-drop', 'PLQ';
+        $l   = sprintf $fmt, 'Class', 'Prio', 'WRR', 'Qlength',
+          'Packets', 'Bytes', 'Tail-drop', 'RED-drop', 'PLQ';
     }
     print $l, '-' x length($l), "\n";
-    if (($name =~ "bond") && is_hardware_qos_bond_enabled) {
+    if ( ( $name =~ "bond" ) && is_hardware_qos_bond_enabled ) {
         @members = get_members($name);
-        @members = sort {versioncmp($a, $b)} @members;
+        @members = sort { versioncmp( $a, $b ) } @members;
 
         my $vif = "";
 
@@ -496,7 +495,7 @@ sub show_summary_header64 {
 
 # Check if it is bonding interface and construct list
 sub check_if_bonding_member_and_construct_list {
-    my $if_name = shift;
+    my $if_name                = shift;
     my $bonding_interfaces_ref = shift;
 
     my $config = new Vyatta::Config();
@@ -506,14 +505,14 @@ sub check_if_bonding_member_and_construct_list {
     $config->setLevel( $intf->path . " bond-group" );
     my $bond_group = $config->returnOrigValue();
 
-    if (defined($bond_group)) {
-       my @members;
-       if (exists($bonding_interfaces_ref->{$bond_group})) {
-           @members = @{$bonding_interfaces_ref->{$bond_group}};
-       }
-       push(@members, $if_name);
-       $bonding_interfaces_ref->{$bond_group} = [@members];
-       return 1;
+    if ( defined($bond_group) ) {
+        my @members;
+        if ( exists( $bonding_interfaces_ref->{$bond_group} ) ) {
+            @members = @{ $bonding_interfaces_ref->{$bond_group} };
+        }
+        push( @members, $if_name );
+        $bonding_interfaces_ref->{$bond_group} = [@members];
+        return 1;
     }
 
     return 0;
@@ -528,14 +527,18 @@ sub walk_interfaces {
     # The following hash stores key represent bond-group
     # and value represent members of the bond-group
     #
-    my %bonding_interfaces =();
+    my %bonding_interfaces = ();
 
     # Sort the interfaces alphabetically by name
     foreach my $ifname ( sort( keys %{$interfaces} ) ) {
         next if ( $ifname eq 'sysdef-map' );
-        next if (is_hardware_qos_bond_enabled &&
-                 check_if_bonding_member_and_construct_list($ifname,
-                                             \%bonding_interfaces));
+        next
+          if (
+            is_hardware_qos_bond_enabled
+            && check_if_bonding_member_and_construct_list(
+                $ifname, \%bonding_interfaces
+            )
+          );
 
         my $data = %{$interfaces}{$ifname};
 
@@ -551,18 +554,21 @@ sub walk_interfaces {
     }
 
     # Sort the bonding_groups alphabetically by name
-    foreach my $key (sort {versioncmp($a, $b)} keys %bonding_interfaces) {
+    foreach my $key ( sort { versioncmp( $a, $b ) } keys %bonding_interfaces ) {
         print "Bonding group: $key\n";
+
         # Sort the member interfaces alphabetically by name
-        for my $ifname (sort {versioncmp($a, $b)} @{$bonding_interfaces{$key}} ) {
+        for my $ifname ( sort { versioncmp( $a, $b ) }
+            @{ $bonding_interfaces{$key} } )
+        {
             my $data = %{$interfaces}{$ifname};
 
             # For now only have 'shaper' => ...
             while ( my ( $policy, $value ) = each %{$data} ) {
                 if ( $policy ne 'shaper' ) {
                     warn "$ifname: unknown policy $policy\n"
-                    if ( $policy ne 'ingress-maps' );
-                     next;
+                      if ( $policy ne 'ingress-maps' );
+                    next;
                 }
                 $func->( @_, $ifname, $value );
             }
@@ -808,7 +814,7 @@ sub show_buffer_errors {
 sub show_egress_maps {
     my $interface = shift;
 
-    if ($interface =~ /dp\dbond\d/) {
+    if ( $interface =~ /dp\dbond\d/ ) {
         print "Feature not supported on bonding interfaces \n";
         return;
     }
@@ -825,7 +831,7 @@ sub show_egress_maps {
 sub show_ingress_maps {
     my $interface = shift;
 
-    if ($interface =~ /dp\dbond\d/) {
+    if ( $interface =~ /dp\dbond\d/ ) {
         print "Feature not supported on bonding interfaces \n";
         return;
     }
@@ -945,12 +951,16 @@ sub show_monitor {
             my $response = $sock->execute("qos show");
             next unless defined($response);
 
-            my $decoded = decode_json($response);
-            my %bonding_interfaces =();
+            my $decoded            = decode_json($response);
+            my %bonding_interfaces = ();
             foreach my $ifname ( sort( keys %{$decoded} ) ) {
-                next if (is_hardware_qos_bond_enabled &&
-                         check_if_bonding_member_and_construct_list($ifname,
-                                            \%bonding_interfaces));
+                next
+                  if (
+                    is_hardware_qos_bond_enabled
+                    && check_if_bonding_member_and_construct_list(
+                        $ifname, \%bonding_interfaces
+                    )
+                  );
                 my $data = %{$decoded}{$ifname};
 
                 # For now only have 'shaper' => ...
@@ -961,9 +971,13 @@ sub show_monitor {
                 $prev{$ifname} = $stats;
             }
 
-            foreach my $bond_group (sort {versioncmp($a, $b)} keys %bonding_interfaces) {
+            foreach my $bond_group ( sort { versioncmp( $a, $b ) }
+                keys %bonding_interfaces )
+            {
                 print "Bonding group: $bond_group\n";
-                for my $ifname (sort {versioncmp($a, $b)} @{$bonding_interfaces{$bond_group}} ) {
+                for my $ifname ( sort { versioncmp( $a, $b ) }
+                    @{ $bonding_interfaces{$bond_group} } )
+                {
                     my $data = %{$decoded}{$ifname};
 
                     # For now only have 'shaper' => ...
@@ -1210,26 +1224,26 @@ sub show_dscp {
 
 # show queueing brief for an interface
 sub show_brief {
-    my $ifname = shift;
-    my @members =();
+    my $ifname  = shift;
+    my @members = ();
     my $fmt;
     my $l;
 
     if ($bits64) {
         $fmt = "%-5s %2s %3s %8s %8s %-7s %3s %20s %-9s\n";
-        $l = sprintf $fmt, 'Class', 'TC', 'WRR', 'Pipe-QID', 'Qlength', '',
-            'PLQ',
-            'Counters', '';
+        $l   = sprintf $fmt, 'Class', 'TC', 'WRR', 'Pipe-QID', 'Qlength', '',
+          'PLQ',
+          'Counters', '';
     } else {
         $fmt = "%-8s %4s %4s %7s %10s %16s %9s %9s %3s\n";
-        $l = sprintf $fmt, 'Class', 'Prio', 'WRR', 'Qlength',
-            'Packets', 'Bytes', 'Tail-drop', 'RED-drop', 'PLQ';
+        $l   = sprintf $fmt, 'Class', 'Prio', 'WRR', 'Qlength',
+          'Packets', 'Bytes', 'Tail-drop', 'RED-drop', 'PLQ';
     }
     print $l, '-' x length($l), "\n";
 
-    if (($ifname =~ "bond") && is_hardware_qos_bond_enabled) {
+    if ( ( $ifname =~ "bond" ) && is_hardware_qos_bond_enabled ) {
         @members = get_members($ifname);
-        @members = sort {versioncmp($a, $b)} @members;
+        @members = sort { versioncmp( $a, $b ) } @members;
 
         my $vif = "";
 
@@ -1577,7 +1591,7 @@ sub show_class {
     my $fmt;
     my $hdr;
 
-    if ($interfaces =~ /dp\dbond\d/) {
+    if ( $interfaces =~ /dp\dbond\d/ ) {
         print "Feature not supported on bonding interfaces \n";
         return;
     }
@@ -1645,26 +1659,26 @@ sub usage {
 }
 
 my (
-    $brief,    $dscp,         $mark,        $pcp,        $monitor,
-    $class,    $summary,      $platmapegr,  $platmaping, $platinfo,
+    $brief,    $dscp,         $mark,       $pcp,        $monitor,
+    $class,    $summary,      $platmapegr, $platmaping, $platinfo,
     $buf_errs, $ingress_maps, $egress_maps
 );
 
 GetOptions(
-    '64'                      => \$bits64,
-    'brief=s'                 => \$brief,
-    'monitor'                 => \$monitor,
-    'dscp=s'                  => \$dscp,
-    'platmapegr=s'            => \$platmapegr,
-    'platmaping=s'            => \$platmaping,
-    'platinfo'                => \$platinfo,
-    'buffer-errors'           => \$buf_errs,
-    'mark=s'                  => \$mark,
-    'cos=s'                   => \$pcp,
-    'class:s'                 => \$class,
-    'summary'                 => \$summary,
-    'ingress-maps:s'          => \$ingress_maps,
-    'egress-maps:s'           => \$egress_maps,
+    '64'             => \$bits64,
+    'brief=s'        => \$brief,
+    'monitor'        => \$monitor,
+    'dscp=s'         => \$dscp,
+    'platmapegr=s'   => \$platmapegr,
+    'platmaping=s'   => \$platmaping,
+    'platinfo'       => \$platinfo,
+    'buffer-errors'  => \$buf_errs,
+    'mark=s'         => \$mark,
+    'cos=s'          => \$pcp,
+    'class:s'        => \$class,
+    'summary'        => \$summary,
+    'ingress-maps:s' => \$ingress_maps,
+    'egress-maps:s'  => \$egress_maps,
 ) or usage();
 
 show_brief($brief) if $brief;
