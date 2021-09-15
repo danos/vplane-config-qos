@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2019, AT&T Intellectual Property.
+# Copyright (c) 2019 - 2021, AT&T Intellectual Property.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -13,6 +13,7 @@ Unit-tests for the qos_op_mode.py module.
 import json
 from unittest.mock import patch
 import vyatta_policy_qos_vci.qos_op_mode
+import pathlib
 
 
 def test_qos_op_mode():
@@ -53,13 +54,14 @@ def test_qos_op_mode():
     generate expected_results.
     """
 
-    with open("./tests/qos_op_mode_config.json") as config_data:
+    script_location = pathlib.Path(__file__).parent
+    with open(script_location / "qos_op_mode_config.json") as config_data:
         config = json.load(config_data)
 
-    with open("./tests/qos_op_mode_test_data.json") as test_data:
+    with open(script_location / "qos_op_mode_test_data.json") as test_data:
         test_data = json.load(test_data)
 
-    with open("./tests/qos_op_mode_expected_results.json") as results_data:
+    with open(script_location / "qos_op_mode_expected_results.json") as results_data:
         expected_results = json.load(results_data)
 
     with patch('vyatta_policy_qos_vci.qos_op_mode.get_config') as mock_get_config:

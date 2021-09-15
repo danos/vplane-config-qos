@@ -120,7 +120,7 @@ def mypy(context, commits="master...HEAD"):
 def pytest(context):
     """Run the unit test suite.
        Tell pytest to only look in vyatta_policy_qos_vci, otherwise it will fail"""
-    context.run("coverage run --source . -m pytest vyatta_policy_qos_vci", echo=True)
+    context.run("coverage run --source . -m pytest", echo=True)
 
 
 @task(pre=[pytest])
