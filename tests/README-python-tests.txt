@@ -19,7 +19,7 @@ cfg-version   doc          README        vyatta
 configure.ac  lib          scripts       vyatta_policy_qos_vci
 COPYING       Makefile.am  templates-op  yang
 $
-$ pytest-3
+$ pytest-3 vyatta_policy_qos_vci/tests
 ======================== test session starts =========================
 platform linux -- Python 3.6.8, pytest-3.3.2, py-1.5.2, pluggy-0.6.0
 rootdir: /home/adewar/stash-repos/vplane-config-qos, inifile:
@@ -53,7 +53,7 @@ tests/test_wred_dscp_group.py ..                               [100%]
 
 You can also run each test individually like so:
 
-$ pytest-3 tests/test_action.py
+$ pytest-3 vyatta_policy_qos_vci/tests/test_action.py
 ======================== test session starts =========================
 platform linux -- Python 3.6.8, pytest-3.3.2, py-1.5.2, pluggy-0.6.0
 rootdir: /home/adewar/stash-repos/vplane-config-qos, inifile:
