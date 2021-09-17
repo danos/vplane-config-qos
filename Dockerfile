@@ -5,14 +5,15 @@ USER root
 # and where the shared drive should be mounted when docker run is executed
 WORKDIR /tmp/vplane-config-qos
 
-# Prevent apt from asking the user questions like what time zone
-ARG DEBIAN_FRONTEND=noninteractive 
+# Prevent apt from asking the user questions like which time zone
+ARG DEBIAN_FRONTEND=noninteractive
 
-# Add Vyatta Repositories
-# Having problems resolving build.eng.vyatta.net so hard coded in the IP address.
-# TODO: Consider finding a better fix
-RUN echo 'deb [trusted=yes] http://10.156.50.45:82/Vyatta:/Tools/xUbuntu_20.04/ ./' >> /etc/apt/sources.list
-RUN apt-get update --yes --allow-releaseinfo-change
+# Add Vyatta tools repository
+RUN apt-get update --yes && \
+    apt-get install --yes wget gnupg2 && \
+    wget -q -O- http://build.eng.vyatta.net:82/Vyatta:/Tools/xUbuntu_20.04/Release.key | apt-key add - && \
+    echo 'deb http://build.eng.vyatta.net:82/Vyatta:/Tools/xUbuntu_20.04/ ./' >> /etc/apt/sources.list && \
+    apt-get update --yes
 
 #-----Debian build/packaging dependencies------
 # Install mk-build-deps program
@@ -21,16 +22,14 @@ RUN apt-get install --yes devscripts equivs
 # Only copy the debian control file as it describes the projects build/packaging dependencies
 COPY ./debian/control /tmp/vplane-config-qos/debian/control
 
-# Install application build/packaging dependencies
-RUN mk-build-deps \
- && apt-get install --yes --fix-missing ./vplane-config-qos-build-deps_*_all.deb
+# Install application's build/packaging dependencies
+RUN mk-build-deps --install --remove --tool='apt-get --yes'
 #------------------------------------------------
 
 #-----------Pip development dependencies---------
-
 COPY ./dev-requirements.txt /tmp/vplane-config-qos/dev-requirements.txt
 RUN apt-get install --yes python3-pip && \
-    pip3 install -r dev-requirements.txt
+    pip3 install --requirement dev-requirements.txt
 #------------------------------------------------
 
 # Jenkins mounts the directory at /var/lib/jenkins/workspace/DANOS_vplane-config-qos_PR-XXX
