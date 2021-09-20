@@ -68,7 +68,6 @@ class MarkMap:
         """ Return the list of dscp-group names """
         return self._dscp_groups.keys()
 
-    @property
     def pcp(self, group_name):
         """ Return the pcp-mark value for the named group """
         return self._dscp_groups[group_name]

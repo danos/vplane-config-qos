@@ -10,7 +10,7 @@
 Unit-tests for the qos_config.py module.
 """
 
-from vyatta_policy_qos_vci.qos_config_bond_members import QosConfigBondMembers
+from vyatta_policy_qos_vci.qos_config_all import QosConfigAll
 from vyatta_policy_qos_vci.bond_membership import BondMembership
 
 TEST_DATA = {
@@ -54,7 +54,7 @@ TEST_DATA = {
 
 
 def test_qosconfig_bond_members():
-    """ Simple Unit Test for the QoSConfigBondMembers class with bonding group
+    """ Simple Unit Test for the QosConfigAll class with bonding group
     in s9500 platform
     """
     # Create a BondMembership object with the desired membership state
@@ -68,7 +68,7 @@ def test_qosconfig_bond_members():
     }
     bond_membership = BondMembership(notification=membership)
 
-    config = QosConfigBondMembers(TEST_DATA, bond_membership=bond_membership)
+    config = QosConfigAll(TEST_DATA, bond_membership=bond_membership)
     assert config is not None
     assert len(config.interfaces) == 2
     assert config.find_interface('dp0xe3') is not None

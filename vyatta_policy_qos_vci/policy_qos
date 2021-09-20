@@ -15,7 +15,7 @@ import sys
 
 from copy import deepcopy
 from traceback import format_tb
-from vyatta_policy_qos_vci.qos_config_bond_members import QosConfigBondMembers
+from vyatta_policy_qos_vci.qos_config_all import QosConfigAll
 from systemd.journal import JournalHandler
 
 import vci
@@ -192,8 +192,23 @@ class Config(vci.Config):
         global _bond_membership
         LOG.debug(f"Config:check - {proposed_config}")
         if is_hardware_qos_bond_enabled():
-            config = QosConfigBondMembers(proposed_config,
-                                          bond_membership=_bond_membership)
+            config = QosConfigAll(proposed_config,
+                                  bond_membership=_bond_membership)
+
+            # Count the number of policies configured on VLAN/VIF and
+            # ignore the policies configured on parent interfaces.
+            count = 0
+            for interface in config.interfaces.values():
+                count += (len(interface.policies)-1)
+
+            # The per VLAN/VIF qos policy limited to 50 due to finite number
+            # of VOQ statistics support in hardware.
+            if count > 50:
+                LOG.info("Config:check failed for vlan qos policy limit")
+                raise vci.Exception("vyatta-policy-qos-vci",
+                                    "The maximum per VLAN/VIF QoS policy limit reached,"
+                                    f" {count}",
+                                    "policy/vlan or vif")
         else:
             config = QosConfig(proposed_config)
 

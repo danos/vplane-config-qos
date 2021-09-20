@@ -22,7 +22,7 @@ import json
 import sys
 
 from vyatta_policy_qos_vci.qos_config import QosConfig
-from vyatta_policy_qos_vci.qos_config_bond_members import QosConfigBondMembers
+from vyatta_policy_qos_vci.qos_config_all import QosConfigAll
 
 LOG = logging.getLogger('Policy QoS VCI')
 
@@ -84,10 +84,10 @@ class Provisioner:
         if bonding_ntfy is None:
             # Now process the QoS config
             if self._is_hardware_qos_bond_enabled:
-                old_config = QosConfigBondMembers(old,
-                                                  bond_membership=cur_bond_membership)
-                new_config = QosConfigBondMembers(new,
-                                                  bond_membership=cur_bond_membership)
+                old_config = QosConfigAll(old,
+                                          bond_membership=cur_bond_membership)
+                new_config = QosConfigAll(new,
+                                          bond_membership=cur_bond_membership)
             else:
                 old_config = QosConfig(old)
                 new_config = QosConfig(new)
@@ -105,9 +105,8 @@ class Provisioner:
             # membership change from the LAG component: Compare two QoS config
             # objects where one contains the current membership state and the
             # other contains the new state from the notification.
-            old_config = QosConfigBondMembers(old,
-                                              bond_membership=cur_bond_membership)
-            new_config = QosConfigBondMembers(old, bond_membership=bonding_ntfy)
+            old_config = QosConfigAll(old, bond_membership=cur_bond_membership)
+            new_config = QosConfigAll(old, bond_membership=bonding_ntfy)
             self._check_interfaces(old_config, new_config, False)
 
     def _check_interfaces(self, old_config, new_config, lp_des_changed):

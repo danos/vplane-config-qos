@@ -11,7 +11,7 @@ Unit-tests for the qos_config.py module.
 """
 
 from vyatta_policy_qos_vci.qos_config import QosConfig
-from vyatta_policy_qos_vci.qos_config_bond_members import QosConfigBondMembers
+from vyatta_policy_qos_vci.qos_config_all import QosConfigAll
 
 TEST_DATA = {
     "vyatta-interfaces-v1:interfaces": {
@@ -186,9 +186,9 @@ def test_qosconfig():
 
 
 def test_qosconfig_bond_members_no_bonding():
-    """ Simple Unit Test for the QoSConfigBondMembers class. This test
-    ensures that QosConfigBondMembers class has the same behavior of QosConfig
+    """ Simple Unit Test for the QosConfigAll class. This test
+    ensures that QosConfigAll class has the same behavior of QosConfig
     when there are not bonding groups in the configuration.
     """
-    config = QosConfigBondMembers(TEST_DATA)
+    config = QosConfigAll(TEST_DATA)
     simple_qos_config_test(config)

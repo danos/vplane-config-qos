@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: LGPL-2.1-only
 #
 """
-The module that defines the QosConfigBondMembers class. This class is a
+The module that defines the QosConfigAll class. This class is a
 specialization of the QosConfig class that splits the QoS configuration of
 bonding groups (LAG) into each individual LAG member.
 """
@@ -19,7 +19,7 @@ from vyatta_policy_qos_vci.interface import Interface
 LOG = logging.getLogger('Policy QoS VCI')
 
 
-class QosConfigBondMembers(QosConfig):
+class QosConfigAll(QosConfig):
     """
     A class to represent all the chunks of config that QoS is interested in.
     The JSON configuration is broken down into bits that are mapped onto the
@@ -30,7 +30,7 @@ class QosConfigBondMembers(QosConfig):
     bonding interface).
     """
     def __init__(self, config_dict, bond_membership=None):
-        """ Create a QosConfigBondMembers object """
+        """ Create a QosConfigAll object """
         self._action_groups = {}
         self._mark_maps = {}
         self._global_profiles = {}
