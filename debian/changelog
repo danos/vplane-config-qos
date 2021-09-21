@@ -1,3 +1,15 @@
+vplane-config-qos (6.0.13) unstable; urgency=medium
+
+  [ Alan Dewar ]
+  * GPC: display the original GPC rule number
+  * GPC: remove unused GPC op-mode perl code
+  * Perltidy show-queueing.pl
+
+  [ aroberts ]
+  * Block mixed mark/egress map configurations
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Tue, 21 Sep 2021 10:04:18 +0100
+
 vplane-config-qos (6.0.12) unstable; urgency=medium
 
   [ Alan Dewar ]
