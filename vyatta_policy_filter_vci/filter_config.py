@@ -111,7 +111,12 @@ class FilterConfig:
 
         try:
             with Controller() as ctrl:
-                ctrl.store("gpf_feature qos", pb_message, "ALL", "SET",
+                if len(self._filter_groups):
+                    cstore_command = "SET"
+                else:
+                    cstore_command = "DELETE"
+
+                ctrl.store("gpf_feature qos", pb_message, "ALL", cstore_command,
                            cmd_name="vyatta:gpc-config")
 
         except ControllerException:
