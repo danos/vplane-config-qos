@@ -1,3 +1,9 @@
+vplane-config-qos (5.0.14) unstable; urgency=medium
+
+  * Block mixed mark/egress map configurations
+
+ -- aroberts <aroberts@vyatta.att-mail.com>  Tue, 21 Sep 2021 10:06:27 +0100
+
 vplane-config-qos (5.0.13) unstable; urgency=medium
 
   [ Karthik Murugesan ]
