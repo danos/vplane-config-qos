@@ -25,6 +25,7 @@ use Vyatta::QoS::Profile;
 use Math::BigInt;
 use Data::Dumper;
 use Scalar::Util qw(reftype);
+use Vyatta::QoS::Policy qw(split_ifname);
 
 use constant MAX_DSCP => Vyatta::QoS::Profile::MAX_DSCP;
 use constant TC_SHIFT => 2;
@@ -42,21 +43,6 @@ sub is_hardware_qos_bond_enabled {
 # 32-bit or 64-bit counters
 #
 my $bits64 = 0;
-
-sub split_ifname {
-    my $ifname = shift;    # dp0p2p1.N
-
-    # QoS not directly allowed on VRRP interface
-    die "QoS not available on VRRP pseudo interface\n"
-      if ( $ifname =~ /v\d+$/ );
-
-    # Split name and vif
-    if ( $ifname =~ /^(.*)\.(\d+)$/ ) {
-        return $1, $2;
-    } else {
-        return $ifname;
-    }
-}
 
 # Fetch queuing information on a specific interface
 # Parse resulting JSON output
@@ -207,10 +193,9 @@ sub show {
     }
     print $l, '-' x length($l), "\n";
     if ( ( $name =~ "bond" ) && is_hardware_qos_bond_enabled ) {
-        @members = get_members($name);
+        my ( $if_bond, $vif ) = split_ifname($name);
+        @members = get_members($if_bond);
         @members = sort { versioncmp( $a, $b ) } @members;
-
-        my $vif = "";
 
         foreach my $port (@members) {
 
@@ -223,8 +208,11 @@ sub show {
             my $shaper = $data->{shaper};
             next unless defined($shaper);
 
-            my $policy_name = get_if_subport_policy_name($name);
+            my $policy_name = get_if_subport_policy_name($if_bond);
             next unless defined($policy_name);
+
+            # Concatenate port and vif
+            $port = "$port.$vif" if ($vif);
 
             print "Member port: $port\n";
             show_shaper( $shaper, $vif, $policy_name, 0 );
@@ -1242,10 +1230,9 @@ sub show_brief {
     print $l, '-' x length($l), "\n";
 
     if ( ( $ifname =~ "bond" ) && is_hardware_qos_bond_enabled ) {
-        @members = get_members($ifname);
+        my ( $if_bond, $vif ) = split_ifname($ifname);
+        @members = get_members($if_bond);
         @members = sort { versioncmp( $a, $b ) } @members;
-
-        my $vif = "";
 
         foreach my $port (@members) {
 
@@ -1258,8 +1245,11 @@ sub show_brief {
             my $shaper = $data->{shaper};
             next unless defined($shaper);
 
-            my $policy_name = get_if_subport_policy_name($ifname);
+            my $policy_name = get_if_subport_policy_name($if_bond);
             next unless defined($policy_name);
+
+            # Concatenate port and vif
+            $port = "$port.$vif" if ($vif);
 
             print "Member port: $port\n";
             show_shaper( $shaper, $vif, $policy_name, 1 );

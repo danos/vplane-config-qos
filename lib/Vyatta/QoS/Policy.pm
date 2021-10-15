@@ -1,6 +1,6 @@
 # Module QoS::Policy.pm
 #
-# Copyright (c) 2018-2019, AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2018-2021, AT&T Intellectual Property. All rights reserved.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
@@ -23,7 +23,7 @@ use Carp;
 our @ISA = qw(Exporter);
 
 our @EXPORT =
-  qw(make_policy get_ifindex vif_binding_changed validate_global_profiles list_profiles dscp_check config_same_as_before get_byte_limits);
+  qw(make_policy get_ifindex vif_binding_changed validate_global_profiles list_profiles dscp_check config_same_as_before get_byte_limits split_ifname);
 
 sub get_byte_limits {
     my $feature_marker =
@@ -225,6 +225,21 @@ sub list_profiles {
 
     push @global_profiles, @local_profiles;
     print join( ' ', @global_profiles ), "\n";
+}
+
+sub split_ifname {
+    my $ifname = shift;    # dp0p2p1.N
+
+    # QoS not directly allowed on VRRP interface
+    die "QoS not available on VRRP pseudo interface\n"
+      if ( $ifname =~ /v\d+$/ );
+
+    # Split name and vif
+    if ( $ifname =~ /^(.*)\.(\d+)$/ ) {
+        return $1, $2;
+    } else {
+        return $ifname, "";
+    }
 }
 
 1;

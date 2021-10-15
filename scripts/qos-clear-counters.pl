@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 #
-# Copyright (c) 2017-2019, AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2021, AT&T Intellectual Property. All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
 #
@@ -18,6 +18,7 @@ use Vyatta::Config;
 use Vyatta::Bonding;
 use Vyatta::Configd qw($AUTO $RUNNING);
 use Vyatta::Misc qw(getInterfaces);
+use Vyatta::QoS::Policy qw(split_ifname);
 
 # Walk through all fabrics issuing "qos clear" requests
 sub clear_counters {
@@ -37,8 +38,12 @@ sub clear_counters {
             $sock->execute("gpc clear qos");
         } else {
             if ($if_name =~ "bond") {
-                @members = get_members($if_name);
+                my ( $if_bond, $vif ) = split_ifname($if_name);
+                @members = get_members($if_bond);
                 foreach my $port (@members) {
+                    # Concatenate port and vif
+                    $port = "$port.$vif" if ($vif);
+
                     $sock->execute("qos clear $port");
                 }
             } else {
