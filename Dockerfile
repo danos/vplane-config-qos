@@ -39,3 +39,7 @@ RUN apt-get update --yes && \
 # Currently there is no way to specify a different directory (https://groups.google.com/g/linux.debian.bugs.dist/c/1KiGKfuFH3Y)
 RUN mkdir -p /var/lib/jenkins/workspace/ \
  && chmod -R a+w /var/lib/jenkins/workspace/
+
+# Add sudo permissions
+RUN apt-get install --yes sudo
+RUN useradd docker && echo "docker:docker" | chpasswd && adduser docker sudo
