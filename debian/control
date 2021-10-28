@@ -2,7 +2,7 @@ Source: vplane-config-qos
 Section: contrib/net
 Priority: extra
 Maintainer: Vyatta Package Maintainers <DL-vyatta-help@att.com>
-Build-Depends: debhelper (>= 9), 
+Build-Depends: debhelper (>= 9),
                dh-yang,
                dh-vci,
                python3 (>= 3.6),
@@ -16,7 +16,7 @@ Depends: vplane-config (>= 1.1-1), vplane-config-npf (>= 0.4.0),
 	 libvyatta-dscp-perl, libconfig-tiny-perl, vyatta-cfg,
 	 libjson-perl, configd (>= 1.6) | configd-trial (>= 1.6),
 	 vyatta-dataplane-op-qos-9, vyatta-dataplane-cfg-qos-16,
-	 vyatta-dataplane-op-gpc-1, python3 (>= 3.6),
+	 vyatta-dataplane-op-gpc-1, python3 (>= 3.6), python3-tabulate
          ${misc:Depends}, ${perl:Depends}
 Description: vyatta dataplane QoS templates
  Vyatta configuration/operational commands for Quality Of Service

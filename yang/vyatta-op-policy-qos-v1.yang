@@ -18,15 +18,19 @@ module vyatta-op-policy-qos-v1 {
 	        prefix monitor;
 	}
 
-	organization "AT&T Inc.";
+	organization "Ciena Corporation";
 	contact
-		"AT&T
-		 Postal: 208 S. Akard Street
-			 Dallas, TX 75202
-		 Web: www.att.com";
+		"Web URL: https://www.ciena.com/
+		Postal:  7035 Ridge Road
+				Hanover, Maryland 21076
+				U.S.A.
+		Phone:   +1 800-921-1144
+		Fax:     +1 410-694-5750";
 
 	description
-		"Copyright (c) 2017-2021, AT&T Intellectual Property.
+		"Copyright (c) 2021, Ciena Corporation, All Rights Reserved.
+
+		 Copyright (c) 2017-2021, AT&T Intellectual Property.
 		 All rights reserved.
 
 		 Redistribution and use in source and binary forms, with or without
@@ -59,6 +63,10 @@ module vyatta-op-policy-qos-v1 {
 		 SPDX-License-Identifier: BSD-3-Clause
 
 		 YANG module for policy QoS operational mode commands.";
+
+	revision 2021-11-17 {
+		description "New commands: show/monitor policy qos summary";
+	}
 
 	revision 2021-03-29 {
 		description "Add the filter-classification option to the
@@ -326,6 +334,11 @@ module vyatta-op-policy-qos-v1 {
 				opd:help "Show the filter-classification used in the dataplane";
 				opd:on-enter "show_gpc_rpc.py";
 			}
+
+			opd:command summary {
+				opd:help "Show dataplane queuing summary";
+				opd:on-enter "show_queueing.py --drop-summary";
+			}
 		}
 	}
 
@@ -336,6 +349,11 @@ module vyatta-op-policy-qos-v1 {
 				opd:help "Monitor dataplane queuing information";
 				opd:on-enter "show-queueing.pl --64 --monitor";
 				opd:privileged true;
+
+				opd:command summary {
+					opd:help "Show dataplane queuing summary";
+					opd:on-enter "show_queueing.py --monitor --drop-summary";
+				}
 			}
 		}
 	}

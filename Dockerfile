@@ -28,7 +28,8 @@ RUN mk-build-deps --install --remove --tool='apt-get --yes'
 
 #-----------Pip development dependencies---------
 COPY ./dev-requirements.txt /tmp/vplane-config-qos/dev-requirements.txt
-RUN apt-get install --yes python3-pip && \
+RUN apt-get update --yes && \
+    apt-get install --yes python3-pip && \
     pip3 install --requirement dev-requirements.txt
 #------------------------------------------------
 

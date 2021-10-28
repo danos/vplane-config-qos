@@ -1,11 +1,14 @@
 #! /usr/bin/perl
 
+# Copyright (c) 2021, Ciena Corporation, All Rights Reserved
 # Copyright (c) 2017-2021, AT&T Intellectual Property. All rights reserved.
 # Copyright (c) 2013-2017, Brocade Communications Systems, Inc.
 # All rights reserved.
 #
 # SPDX-License-Identifier: LGPL-2.1-only
 #
+
+# Note: New functionality intended for this file should be written in scripts/show_queueing.py instead.
 
 use strict;
 use warnings;

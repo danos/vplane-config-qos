@@ -15,4 +15,5 @@ scripts/qos-op-mode.pl opt/vyatta/bin
 scripts/qos-validate.pl opt/vyatta/sbin
 scripts/show-ext-buf.pl opt/vyatta/bin
 scripts/show-queueing.pl opt/vyatta/bin
+scripts/show_queueing.py opt/vyatta/bin
 templates-op/monitor/queuing/node.def opt/vyatta/share/vyatta-op/templates/monitor/queuing
