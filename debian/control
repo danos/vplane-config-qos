@@ -3,6 +3,7 @@ Section: contrib/net
 Priority: extra
 Maintainer: Vyatta Package Maintainers <DL-vyatta-help@att.com>
 Build-Depends: debhelper (>= 9), 
+               netbase,
                dh-yang,
                dh-vci,
                python3 (>= 3.6),
@@ -76,7 +77,7 @@ Priority: extra
 Depends: python3 (>= 3.6), python3-vci, python3-systemd, ${misc:Depends},
 	 vyatta-resources-group-v1-yang (>= 4.1.0), vyatta-res-grp-vci,
 	 python3-vyatta-cfgclient, vyatta-interfaces-bonding (>= 0.52),
-	 vyatta-interfaces (>= 2.1)
+	 vyatta-interfaces (>= 2.1), netbase
 Description: Policy QoS VCI Service
  Service for policy qos commands using the Vyatta Component Infrastructure.
 
