@@ -26,15 +26,19 @@ module vyatta-policy-qos-deviation-ufi-s9500-30xs-v1 {
 		prefix action;
 	}
 
-    organization "AT&T Inc.";
+    organization "Ciena Corporation";
 	contact
-		"AT&T
-          Postal: 208 S. Akard Street
-                  Dallas, TX 75202
-          Web: www.att.com";
+	    "Web URL: https://www.ciena.com/
+	     Postal:  7035 Ridge Road
+		      Hanover, Maryland 21076
+		      U.S.A.
+	     Phone:   +1 800-921-1144
+	     Fax:     +1 410-694-5750";
 
 	description
-		"Copyright (c) 2020, AT&T Intellectual Property.
+		"Copyright (c) 2021, Ciena Corporation, All Rights Reserved.
+
+		 Copyright (c) 2020, AT&T Intellectual Property.
 		 All rights reserved.
 
 		 Redistribution and use in source and binary forms, with or without
@@ -68,6 +72,10 @@ module vyatta-policy-qos-deviation-ufi-s9500-30xs-v1 {
 
 		 Deviations for QoS policies on the UFI S9500-30XS platform";
 
+	revision 2021-11-17 {
+		description "Delete the must from wred-map-bytes max-threshold.";
+	}
+
 	revision 2020-03-26 {
 		description "Allow QoS on dataplane interfaces and VIFs.";
 	}
@@ -98,5 +106,14 @@ module vyatta-policy-qos-deviation-ufi-s9500-30xs-v1 {
 
 	deviation /policy:policy/action:action {
 		deviate not-supported;
+	}
+
+	deviation /policy:policy/qos:qos/qos:name/qos:shaper/qos:profile/qos:queue/qos:wred-map-bytes/qos:dscp-group/qos:max-threshold {
+		deviate delete {
+			must "not(../min-threshold) or (../max-threshold > ../min-threshold)" {
+				error-message "min-threshold must be less than" +
+					      " max-threshold";
+			}
+		}
 	}
 }

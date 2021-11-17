@@ -11,6 +11,9 @@ A module to define a class of object to hold Wred parameters
 
 from pathlib import Path
 from enum import Enum
+import logging
+
+LOG = logging.getLogger('Policy QoS VCI')
 
 
 def byte_limits():
@@ -18,6 +21,21 @@ def byte_limits():
     byte_limit_feature = Path(
         "/run/vyatta-platform/features/vyatta-policy-qos-groupings-v1/byte-limits")
     return byte_limit_feature.is_file()
+
+
+def is_platform_QAX():
+    """
+    Check the platform is a QAX since we need to tailor it's behaviour to
+    conform with yang backwards compatibility issues.
+    """
+    try:
+        with open("/var/lib/vyatta-platform/platform-id.conf", "r") as myfile:
+            data = myfile.read()
+        if "ufi.s9500-30xs" in data:
+            return True
+        return False
+    except FileNotFoundError:
+        return False
 
 
 def get_limit(limit_value, qunits):
@@ -39,6 +57,7 @@ def check_threshold(max_th, qlimit):
 
 class WredMap():
     """ Define the wred-map class """
+
     def __init__(self, wred_map_dict, is_dscp, qunits, tc_qlimit):
         """ Create a wred-map object """
         self._is_dscp = is_dscp
@@ -51,6 +70,13 @@ class WredMap():
         self._mark_prob = wred_map_dict['mark-probability']
         self._min_th = get_limit(wred_map_dict['min-threshold'], qunits)
         self._max_th = get_limit(wred_map_dict['max-threshold'], qunits)
+        if is_platform_QAX():
+            if self._max_th >= self._tc_qlimit:
+                LOG.error(f"Limiting max-threshold {self._max_th} to less than {self._tc_qlimit}\n")
+                self._max_th = self._tc_qlimit - 1
+            if self._min_th >= self._max_th:
+                LOG.error(f"Limiting min-threshold {self._min_th} to less than {self._max_th}\n")
+                self._min_th = self._max_th - 1
 
     class Units(Enum):
         TIME = 1
