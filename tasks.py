@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Copyright (c) 2021, Ciena Corporation, All Rights Reserved
 # Copyright (c) 2021, AT&T Intellectual Property. All rights reserved.
 # SPDX-License-Identifier: GPL-2.0-only
 
@@ -150,7 +151,7 @@ def licence(context, commits="master...HEAD"):
         error = False
         for file in source_files:
             year = datetime.datetime.now().year
-            pattern = rf"Copyright \(c\) .*{year}.* AT&T Intellectual Property"
+            pattern = rf"Copyright \(c\) .*{year}.* Ciena Corporation, All Rights Reserved"
 
             with open(file) as f:
                 for line in f:
@@ -158,7 +159,7 @@ def licence(context, commits="master...HEAD"):
                     if match:
                         break
                 else:
-                    print(f"Failed: File {file} does not contain AT&T licence for the current year ({year})")
+                    print(f"Failed: File {file} does not contain Ciena licence for the current year ({year})")
                     error = True
         return error
 
