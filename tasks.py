@@ -38,11 +38,15 @@ import functools
 @functools.lru_cache(maxsize=1)
 def get_files(commits: str) -> List:
     def get_all_files(repo_root: str) -> List:
-        """Return every file in this repository. Ignore .git folder and files excluded by .gitignore"""
-        # Most tools can search for files themselves and do not need to be passed a list of files.
-        # For example `flake8 .` will find every .py file recursively. This repo contains scripts without
-        # any file extension. Therefore it is necessary to pass every file to these tools so no files are
-        # left out.
+        """
+        Return every file in this repository.
+        Ignore .git folder and files excluded by .gitignore.
+
+        Most tools can search for files themselves and do not need to be passed a list of files.
+        For example `flake8 .` will find every .py file recursively. This repo contains scripts without
+        any file extension. Therefore it is necessary to pass every file to these tools so no files are
+        left out.
+        """
 
         git_command = "git ls-tree -r --full-name --name-only HEAD"
         result = subprocess.check_output(git_command, shell=True).decode("utf-8")
@@ -51,7 +55,7 @@ def get_files(commits: str) -> List:
         return all_files_full_path
 
     def get_changed_files(repo_root: str, commits: str) -> List:
-        """Return all the files with content that has changed"""
+        """ Return all the files with content that has changed. """
 
         git_command = f"git diff -G'.' --diff-filter=rd --find-renames=100% --name-only --format=format:'' {commits}"
         result = subprocess.check_output(git_command, shell=True).decode("utf-8")
@@ -71,8 +75,10 @@ def get_files(commits: str) -> List:
 
 
 def get_files_by_types(files: List, types: List[str]) -> List:
-    """Return a subset of 'files' based of the file type. Use python-magic rather simply
-        looking at the file extension because some of the scripts do not have any file extension"""
+    """
+    Return a subset of 'files' based of the file type. Use python-magic rather simply
+    looking at the file extension because some of the scripts do not have any file extension.
+    """
 
     files_by_types = []
     for file in files:
@@ -99,7 +105,7 @@ def get_files_by_types(files: List, types: List[str]) -> List:
 
 @task
 def flake8(context, commits="master...HEAD"):
-    """Run flake8 over changed files"""
+    """ Run flake8 over changed files. """
     files = get_files(commits)
     python_files = get_files_by_types(files, ["Python"])
     if python_files:  # Only run flake8 if there are files to check (otherwise it will run it over the directory)
@@ -109,7 +115,7 @@ def flake8(context, commits="master...HEAD"):
 
 @task
 def mypy(context, commits="master...HEAD"):
-    """Run python static type checker"""
+    """ Run python static type checker. """
     files = get_files(commits)
     python_files = get_files_by_types(files, ["Python"])
     if python_files:  # Only run mypy if there are files to check (otherwise it will run it over the directory)
@@ -119,21 +125,22 @@ def mypy(context, commits="master...HEAD"):
 
 @task
 def pytest(context):
-    """Run the unit test suite.
-       Tell pytest to only look in vyatta_policy_qos_vci, otherwise it will fail"""
+    """
+    Run the unit test suite.
+    """
     context.run("coverage run --source . -m pytest", echo=True)
 
 
 @task(pre=[pytest])
 def coverage(context):
-    """Generate the coverage report for the unit test suite"""
+    """ Generate the coverage report for the unit test suite. """
     context.run("coverage html", echo=True)
     context.run("coverage report", echo=True)
 
 
 @task
 def gitlint(context, commits="master...HEAD"):
-    """Run the unit test suite"""
+    """ Run gitlint over commits """
     # context.run() fails for gitlint. Possibly because of https://github.com/fabric/fabric/issues/1812
     # So invoke gitlint using subprocess.run rather than invokes context.run
     command = f"gitlint --commits {commits}"
@@ -145,7 +152,7 @@ def gitlint(context, commits="master...HEAD"):
 
 @task
 def licence(context, commits="master...HEAD"):
-    """Check source code files contain the spdx licence and an up to date AT&T licence"""
+    """ Check source code files contain the spdx licence and an up to date Ciena licence. """
 
     def check_att_licence(source_files: List[str]) -> bool:
         error = False
@@ -183,6 +190,11 @@ def licence(context, commits="master...HEAD"):
 
 @task
 def whitespace(context, commits="master...HEAD"):
+    """
+    Check files do no contain trailing whitespace.
+    Static anaylsis tools (.eg flake8) can check this for source files (eg. Python),
+    however we need to implement our own check for other files (eg. debian/control).
+    """
     files = get_files(commits)
 
     # Remove markdown files as they use trailing whitespace
@@ -198,10 +210,11 @@ def whitespace(context, commits="master...HEAD"):
 
 @task
 def package(context):
-    """ Build the debian packages.
-        Copy packages from parent directory to new child directory. Do not remove them
-        as lintian still expects them in the parent directory.
-        Clean up after a package is built.
+    """
+    Build the debian packages.
+    Copy packages from parent directory to new child directory. Do not remove them
+    as lintian still expects them in the parent directory.
+    Clean up after a package is built.
     """
     context.run("dpkg-buildpackage", echo=True)
     context.run("mkdir -p deb_packages", echo=True)
@@ -216,16 +229,17 @@ def clean(context):
 
 @task
 def lintian(context):
-    """ Lint debain packages.
-        Having issues with error: source-is-missing .../test_show_queueing.cpython-39-pytest-6.2.5.pyc
-        For some reason lintian find pycache files even when they don't exist anymore.
+    """
+    Lint debain packages.
+    Having issues with error: source-is-missing .../test_show_queueing.cpython-39-pytest-6.2.5.pyc
+    For some reason lintian find pycache files even when they don't exist anymore.
     """
     context.run("lintian --fail-on error --profile vyatta", echo=True)
 
 
 @task(pre=[flake8, mypy, pytest, coverage, gitlint, licence, whitespace, package, clean, lintian])
 def all(context, commits="master...HEAD"):
-    """Run all stages in the pipeline."""
+    """ Run all stages in the pipeline. """
     # Use invoke pre tasks to call each stage
     # If no stage has exited early then all stages were successful
     print("\nSUCCESS")
